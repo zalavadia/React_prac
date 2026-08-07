@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>React Path — React Seekho (→ React 19)</title>
+    <meta
+      name="description"
+      content="React basic se mid + React 19 — topic, questions, answers browser me."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <header class="top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-name">React Path</p>
+          <p class="brand-tag">React · Base → Mid · React 19 · Advanced · Hinglish</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <label class="search-wrap">
+          <span class="sr-only">Search topics</span>
+          <input
+            id="search"
+            type="search"
+            placeholder="Topic dhundo…"
+            autocomplete="off"
+          />
+        </label>
+        <p class="progress" id="progressLabel">0 done</p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar" id="sidebar"></aside>
+
+      <section class="panel" id="panel" aria-live="polite">
+        <div class="welcome" id="welcome">
+          <p class="eyebrow">Learn in browser</p>
+          <h1>React Path</h1>
+          <p class="lede">
+            Left se topic choose karo. Yahi pe
+            <strong>poori explanation + questions + answer code</strong> dikhega.
+            Sequence: <strong>01 → 40</strong> (basic → mid → React 19 → interview).
+          </p>
+          <p class="hint">
+            Teaching files: <code>react_prac/*.jsx</code>. Live practice ke liye
+            Vite + React 19 project banao; yeh app concepts + Q&amp;A ke liye hai.
+          </p>
+        </div>
+
+        <article class="detail hidden" id="detail">
+          <div class="detail-head">
+            <p class="level-pill" id="detailLevel"></p>
+            <button type="button" class="done-btn" id="doneBtn">
+              Mark done
+            </button>
+          </div>
+          <h2 id="detailTitle"></h2>
+          <p class="file-line">File: <code id="detailFile"></code></p>
+
+          <h3>Topic samjho</h3>
+          <pre class="intro-block" id="detailIntro"></pre>
+
+          <h3>Questions &amp; Answers</h3>
+          <div id="qaList" class="qa-list"></div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>
+        Local: <code>cd react_prac/docs && python3 -m http.server 5600</code>
+        · Folder: <code>javascript_prac/react_prac/</code>
+      </p>
+    </footer>
+
+    <script src="./topics-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
