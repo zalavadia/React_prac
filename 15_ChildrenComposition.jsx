@@ -1,17 +1,17 @@
 // ============================================================================
 // 15 — Children Composition
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: children = dabbe ke andar jo bhi daal do. Card, Modal, Layout —
+// SIMPLE: children = whatever you put inside the box. Card, Modal, Layout —
 // shell fixed, content flexible. Composition > inheritance (React way).
 //
 // <Modal><Form /></Modal> → Modal({ children }). slots: header/footer props
-// ya multiple props as elements. cloneElement rare — prefer explicit props.
+// or multiple props as elements. cloneElement rare — prefer explicit props.
 //
-// KYUN: Flexible UI libraries. Avoid prop explosion "title, body, footer...".
+// WHY: Flexible UI libraries. Avoid prop explosion "title, body, footer...".
 // INTERVIEW: composition vs config props; containership.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -20,10 +20,10 @@ import { useEffect, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Basic children wrapper
 //
-// Kya karna hai:
-// FancyBox children render.
+// Task:
+// FancyBox renders children.
 //
-// Seedha matlab:
+// In simple words:
 // Reusable chrome around unknown content.
 // -----------------------------------------------------------------------------
 function FancyBox({ children }) {
@@ -33,10 +33,10 @@ function FancyBox({ children }) {
 // -----------------------------------------------------------------------------
 // Q2: Layout slots via props
 //
-// Kya karna hai:
+// Task:
 // sidebar + children main.
 //
-// Seedha matlab:
+// In simple words:
 // Named "slots" as props — clear structure.
 // -----------------------------------------------------------------------------
 function Shell({ sidebar, children }) {
@@ -59,11 +59,11 @@ function AppShell() {
 // -----------------------------------------------------------------------------
 // Q3: Modal with children
 //
-// Kya karna hai:
+// Task:
 // open + onClose + children body.
 //
-// Seedha matlab:
-// Modal na jaane andar Form hai ya Text — children.
+// In simple words:
+// Modal doesn't know if inside is Form or Text — children.
 // -----------------------------------------------------------------------------
 function Modal({ open, onClose, children }) {
   if (!open) return null;
@@ -80,10 +80,10 @@ function Modal({ open, onClose, children }) {
 // -----------------------------------------------------------------------------
 // Q4: Button asChild-ish pattern (simple)
 //
-// Kya karna hai:
+// Task:
 // Sometimes wrap link styled as button — children / component prop.
 //
-// Seedha matlab:
+// In simple words:
 // Composition lets consumer choose <a> vs <button>.
 // -----------------------------------------------------------------------------
 function Button({ children, onClick }) {
@@ -97,11 +97,11 @@ function Button({ children, onClick }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Children as function (render prop)
 //
-// Kya karna hai:
+// Task:
 // <Data>{(data) => <pre>...</pre>}</Data>
 //
-// Seedha matlab:
-// Parent data de, child decide UI. Hooks se pehle popular; ab custom hooks.
+// In simple words:
+// Parent gives data, child decides UI. Popular before hooks; now custom hooks.
 // -----------------------------------------------------------------------------
 function Mouse({ children }) {
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -118,17 +118,17 @@ function Mouse({ children }) {
 // -----------------------------------------------------------------------------
 // Q6: Compound components sketch
 //
-// Kya karna hai:
+// Task:
 // Tabs + Tabs.Panel API feel — related pieces.
 //
-// Seedha matlab:
+// In simple words:
 // Implicit state share (context). Nice DX for libraries.
 // -----------------------------------------------------------------------------
 function Tabs({ children }) {
   const [active, setActive] = useState(0);
   return (
     <div>
-      {/* real impl maps children / context — concept yahan */}
+      {/* real impl maps children / context — concept here */}
       <p>Active tab: {active}</p>
       <button onClick={() => setActive(0)}>0</button>
       <button onClick={() => setActive(1)}>1</button>
@@ -140,22 +140,22 @@ function Tabs({ children }) {
 // -----------------------------------------------------------------------------
 // Q7: Avoid cloneElement when possible
 //
-// Kya karna hai:
-// Extra props children pe inject karna — prefer context ya render prop.
+// Task:
+// Inject extra props into children — prefer context or render prop.
 //
-// Seedha matlab:
-// cloneElement magic = brittle. Explicit better.
+// In simple words:
+// cloneElement magic = brittle. Explicit is better.
 // -----------------------------------------------------------------------------
 // React.cloneElement(child, { extra }) // last resort
 
 // -----------------------------------------------------------------------------
 // Q8: [MID] Conditional children / empty
 //
-// Kya karna hai:
+// Task:
 // List empty → EmptyState as children pattern.
 //
-// Seedha matlab:
-// Parent structure, consumer empty UI pass kare.
+// In simple words:
+// Parent structure, consumer passes empty UI.
 // -----------------------------------------------------------------------------
 function ListBox({ items, empty, children }) {
   if (!items.length) return empty ?? <p>Nothing</p>;
@@ -165,12 +165,12 @@ function ListBox({ items, empty, children }) {
 // -----------------------------------------------------------------------------
 // Q9: React.Children utilities (light)
 //
-// Kya karna hai:
+// Task:
 // React.Children.count(children), map, toArray — slot validation.
 //
-// Seedha matlab:
-// Compound components me kaunse children allowed check kar sakte ho.
-// Overuse mat — explicit props often clearer.
+// In simple words:
+// In compound components you can check which children are allowed.
+// Don't overuse — explicit props often clearer.
 // -----------------------------------------------------------------------------
 function CountChildren({ children }) {
   const n = Array.isArray(children) ? children.length : children ? 1 : 0;
@@ -185,12 +185,12 @@ function CountChildren({ children }) {
 // -----------------------------------------------------------------------------
 // Q10: cloneElement caution — implicit prop injection
 //
-// Kya karna hai:
+// Task:
 // React.cloneElement(child, { isActive }) — magic props inject.
 //
-// Seedha matlab:
-// Fragile: child type assume, overrides clash. Context/render prop prefer.
-// Radix asChild internally cloneElement use karta — library level OK.
+// In simple words:
+// Fragile: assumes child type, overrides clash. Prefer context/render prop.
+// Radix asChild uses cloneElement internally — OK at library level.
 // -----------------------------------------------------------------------------
 // function InjectActive({ children, active }) {
 //   return React.cloneElement(children, { "data-active": active });
@@ -199,11 +199,11 @@ function CountChildren({ children }) {
 // -----------------------------------------------------------------------------
 // Q11: [MID] Multiple slot props pattern
 //
-// Kya karna hai:
-// header, footer, actions alag props — JSX me pass.
+// Task:
+// header, footer, actions as separate props — pass in JSX.
 //
-// Seedha matlab:
-// Config props explosion avoid. Named slots readable.
+// In simple words:
+// Avoid config props explosion. Named slots readable.
 // <Card header={<h2/>} footer={<Btn/>}>body</Card>
 // -----------------------------------------------------------------------------
 function Card({ header, footer, children }) {
@@ -227,12 +227,12 @@ function CardDemo() {
 // -----------------------------------------------------------------------------
 // Q12: Compound Tabs — context share sketch
 //
-// Kya karna hai:
+// Task:
 // Tabs.List + Tabs.Panel — shared activeIndex via context.
 //
-// Seedha matlab:
-// Library API feel: related components ek family.
-// Parent Tabs state hold; children consume context (see 11).
+// In simple words:
+// Library API feel: related components as one family.
+// Parent Tabs holds state; children consume context (see 11).
 // -----------------------------------------------------------------------------
 function TabList({ labels, active, onSelect }) {
   return (
@@ -265,12 +265,12 @@ function TabsCompound() {
 // -----------------------------------------------------------------------------
 // Q13: Render props vs hooks
 //
-// Kya karna hai:
+// Task:
 // <Mouse>{(pos) => ...}</Mouse> vs const pos = useMouse() — hooks win usually.
 //
-// Seedha matlab:
+// In simple words:
 // Render prop = flexibility + composition. Hooks = same reuse, cleaner tree.
-// Legacy libs me render props common; custom hook modern prefer.
+// Legacy libs use render props; modern code prefers custom hooks.
 // -----------------------------------------------------------------------------
 function DataLoader({ url, children }) {
   const [data, setData] = useState(null);
@@ -286,11 +286,11 @@ function DataLoader({ url, children }) {
 // -----------------------------------------------------------------------------
 // Q14: [MID] asChild pattern (light)
 //
-// Kya karna hai:
-// <Button asChild><a href="/">Link</a></Button> — styles merge, child render.
+// Task:
+// <Button asChild><a href="/">Link</a></Button> — merge styles, render child.
 //
-// Seedha matlab:
-// Button apna <button> nahi — child clone karke props merge (Radix style).
+// In simple words:
+// Button skips its own <button> — clone child and merge props (Radix style).
 // Simple version: children pass through with className merge.
 // -----------------------------------------------------------------------------
 function StyledWrapper({ className, children }) {
@@ -301,12 +301,12 @@ function StyledWrapper({ className, children }) {
 // -----------------------------------------------------------------------------
 // Q15: Composition over config props
 //
-// Kya karna hai:
+// Task:
 // <Modal title="" body="" footer="" /> ❌ vs children composition ✅
 //
-// Seedha matlab:
-// Har section alag component pass — flexible order, custom layout.
-// Config props rigid ho jaate hain complex UI me.
+// In simple words:
+// Pass each section as its own component — flexible order, custom layout.
+// Config props get rigid in complex UI.
 // -----------------------------------------------------------------------------
 function ConfigVsComposeNote() {
   return <p>Composition = consumer control. Config = library decides structure.</p>;
@@ -315,14 +315,14 @@ function ConfigVsComposeNote() {
 // -----------------------------------------------------------------------------
 // Q16: Fragment as children wrapper
 //
-// Kya karna hai:
+// Task:
 // <>
 //   <Header /><Body />
 // </> — multiple children without extra DOM.
 //
-// Seedha matlab:
-// children array hota hai multiple ho to. Fragment group karta hai.
-// Modal children me kai elements OK.
+// In simple words:
+// children is an array when multiple. Fragment groups them.
+// Modal children can have many elements OK.
 // -----------------------------------------------------------------------------
 function MultiChildModal({ children }) {
   return <div className="modal-body">{children}</div>;
@@ -331,12 +331,12 @@ function MultiChildModal({ children }) {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Inversion — parent doesn't know child type
 //
-// Kya karna hai:
-// Layout children kuch bhi ho sakta — Form, Chart, Text.
+// Task:
+// Layout children can be anything — Form, Chart, Text.
 //
-// Seedha matlab:
+// In simple words:
 // Open/closed principle. Shell stable, content pluggable.
-// React design philosophy core.
+// Core React design philosophy.
 // -----------------------------------------------------------------------------
 function PageLayout({ children }) {
   return (
@@ -350,12 +350,12 @@ function PageLayout({ children }) {
 // -----------------------------------------------------------------------------
 // Q18: Explicit component prop vs children
 //
-// Kya karna hai:
+// Task:
 // icon={<Icon />} prop vs children — semantic clarity.
 //
-// Seedha matlab:
+// In simple words:
 // Single main content → children. Secondary pieces → named props (icon, suffix).
-// API design: consumer ko confuse mat karo.
+// API design: don't confuse the consumer.
 // -----------------------------------------------------------------------------
 function InputField({ label, icon, suffix, ...inputProps }) {
   return (
@@ -373,11 +373,11 @@ function InputField({ label, icon, suffix, ...inputProps }) {
 // -----------------------------------------------------------------------------
 // Q19: Children.map for list render prop
 //
-// Kya karna hai:
+// Task:
 // items.map(it => children(it)) — ListBox pattern (Q8).
 //
-// Seedha matlab:
-// Parent iteration, consumer template deta hai per item.
+// In simple words:
+// Parent iterates, consumer gives template per item.
 // Render prop + list combo common.
 // -----------------------------------------------------------------------------
 function Table({ rows, children }) {
@@ -395,11 +395,11 @@ function Table({ rows, children }) {
 // -----------------------------------------------------------------------------
 // Q20: [MID] Avoid nesting hell — extract subcomponents
 //
-// Kya karna hai:
+// Task:
 // Deep JSX tree → Shell.Sidebar, Shell.Main subcomponents.
 //
-// Seedha matlab:
-// Composition readable rakho. Compound namespacing (Tabs.Panel) DX boost.
+// In simple words:
+// Keep composition readable. Compound namespacing (Tabs.Panel) boosts DX.
 // -----------------------------------------------------------------------------
 function ShellSidebar({ children }) {
   return <aside>{children}</aside>;
@@ -413,12 +413,12 @@ Shell.Main = ShellMain;
 // -----------------------------------------------------------------------------
 // Q21: Portal + children composition
 //
-// Kya karna hai:
-// Modal children ko document.body pe portal — composition same API.
+// Task:
+// Modal children to document.body via portal — same composition API.
 //
-// Seedha matlab:
-// Consumer <Modal><Form/></Modal> — andar portal handle. API clean.
-// Implementation detail hide — composition preserve.
+// In simple words:
+// Consumer <Modal><Form/></Modal> — portal handled inside. API stays clean.
+// Hide implementation detail — preserve composition.
 // -----------------------------------------------------------------------------
 function PortalModal({ open, children }) {
   if (!open) return null;
@@ -429,12 +429,12 @@ function PortalModal({ open, children }) {
 // -----------------------------------------------------------------------------
 // Q22: Polymorphic component light sketch
 //
-// Kya karna hai:
-// as="a" | as="button" — element type consumer choose (advanced composition).
+// Task:
+// as="a" | as="button" — consumer picks element type (advanced composition).
 //
-// Seedha matlab:
-// Design systems me common. asChild se related — type flexibility.
-// Simple start: children pass karo, wrap mat karo.
+// In simple words:
+// Common in design systems. Related to asChild — type flexibility.
+// Simple start: pass children, don't wrap.
 // -----------------------------------------------------------------------------
 function PolymorphicNote() {
   return <p>as prop / asChild = same HTML tag flexibility, different API.</p>;

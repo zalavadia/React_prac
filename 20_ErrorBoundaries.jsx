@@ -1,17 +1,17 @@
 // ============================================================================
 // 20 — Error Boundaries
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Error boundary = safety net. Child tree render me crash → poori
-// app white screen ki jagah fallback UI. Class component (ya library) se.
+// SIMPLE: Error boundary = safety net. Child tree crash during render → instead of
+// whole app white screen, show fallback UI. Class component (or library).
 //
 // Catch: render, lifecycle, constructors of children.
-// NOT catch: event handlers, async, SSR, khud boundary errors — try/catch wahan.
+// NOT catch: event handlers, async, SSR, boundary's own errors — use try/catch there.
 //
-// KYUN: Production resilience. Widget fail ≠ whole app die.
+// WHY: Production resilience. Widget fail ≠ whole app die.
 // INTERVIEW: what they catch / don't; class getDerivedStateFromError.
-// Vite/React 19 project me use — teaching file. (class API yahan intentional)
+// Use in a Vite + React 19 project — teaching file. (class API intentional here)
 //
 // ============================================================================
 
@@ -20,11 +20,11 @@ import { Component, useEffect, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Basic class error boundary
 //
-// Kya karna hai:
+// Task:
 // getDerivedStateFromError + componentDidCatch.
 //
-// Seedha matlab:
-// hasError state → fallback. didCatch logging.
+// In simple words:
+// hasError state → fallback. didCatch for logging.
 // -----------------------------------------------------------------------------
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -48,11 +48,11 @@ class ErrorBoundary extends Component {
 // -----------------------------------------------------------------------------
 // Q2: Wrap risky widget
 //
-// Kya karna hai:
+// Task:
 // <ErrorBoundary><Risky /></ErrorBoundary>
 //
-// Seedha matlab:
-// Isolate blast radius. Baaki app chalega.
+// In simple words:
+// Isolate blast radius. Rest of app keeps running.
 // -----------------------------------------------------------------------------
 function Risky({ blow }) {
   if (blow) throw new Error("boom");
@@ -74,10 +74,10 @@ function Dashboard() {
 // -----------------------------------------------------------------------------
 // Q3: Reset by changing key
 //
-// Kya karna hai:
-// key={resetId} boundary pe — remount clear error state.
+// Task:
+// key={resetId} on boundary — remount clears error state.
 //
-// Seedha matlab:
+// In simple words:
 // Retry UX: user "Try again" → key++.
 // -----------------------------------------------------------------------------
 function Recoverable() {
@@ -95,11 +95,11 @@ function Recoverable() {
 // -----------------------------------------------------------------------------
 // Q4: Event handler errors NOT caught
 //
-// Kya karna hai:
-// onClick me throw — boundary nahi pakdegi; try/catch.
+// Task:
+// throw in onClick — boundary won't catch; use try/catch.
 //
-// Seedha matlab:
-// Interview classic. Handlers alag.
+// In simple words:
+// Interview classic. Handlers are separate.
 // -----------------------------------------------------------------------------
 function ClickBomb() {
   return (
@@ -120,11 +120,11 @@ function ClickBomb() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Async errors NOT caught
 //
-// Kya karna hai:
-// fetch().then throw — boundary nahi. Error state khud set.
+// Task:
+// fetch().then throw — boundary won't. Set error state yourself.
 //
-// Seedha matlab:
-// Data layer me error UI pattern (06/23).
+// In simple words:
+// Data layer error UI pattern (06/23).
 // -----------------------------------------------------------------------------
 function AsyncErrorDemo() {
   const [err, setErr] = useState(null);
@@ -146,10 +146,10 @@ function AsyncErrorDemo() {
 // -----------------------------------------------------------------------------
 // Q6: Nested boundaries
 //
-// Kya karna hai:
+// Task:
 // Page boundary + section boundary — granular fallbacks.
 //
-// Seedha matlab:
+// In simple words:
 // Fine-grained UX: sidebar fail, main OK.
 // -----------------------------------------------------------------------------
 function Page() {
@@ -166,11 +166,11 @@ function Page() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Logging service in didCatch
 //
-// Kya karna hai:
-// Sentry/LogRocket style — componentDidCatch me report.
+// Task:
+// Sentry/LogRocket style — report in componentDidCatch.
 //
-// Seedha matlab:
-// Production observability. User ko friendly fallback.
+// In simple words:
+// Production observability. User gets friendly fallback.
 // -----------------------------------------------------------------------------
 class ReportingBoundary extends Component {
   state = { hasError: false };
@@ -190,11 +190,11 @@ class ReportingBoundary extends Component {
 // -----------------------------------------------------------------------------
 // Q8: Libraries note
 //
-// Kya karna hai:
+// Task:
 // react-error-boundary package — hooks-friendly API.
 //
-// Seedha matlab:
-// Class boilerplate avoid karne ke liye team libs use karti.
+// In simple words:
+// Teams use libs to avoid class boilerplate.
 // Concept same.
 // -----------------------------------------------------------------------------
 function Note() {
@@ -202,13 +202,13 @@ function Note() {
 }
 
 // -----------------------------------------------------------------------------
-// Q9: getDerivedStateFromError — side effects mat
+// Q9: getDerivedStateFromError — no side effects
 //
-// Kya karna hai:
-// Sirf state return karo; logging componentDidCatch me.
+// Task:
+// Only return state; logging in componentDidCatch.
 //
-// Seedha matlab:
-// getDerivedStateFromError pure hona chahiye — React rule.
+// In simple words:
+// getDerivedStateFromError must be pure — React rule.
 // -----------------------------------------------------------------------------
 class PureBoundary extends Component {
   state = { hasError: false };
@@ -226,11 +226,11 @@ class PureBoundary extends Component {
 // -----------------------------------------------------------------------------
 // Q10: [MID] Custom fallback with error details (dev only)
 //
-// Kya karna hai:
-// didCatch me error message state me (dev); prod me generic UI.
+// Task:
+// didCatch error message in state (dev); generic UI in prod.
 //
-// Seedha matlab:
-// User ko friendly; dev ko detail — env check se.
+// In simple words:
+// Friendly for user; detail for dev — check env.
 // -----------------------------------------------------------------------------
 class DevFallbackBoundary extends Component {
   state = { hasError: false, msg: "" };
@@ -251,13 +251,13 @@ class DevFallbackBoundary extends Component {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: componentStack se kaun crash hua
+// Q11: componentStack — which component crashed
 //
-// Kya karna hai:
-// info.componentStack logging me — Sentry ko bhejo.
+// Task:
+// info.componentStack in logging — send to Sentry.
 //
-// Seedha matlab:
-// Stack batata kaun sa child component fail — debug fast.
+// In simple words:
+// Stack shows which child failed — faster debug.
 // -----------------------------------------------------------------------------
 class StackLogBoundary extends Component {
   state = { hasError: false };
@@ -274,13 +274,13 @@ class StackLogBoundary extends Component {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: [MID] useEffect throw — boundary pakdegi
+// Q12: [MID] useEffect throw — boundary catches
 //
-// Kya karna hai:
-// Effect ke andar throw → render phase me propagate → boundary catch.
+// Task:
+// Throw inside effect → propagates to render phase → boundary catch.
 //
-// Seedha matlab:
-// Async setTimeout throw nahi; sync throw effect me boundary tak ja sakta.
+// In simple words:
+// setTimeout throw no; sync throw in effect can reach boundary.
 // -----------------------------------------------------------------------------
 function EffectThrow({ bad }) {
   useEffect(() => {
@@ -290,13 +290,13 @@ function EffectThrow({ bad }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q13: Render me conditional throw — classic catch
+// Q13: Render conditional throw — classic catch
 //
-// Kya karna hai:
+// Task:
 // if (!data) throw new Error — boundary fallback.
 //
-// Seedha matlab:
-// Render/lifecycle errors — yahi boundary ka main job.
+// In simple words:
+// Render/lifecycle errors — main job of boundary.
 // -----------------------------------------------------------------------------
 function RenderThrow({ data }) {
   if (!data) throw new Error("missing data");
@@ -304,31 +304,31 @@ function RenderThrow({ data }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q14: [MID] SSR — error boundary server pe alag behavior
+// Q14: [MID] SSR — error boundary different behavior on server
 //
-// Kya karna hai:
-// Server render error → HTML error page; client hydrate alag.
+// Task:
+// Server render error → HTML error page; client hydrate different.
 //
-// Seedha matlab:
-// Boundary mostly client hydration/render; SSR errors often framework handle.
+// In simple words:
+// Boundary mostly client hydration/render; SSR errors often handled by framework.
 // -----------------------------------------------------------------------------
 function SSRNote() {
   return (
     <p>
-      SSR crash often whole response fail; client ErrorBoundary widget-level
-      isolate karti hai.
+      SSR crash often fails whole response; client ErrorBoundary isolates at widget
+      level.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q15: Boundary khud throw — parent boundary pakdegi
+// Q15: Boundary itself throws — parent boundary catches
 //
-// Kya karna hai:
-// Inner boundary render me crash → outer boundary fallback.
+// Task:
+// Inner boundary crash in render → outer boundary fallback.
 //
-// Seedha matlab:
-// Boundary apne errors catch nahi karti — parent ya white screen.
+// In simple words:
+// Boundary doesn't catch its own errors — parent or white screen.
 // -----------------------------------------------------------------------------
 function OuterInnerDemo() {
   return (
@@ -341,13 +341,13 @@ function OuterInnerDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] Granular boundaries — chart vs table alag
+// Q16: [MID] Granular boundaries — chart vs table separate
 //
-// Kya karna hai:
-// Har widget apni boundary — ek fail, baaki dashboard live.
+// Task:
+// Each widget its own boundary — one fail, rest of dashboard live.
 //
-// Seedha matlab:
-// Blast radius chhota = better UX + easier debug.
+// In simple words:
+// Smaller blast radius = better UX + easier debug.
 // -----------------------------------------------------------------------------
 function WidgetGrid() {
   return (
@@ -365,17 +365,18 @@ function WidgetGrid() {
 // -----------------------------------------------------------------------------
 // Q17: [ADV] React 19 — error overlay / use hook errors
 //
-// Kya karna hai:
-// use() promise reject → nearest Suspense/boundary; dev overlay alag.
+// Task:
+// use() promise reject → nearest Suspense/boundary; dev overlay separate.
 //
-// Seedha matlab:
-// React 19 me data errors Suspense boundary ke saath integrate ho rahe.
+// In simple words:
+// React 19: data errors integrate with Suspense boundary.
+// Class boundary still for render errors.
 // -----------------------------------------------------------------------------
 function React19Note() {
   return (
     <p>
-      React 19: render errors + use() rejections — boundary/Suspense stack
-      samjho; class boundary ab bhi render errors ke liye.
+      React 19: render errors + use() rejections — understand boundary/Suspense
+      stack; class boundary still for render errors.
     </p>
   );
 }
@@ -383,53 +384,52 @@ function React19Note() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] react-error-boundary — resetKeys prop
 //
-// Kya karna hai:
+// Task:
 // resetKeys={[userId]} change → auto reset error state.
 //
-// Seedha matlab:
-// Manual key++ ki jagah library prop — same remount idea.
+// In simple words:
+// Instead of manual key++, library prop — same remount idea.
 // -----------------------------------------------------------------------------
 function ResetKeysNote() {
   return (
     <p>
-      react-error-boundary: resetKeys prop se boundary dubara try — key pattern
-      automated.
+      react-error-boundary: resetKeys prop retries boundary — automated key
+      pattern.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q19: [ADV] try/catch render me — kaam nahi karta
+// Q19: [ADV] try/catch in render — doesn't work
 //
-// Kya karna hai:
-// function App() { try { return Child } catch — ❌ child throw catch nahi.
+// Task:
+// function App() { try { return Child } catch — ❌ child throw not caught.
 //
-// Seedha matlab:
-// Render async nahi; child throw parent try se bypass — boundary chahiye.
+// In simple words:
+// Render isn't async; child throw bypasses parent try — need ErrorBoundary.
 // -----------------------------------------------------------------------------
 function TryCatchLimit() {
   return (
     <p>
-      Parent me try/catch child render throw nahi pakdega — ErrorBoundary use
-      karo.
+      Parent try/catch won't catch child render throw — use ErrorBoundary.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q20: [ADV] ErrorBoundary bahar, Suspense andar order
+// Q20: [ADV] ErrorBoundary outside, Suspense inside order
 //
-// Kya karna hai:
-// ErrorBoundary wraps Suspense wraps Lazy — lazy fail + render fail dono.
+// Task:
+// ErrorBoundary wraps Suspense wraps Lazy — lazy fail + render fail both.
 //
-// Seedha matlab:
+// In simple words:
 // Suspense = loading; Boundary = error — outer boundary recommended.
 // -----------------------------------------------------------------------------
 function StackOrderNote() {
   return (
     <p>
-      Pattern: ErrorBoundary → Suspense → LazyComponent. Import fail boundary
-      pakdegi.
+      Pattern: ErrorBoundary → Suspense → LazyComponent. Import fail caught by
+      boundary.
     </p>
   );
 }
@@ -437,11 +437,11 @@ function StackOrderNote() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Logging — PII scrub before send
 //
-// Kya karna hai:
-// didCatch me error.message safe; user input stack me mat bhejo raw.
+// Task:
+// didCatch error.message safe; don't send raw user input in stack.
 //
-// Seedha matlab:
-// Production logging me GDPR/security — sanitize payload.
+// In simple words:
+// Production logging GDPR/security — sanitize payload.
 // -----------------------------------------------------------------------------
 class SafeLogBoundary extends Component {
   state = { hasError: false };
@@ -462,13 +462,13 @@ class SafeLogBoundary extends Component {
 }
 
 // -----------------------------------------------------------------------------
-// Q22: [ADV] Interview matrix — kya pakdega kya nahi
+// Q22: [ADV] Interview matrix — what catches what
 //
-// Kya karna hai:
+// Task:
 // Render/lifecycle ✅ | Events ❌ | Async ❌ | Boundary self ❌ | SSR ⚠️
 //
-// Seedha matlab:
-// Ek table yahin yaad — interview me fast answer.
+// In simple words:
+// Remember this table — fast interview answer.
 // -----------------------------------------------------------------------------
 function CatchMatrix() {
   return (

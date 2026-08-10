@@ -1,46 +1,46 @@
 // ============================================================================
 // 01 — What Is React And JSX
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: React = kitchen me chef jo UI (screen) banata hai pieces (components) se.
-// JSX = HTML jaisa dikhta hai, lekin JS ke andar likhte ho — jaise recipe card
-// jo code bhi hai. Browser JSX nahi samajhta; Vite/Babel ise JS me badal deta hai.
+// SIMPLE: React = a chef in the kitchen who builds the UI (screen) from pieces (components).
+// JSX = looks like HTML, but you write it inside JS — like a recipe card that is also code.
+// The browser does not understand JSX; Vite/Babel turns it into JS.
 //
-// React kya karta hai: data badle → UI update. Tum manually DOM nahi chhedte.
-// JSX me { } = JS expression daalna. className = HTML class (class reserved hai).
+// What React does: data changes → UI updates. You do not touch the DOM manually.
+// In JSX, { } = insert a JS expression. className = HTML class (class is reserved in JS).
 //
-// KYUN: React samajhne ka pehla step. Bina JSX/component soch ke hooks confuse honge.
-// INTERVIEW: JSX kya hai; virtual DOM idea; why className; one parent rule.
-// Vite/React 19 project me use — yeh teaching file hai, node se mat chalao.
+// WHY: First step to understanding React. Without JSX/component thinking, hooks will confuse you.
+// INTERVIEW: What is JSX; virtual DOM idea; why className; one parent rule.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
 import React, { Fragment } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: Pehla JSX element
+// Q1: First JSX element
 //
-// Kya karna hai:
-// Ek simple <h1>Hello React</h1> return karo component se.
+// Task:
+// Return a simple <h1>Hello React</h1> from a component.
 //
-// Seedha matlab:
-// Component = function jo JSX return kare.
-// Yeh React ka "dabba" hai jo screen pe dikhega.
+// In simple words:
+// Component = a function that returns JSX.
+// This is React's "box" that will show on the screen.
 // -----------------------------------------------------------------------------
 function Hello() {
   return <h1>Hello React</h1>;
 }
 
 // -----------------------------------------------------------------------------
-// Q2: JS expression curly braces me
+// Q2: JS expression in curly braces
 //
-// Kya karna hai:
-// name = "Ada". <p> me Hello, {name} dikhao.
+// Task:
+// name = "Ada". Show Hello, {name} inside <p>.
 //
-// Seedha matlab:
-// { } ke andar koi bhi JS expression chalega (variable, 1+1, call).
-// String concat ki zarurat nahi — JSX me seedha mix.
+// In simple words:
+// Any JS expression works inside { } (variable, 1+1, function call).
+// No string concat needed — mix directly in JSX.
 // -----------------------------------------------------------------------------
 function Greet() {
   const name = "Ada";
@@ -48,14 +48,14 @@ function Greet() {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: className (class nahi)
+// Q3: className (not class)
 //
-// Kya karna hai:
-// div pe className="card" lagao, andar text.
+// Task:
+// Put className="card" on a div, with text inside.
 //
-// Seedha matlab:
-// JS me class keyword reserved hai.
-// Isliye React me className use karte hain. CSS same rehti hai.
+// In simple words:
+// The class keyword is reserved in JS.
+// So React uses className. CSS stays the same.
 // -----------------------------------------------------------------------------
 function Card() {
   return <div className="card">Yeh ek card hai</div>;
@@ -64,11 +64,11 @@ function Card() {
 // -----------------------------------------------------------------------------
 // Q4: Self-closing tags
 //
-// Kya karna hai:
-// <img /> aur <br /> self-close karo (JSX me zaruri).
+// Task:
+// Self-close <img /> and <br /> (required in JSX).
 //
-// Seedha matlab:
-// HTML me kabhi kabhi tag band nahi karte. JSX strict hai — band karo.
+// In simple words:
+// In HTML you sometimes skip closing tags. JSX is strict — close them.
 // -----------------------------------------------------------------------------
 function Avatar() {
   return (
@@ -81,14 +81,14 @@ function Avatar() {
 }
 
 // -----------------------------------------------------------------------------
-// Q5: Ek parent rule (Fragment)
+// Q5: One parent rule (Fragment)
 //
-// Kya karna hai:
-// Do siblings return karo bina extra div ke — <>...</> use karo.
+// Task:
+// Return two siblings without an extra div — use <>...</>.
 //
-// Seedha matlab:
-// return me ek root chahiye. Extra div DOM gandha karta hai.
-// Fragment <> </> invisible wrapper hai.
+// In simple words:
+// return needs one root. An extra div clutters the DOM.
+// Fragment <> </> is an invisible wrapper.
 // -----------------------------------------------------------------------------
 function TwoLines() {
   return (
@@ -102,11 +102,11 @@ function TwoLines() {
 // -----------------------------------------------------------------------------
 // Q6: Nested JSX tree
 //
-// Kya karna hai:
-// Header + main + footer wala chhota layout banao.
+// Task:
+// Build a small layout with header + main + footer.
 //
-// Seedha matlab:
-// JSX = tree. Parent children wrap karta hai — HTML jaisa nesting.
+// In simple words:
+// JSX = a tree. Parent wraps children — like HTML nesting.
 // -----------------------------------------------------------------------------
 function Layout() {
   return (
@@ -119,41 +119,41 @@ function Layout() {
 }
 
 // -----------------------------------------------------------------------------
-// Q7: [MID] JSX behind the scenes (createElement soch)
+// Q7: [MID] JSX behind the scenes (createElement mental model)
 //
-// Kya karna hai:
-// Samjho: <h1 className="t">Hi</h1> ≈ React.createElement("h1", { className: "t" }, "Hi")
+// Task:
+// Understand: <h1 className="t">Hi</h1> ≈ React.createElement("h1", { className: "t" }, "Hi")
 //
-// Seedha matlab:
-// JSX sugar hai. Internally objects (elements) bante hain.
-// Interview me: "JSX HTML nahi, syntax sugar hai createElement ke liye."
+// In simple words:
+// JSX is sugar. Internally objects (elements) are created.
+// In interviews: "JSX is not HTML, it is syntax sugar for createElement."
 // -----------------------------------------------------------------------------
-// Conceptual — Vite/React project me JSX compile ho jata hai:
+// Conceptual — in a Vite/React project JSX compiles automatically:
 // const el = <h1 className="t">Hi</h1>;
 // // roughly → React.createElement("h1", { className: "t" }, "Hi");
 
 // -----------------------------------------------------------------------------
 // Q8: [MID] Inline style object
 //
-// Kya karna hai:
-// style={{ color: "tomato", fontSize: 18 }} lagao (camelCase CSS).
+// Task:
+// Apply style={{ color: "tomato", fontSize: 18 }} (camelCase CSS).
 //
-// Seedha matlab:
-// style = object, string nahi. font-size → fontSize.
-// Double { } : bahar JSX expression, andar object literal.
+// In simple words:
+// style = object, not a string. font-size → fontSize.
+// Double { } : outer = JSX expression, inner = object literal.
 // -----------------------------------------------------------------------------
 function Styled() {
   return <p style={{ color: "tomato", fontSize: 18 }}>Styled text</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q9: Fragment with key (list me)
+// Q9: Fragment with key (in lists)
 //
-// Kya karna hai:
-// map me <> ki jagah <React.Fragment key={id}> use karo.
+// Task:
+// In map, use <React.Fragment key={id}> instead of <>.
 //
-// Seedha matlab:
-// Short <> me key nahi lag sakti. List me key zaroori — Fragment bhi key le sakta hai.
+// In simple words:
+// Short <> cannot take a key. Lists need keys — Fragment can have a key too.
 // -----------------------------------------------------------------------------
 function ItemList({ items }) {
   return (
@@ -171,12 +171,12 @@ function ItemList({ items }) {
 // -----------------------------------------------------------------------------
 // Q10: Expression vs statement trap
 //
-// Kya karna hai:
-// { if (x) ... } ❌ — ternary / && use karo.
+// Task:
+// { if (x) ... } ❌ — use ternary / && instead.
 //
-// Seedha matlab:
-// { } me sirf expression chalega, statement nahi. if/for/let block nahi.
-// Interview trap: "JSX me if kaise?" → ternary ya && ya bahar if.
+// In simple words:
+// Only expressions go inside { }, not statements. No if/for/let blocks.
+// Interview trap: "How to use if in JSX?" → ternary, &&, or if outside.
 // -----------------------------------------------------------------------------
 function StatusBadge({ ok }) {
   return (
@@ -190,12 +190,12 @@ function StatusBadge({ ok }) {
 // -----------------------------------------------------------------------------
 // Q11: JSX injection safety (XSS)
 //
-// Kya karna hai:
-// User input seedha text me safe. dangerouslySetInnerHTML avoid unless trusted.
+// Task:
+// User input as plain text is safe. Avoid dangerouslySetInnerHTML unless trusted.
 //
-// Seedha matlab:
-// React default me text escape karta hai — <script> string render nahi chalega.
-// HTML inject chahiye? dangerouslySetInnerHTML — sirf sanitized/trusted source se.
+// In simple words:
+// React escapes text by default — a <script> string will not run.
+// Need HTML injection? dangerouslySetInnerHTML — only from sanitized/trusted source.
 // -----------------------------------------------------------------------------
 function UserComment({ text }) {
   return <p>{text}</p>; // safe — React escapes HTML chars
@@ -205,11 +205,11 @@ function UserComment({ text }) {
 // -----------------------------------------------------------------------------
 // Q12: createElement manually (no JSX)
 //
-// Kya karna hai:
-// React.createElement se same tree banao — JSX samajhne ke liye.
+// Task:
+// Build the same tree with React.createElement — to understand JSX.
 //
-// Seedha matlab:
-// JSX compile hoke createElement calls banta hai. Type, props, ...children.
+// In simple words:
+// JSX compiles into createElement calls. Type, props, ...children.
 // -----------------------------------------------------------------------------
 function ManualHello() {
   return React.createElement(
@@ -223,12 +223,12 @@ function ManualHello() {
 // -----------------------------------------------------------------------------
 // Q13: children prop implicit
 //
-// Kya karna hai:
-// <Card>yeh andar</Card> → Card ke andar {children} render.
+// Task:
+// <Card>content inside</Card> → render {children} inside Card.
 //
-// Seedha matlab:
-// Tags ke beech ka content automatically children prop ban jata hai.
-// Wrapper / layout components ka core pattern.
+// In simple words:
+// Content between tags automatically becomes the children prop.
+// Core pattern for wrapper / layout components.
 // -----------------------------------------------------------------------------
 function CardWrap({ title, children }) {
   return (
@@ -243,13 +243,13 @@ function CardWrap({ title, children }) {
 // -----------------------------------------------------------------------------
 // Q14: Boolean rendering quirks (0, "", false)
 //
-// Kya karna hai:
-// {count && <p>...</p>} — count 0 ho to screen pe "0" dikhega!
+// Task:
+// {count && <p>...</p>} — when count is 0, "0" shows on screen!
 //
-// Seedha matlab:
-// false/null/undefined render nahi hote. 0 aur "" render hote hain.
-// Fix: count > 0 && ... ya !!count && ... ya ternary.
-// Interview trap bahut common.
+// In simple words:
+// false/null/undefined do not render. 0 and "" do render.
+// Fix: count > 0 && ... or !!count && ... or ternary.
+// Very common interview trap.
 // -----------------------------------------------------------------------------
 function CartHint({ count }) {
   return (
@@ -263,12 +263,12 @@ function CartHint({ count }) {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Babel transform mental model
 //
-// Kya karna hai:
-// Samjho Vite/Babel JSX ko JS me badalta hai before browser.
+// Task:
+// Understand that Vite/Babel converts JSX to JS before the browser.
 //
-// Seedha matlab:
-// Browser JSX nahi samajhta. Build step: JSX → createElement (classic) ya jsx runtime (React 17+).
-// Dev me HMR; prod me minified bundle.
+// In simple words:
+// Browser does not understand JSX. Build step: JSX → createElement (classic) or jsx runtime (React 17+).
+// Dev has HMR; prod has minified bundle.
 // -----------------------------------------------------------------------------
 // Before (you write):
 // const el = <h1 className="t">Hi</h1>;
@@ -279,12 +279,12 @@ function CartHint({ count }) {
 // -----------------------------------------------------------------------------
 // Q16: Deep nested JSX tree
 //
-// Kya karna hai:
-// Article > section > div > p nesting — readable indent rakho.
+// Task:
+// Article > section > div > p nesting — keep readable indent.
 //
-// Seedha matlab:
-// JSX = tree structure. Har level parent ek child wrap karta hai.
-// Deep nesting = split into components (02) — readability ke liye.
+// In simple words:
+// JSX = tree structure. Each level wraps one child.
+// Deep nesting = split into components (02) — for readability.
 // -----------------------------------------------------------------------------
 function ArticleBlock() {
   return (
@@ -306,17 +306,17 @@ function ArticleBlock() {
 // -----------------------------------------------------------------------------
 // Q17: Comments in JSX
 //
-// Kya karna hai:
-// {/* yeh comment */} — HTML <!-- --> JSX expression me nahi.
+// Task:
+// {/* this comment */} — not HTML <!-- --> inside JSX expression.
 //
-// Seedha matlab:
-// JSX ke andar comment bhi { } expression block me likho.
-// // line comment JSX tag ke beech me break kar sakta hai — careful.
+// In simple words:
+// Inside JSX, comments also go in a { } expression block.
+// // line comments can break inside JSX tags — be careful.
 // -----------------------------------------------------------------------------
 function WithComment() {
   return (
     <div>
-      {/* Sidebar placeholder — baad me component banega */}
+      {/* Sidebar placeholder — will become a component later */}
       <aside>Side</aside>
       <main>Main</main>
     </div>
@@ -326,12 +326,12 @@ function WithComment() {
 // -----------------------------------------------------------------------------
 // Q18: Spread attributes {...props}
 //
-// Kya karna hai:
+// Task:
 // const attrs = { id: "x", "data-test": "btn" }; <button {...attrs} />
 //
-// Seedha matlab:
-// Spread se saari props ek saath pass. Override: pehle spread, baad me specific prop.
-// Handy wrappers; overuse = unclear kaunsi prop allowed hai.
+// In simple words:
+// Spread passes all props at once. Override: spread first, then specific prop.
+// Handy for wrappers; overuse = unclear which props are allowed.
 // -----------------------------------------------------------------------------
 function SpreadButton({ label, ...rest }) {
   return (
@@ -345,12 +345,12 @@ function SpreadButton({ label, ...rest }) {
 // -----------------------------------------------------------------------------
 // Q19: [MID] htmlFor / tabIndex camelCase
 //
-// Kya karna hai:
-// <label htmlFor="email"> — HTML for reserved hai JS me.
+// Task:
+// <label htmlFor="email"> — HTML for is reserved in JS.
 //
-// Seedha matlab:
-// JSX attributes camelCase: htmlFor, tabIndex, aria-* as-is, onClick.
-// DOM property names match karte hain mostly, HTML attribute names nahi always.
+// In simple words:
+// JSX attributes are camelCase: htmlFor, tabIndex, aria-* as-is, onClick.
+// They mostly match DOM property names, not always HTML attribute names.
 // -----------------------------------------------------------------------------
 function LabelDemo() {
   return (
@@ -362,14 +362,14 @@ function LabelDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q20: [ADV] null return — kuch mat dikhao
+// Q20: [ADV] null return — show nothing
 //
-// Kya karna hai:
-// Condition false ho to return null — empty render.
+// Task:
+// When condition is false, return null — empty render.
 //
-// Seedha matlab:
-// Component null/undefined return kar sakta hai — kuch paint nahi.
-// Useful: permission gate, loading placeholder parent handle kare.
+// In simple words:
+// Component can return null/undefined — nothing is painted.
+// Useful: permission gate, loading placeholder handled by parent.
 // -----------------------------------------------------------------------------
 function AdminOnly({ isAdmin }) {
   if (!isAdmin) return null;
@@ -379,12 +379,12 @@ function AdminOnly({ isAdmin }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Array of elements return
 //
-// Kya karna hai:
-// map se array of JSX return — har item pe key.
+// Task:
+// Return array of JSX from map — key on each item.
 //
-// Seedha matlab:
-// React array of elements render kar sakta hai — lekin key list me must.
-// Fragment ya single parent dono patterns valid.
+// In simple words:
+// React can render an array of elements — but key is required in lists.
+// Fragment or single parent — both patterns are valid.
 // -----------------------------------------------------------------------------
 function TagRow({ tags }) {
   return (
@@ -401,12 +401,12 @@ function TagRow({ tags }) {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Anti-pattern — huge inline JSX blob
 //
-// Kya karna hai:
-// 200-line return mat rakho — chhote components me todo.
+// Task:
+// Do not keep a 200-line return — split into smaller components.
 //
-// Seedha matlab:
-// Ek function ek kaam. JSX readable hona chahiye — extract Header, List, Footer.
-// Real-world: file split + composition (02) se maintainable codebase.
+// In simple words:
+// One function, one job. JSX should be readable — extract Header, List, Footer.
+// Real-world: file split + composition (02) = maintainable codebase.
 // -----------------------------------------------------------------------------
 function PageShell({ header, children, footer }) {
   return (

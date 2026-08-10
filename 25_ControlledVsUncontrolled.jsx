@@ -1,19 +1,19 @@
 // ============================================================================
 // 25 — Controlled Vs Uncontrolled
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: Controlled = React state steering wheel (value + onChange).
-// Uncontrolled = DOM apna value rakhe; tum ref se kabhi-kabhi padho
-// (defaultValue). Jaise autopilot vs kabhi speedo check.
+// SIMPLE: Controlled = React state is the steering wheel (value + onChange).
+// Uncontrolled = DOM keeps its own value; you read it sometimes via ref
+// (defaultValue). Like autopilot vs checking the speedometer now and then.
 //
 // Controlled: validation, disable submit, sync fields — easy.
-// Uncontrolled: kam re-renders, simple one-shot forms, file input often.
-// Mix mat confuse karo — value + defaultValue saath = warning.
+// Uncontrolled: fewer re-renders, simple one-shot forms, file input often.
+// Do not mix and confuse — value + defaultValue together = warning.
 //
-// KYUN: Form design decision. Interview me clear farq chahiye.
+// WHY: Form design decision. Interview wants clear difference.
 // INTERVIEW: when each; file inputs; converting between.
-// Vite/React 19 project me use — teaching file.
+// Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -22,11 +22,11 @@ import { useRef, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Controlled text
 //
-// Kya karna hai:
+// Task:
 // value={state} onChange setState.
 //
-// Seedha matlab:
-// Source of truth React. Har keystroke re-render.
+// In simple words:
+// Source of truth is React. Every keystroke re-renders.
 // -----------------------------------------------------------------------------
 function Controlled() {
   const [name, setName] = useState("");
@@ -36,11 +36,11 @@ function Controlled() {
 // -----------------------------------------------------------------------------
 // Q2: Uncontrolled text
 //
-// Kya karna hai:
-// defaultValue + ref; submit pe ref.current.value.
+// Task:
+// defaultValue + ref; on submit read ref.current.value.
 //
-// Seedha matlab:
-// Source of truth DOM. React sirf mount pe seed.
+// In simple words:
+// Source of truth is DOM. React only seeds on mount.
 // -----------------------------------------------------------------------------
 function Uncontrolled() {
   const ref = useRef(null);
@@ -59,11 +59,11 @@ function Uncontrolled() {
 // -----------------------------------------------------------------------------
 // Q3: File input — usually uncontrolled
 //
-// Kya karna hai:
+// Task:
 // <input type="file" ref={fileRef} /> — value control limited.
 //
-// Seedha matlab:
-// Security: path set nahi kar sakte. FileList ref/onChange se.
+// In simple words:
+// Security: cannot set path. FileList via ref/onChange.
 // -----------------------------------------------------------------------------
 function FilePicker() {
   const ref = useRef(null);
@@ -83,10 +83,10 @@ function FilePicker() {
 // -----------------------------------------------------------------------------
 // Q4: Don't mix value and defaultValue
 //
-// Kya karna hai:
-// Ek input pe dono mat.
+// Task:
+// Do not use both on one input.
 //
-// Seedha matlab:
+// In simple words:
 // React warning. Pick one mode.
 // -----------------------------------------------------------------------------
 function MixedBad() {
@@ -97,11 +97,11 @@ function MixedBad() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Controlled checkbox vs uncontrolled
 //
-// Kya karna hai:
+// Task:
 // checked + onChange vs defaultChecked.
 //
-// Seedha matlab:
-// Same dichotomy. Form libs often controlled.
+// In simple words:
+// Same dichotomy. Form libs often use controlled.
 // -----------------------------------------------------------------------------
 function Checks() {
   const [on, setOn] = useState(false);
@@ -116,10 +116,10 @@ function Checks() {
 // -----------------------------------------------------------------------------
 // Q6: When controlled shines
 //
-// Kya karna hai:
+// Task:
 // Instant search filter, char counter, sibling sync fields.
 //
-// Seedha matlab:
+// In simple words:
 // UI derived from every keystroke → controlled.
 // -----------------------------------------------------------------------------
 function CharCount() {
@@ -135,11 +135,11 @@ function CharCount() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Hybrid: read uncontrolled into state on submit only
 //
-// Kya karna hai:
-// Form uncontrolled during typing; submit pe state/API.
+// Task:
+// Form uncontrolled while typing; on submit push to state/API.
 //
-// Seedha matlab:
-// Performance + simplicity middle ground.
+// In simple words:
+// Middle ground: performance + simplicity.
 // -----------------------------------------------------------------------------
 function Hybrid() {
   const [submitted, setSubmitted] = useState("");
@@ -161,10 +161,10 @@ function Hybrid() {
 // -----------------------------------------------------------------------------
 // Q8: Decision cheat sheet
 //
-// Kya karna hai:
+// Task:
 // Need live React logic? Controlled. One-shot / file? Uncontrolled OK.
 //
-// Seedha matlab:
+// In simple words:
 // Interview closing line.
 // -----------------------------------------------------------------------------
 function Cheat() {
@@ -178,11 +178,11 @@ function Cheat() {
 // -----------------------------------------------------------------------------
 // Q9: Controlled select — value + onChange
 //
-// Kya karna hai:
-// select value={city} onChange — option list state driven.
+// Task:
+// select value={city} onChange — option list driven by state.
 //
-// Seedha matlab:
-// Dropdown bhi controlled — empty string placeholder option common.
+// In simple words:
+// Dropdown is controlled too — empty string placeholder option is common.
 // -----------------------------------------------------------------------------
 function ControlledSelect() {
   const [city, setCity] = useState("mumbai");
@@ -195,13 +195,13 @@ function ControlledSelect() {
 }
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] Uncontrolled radio group — ref ya FormData
+// Q10: [MID] Uncontrolled radio group — ref or FormData
 //
-// Kya karna hai:
-// name same radios; submit pe FormData se value read.
+// Task:
+// Same name radios; read value from FormData on submit.
 //
-// Seedha matlab:
-// Radio group controlled bhi ho sakta; simple form me uncontrolled OK.
+// In simple words:
+// Radio group can be controlled too; uncontrolled OK for simple forms.
 // -----------------------------------------------------------------------------
 function RadioForm() {
   function submit(e) {
@@ -225,11 +225,11 @@ function RadioForm() {
 // -----------------------------------------------------------------------------
 // Q11: Controlled textarea — same as input
 //
-// Kya karna hai:
-// value={text} onChange — multiline bhi React state.
+// Task:
+// value={text} onChange — multiline also uses React state.
 //
-// Seedha matlab:
-// defaultValue textarea pe bhi — pick one mode.
+// In simple words:
+// defaultValue on textarea too — pick one mode.
 // -----------------------------------------------------------------------------
 function ControlledTextarea() {
   const [bio, setBio] = useState("");
@@ -241,17 +241,17 @@ function ControlledTextarea() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] React Hook Form — mostly uncontrolled register()
 //
-// Kya karna hai:
-// register("email") ref-based; validation lib handle — kam re-renders.
+// Task:
+// register("email") ref-based; lib handles validation — fewer re-renders.
 //
-// Seedha matlab:
-// Lib contrast: RHF uncontrolled default; Formik often controlled state heavy.
+// In simple words:
+// Lib contrast: RHF uncontrolled default; Formik often controlled and state heavy.
 // -----------------------------------------------------------------------------
 function RHFNote() {
   return (
     <p>
-      React Hook Form: register ref se — controlled jahan zaroor (watch fields).
-      Performance win uncontrolled pe.
+      React Hook Form: register via ref — controlled where needed (watch fields).
+      Performance win on uncontrolled.
     </p>
   );
 }
@@ -259,24 +259,24 @@ function RHFNote() {
 // -----------------------------------------------------------------------------
 // Q13: Formik contrast — controlled field state
 //
-// Kya karna hai:
-// values + setFieldValue — har keystroke form state update.
+// Task:
+// values + setFieldValue — every keystroke updates form state.
 //
-// Seedha matlab:
-// Simple forms OK; bade forms me re-render cost — RHF alternative.
+// In simple words:
+// OK for simple forms; re-render cost on big forms — RHF alternative.
 // -----------------------------------------------------------------------------
 function FormikNote() {
   return <p>Formik: central values object — controlled feel, predictable validation.</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q14: [MID] Controlled se uncontrolled switch — remount key
+// Q14: [MID] Switch controlled to uncontrolled — remount key
 //
-// Kya karna hai:
-// mode change pe input key={mode} — DOM fresh, warning avoid.
+// Task:
+// On mode change: input key={mode} — fresh DOM, avoid warning.
 //
-// Seedha matlab:
-// Runtime switch risky — remount se clean slate.
+// In simple words:
+// Runtime switch is risky — remount for clean slate.
 // -----------------------------------------------------------------------------
 function ModeSwitch({ controlled }) {
   const [v, setV] = useState("");
@@ -290,18 +290,18 @@ function ModeSwitch({ controlled }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q15: defaultValue sirf first mount pe
+// Q15: defaultValue only on first mount
 //
-// Kya karna hai:
-// defaultValue change prop se update nahi — controlled use karo agar sync chahiye.
+// Task:
+// defaultValue does not update from prop change — use controlled if sync needed.
 //
-// Seedha matlab:
-// Parent se prop change → uncontrolled input stale rehta.
+// In simple words:
+// Parent prop change → uncontrolled input stays stale.
 // -----------------------------------------------------------------------------
 function DefaultValueOnce() {
   return (
     <p>
-      defaultValue ek baar set — baad me parent prop change DOM me reflect nahi.
+      defaultValue set once — later parent prop change does not reflect in DOM.
     </p>
   );
 }
@@ -309,11 +309,11 @@ function DefaultValueOnce() {
 // -----------------------------------------------------------------------------
 // Q16: [MID] Multiple file inputs — refs array
 //
-// Kya karna hai:
-// files[0], files[1] alag ref — multi upload uncontrolled natural.
+// Task:
+// files[0], files[1] separate ref — multi upload naturally uncontrolled.
 //
-// Seedha matlab:
-// File value controlled nahi ho sakta security se — ref/onChange FileList.
+// In simple words:
+// File value cannot be controlled for security — ref/onChange FileList.
 // -----------------------------------------------------------------------------
 function MultiFile() {
   const a = useRef(null);
@@ -334,11 +334,11 @@ function MultiFile() {
 // -----------------------------------------------------------------------------
 // Q17: [ADV] readOnly vs disabled controlled
 //
-// Kya karna hai:
-// readOnly: value dikhe submit ho; disabled: form me skip often.
+// Task:
+// readOnly: value shows and submits; disabled: often skipped in form.
 //
-// Seedha matlab:
-// UX + a11y — disabled fields grey; readOnly edit block display OK.
+// In simple words:
+// UX + a11y — disabled fields grey; readOnly blocks edit but displays OK.
 // -----------------------------------------------------------------------------
 function ReadOnlyField() {
   const [code] = useState("INV-001");
@@ -348,11 +348,11 @@ function ReadOnlyField() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] Custom input — value + onChange contract
 //
-// Kya karna hai:
-// MyInput { value, onChange } — parent controlled rakhe.
+// Task:
+// MyInput { value, onChange } — parent keeps it controlled.
 //
-// Seedha matlab:
-// Native jaisa API — form libs isi pattern pe built.
+// In simple words:
+// Native-like API — form libs built on this pattern.
 // -----------------------------------------------------------------------------
 function MyInput({ value, onChange, label }) {
   return (
@@ -366,17 +366,17 @@ function MyInput({ value, onChange, label }) {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] useImperativeHandle — uncontrolled reset
 //
-// Kya karna hai:
-// ref se .reset() expose — parent imperative clear.
+// Task:
+// Expose .reset() via ref — parent clears imperatively.
 //
-// Seedha matlab:
-// Mostly declarative prefer; kabhi lib/integration ke liye imperative.
+// In simple words:
+// Prefer declarative; sometimes useful for lib/integration.
 // -----------------------------------------------------------------------------
 function ImperativeNote() {
   return (
     <p>
-      useImperativeHandle: child ref pe reset/focus expose — uncontrolled forms
-      me kabhi useful.
+      useImperativeHandle: expose reset/focus on child ref — sometimes useful in
+      uncontrolled forms.
     </p>
   );
 }
@@ -384,17 +384,17 @@ function ImperativeNote() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Autocomplete / combobox controlled pain
 //
-// Kya karna hai:
-// Typing + selection + async options — controlled state complex.
+// Task:
+// Typing + selection + async options — controlled state gets complex.
 //
-// Seedha matlab:
-// Isliye Downshift/Radix — ya lib use karo, khud har keystroke handle heavy.
+// In simple words:
+// Why Downshift/Radix exist — or use a lib; handling every keystroke yourself is heavy.
 // -----------------------------------------------------------------------------
 function AutocompleteNote() {
   return (
     <p>
       Combobox controlled: input value + highlighted index + selected item — lib
-      recommend.
+      recommended.
     </p>
   );
 }
@@ -402,17 +402,17 @@ function AutocompleteNote() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Native form submit vs fully controlled
 //
-// Kya karna hai:
-// action + FormData native; ya preventDefault + controlled state API.
+// Task:
+// action + FormData native; or preventDefault + controlled state API.
 //
-// Seedha matlab:
-// React 19 Actions native form bhi — controlled mix carefully.
+// In simple words:
+// React 19 Actions also support native form — mix controlled carefully.
 // -----------------------------------------------------------------------------
 function NativeSubmitNote() {
   return (
     <p>
       Native submit FormData (uncontrolled friendly) vs controlled gather state
-      manually — pick form size/complexity se.
+      manually — pick by form size/complexity.
     </p>
   );
 }
@@ -420,11 +420,11 @@ function NativeSubmitNote() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — controlled vs uncontrolled decision tree
 //
-// Kya karna hai:
-// Live validate/sync → controlled. Performance/simple/file → uncontrolled. Mix mat.
+// Task:
+// Live validate/sync → controlled. Performance/simple/file → uncontrolled. Do not mix.
 //
-// Seedha matlab:
-// File always special; libs contrast bolo — strong close.
+// In simple words:
+// File always special; mention lib contrast — strong close.
 // -----------------------------------------------------------------------------
 function ControlledInterview() {
   return (

@@ -1,32 +1,32 @@
 // ============================================================================
 // 29 — React 19 Form Actions (action={fn}, formAction)
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study order: do this file first, then the next in sequence
 // ============================================================================
 //
-// LAYMAN: HTML form me action="/url" hota tha — browser POST karta tha.
-// React 19 me action={javascriptFunction} de sakte ho.
-// Submit pe React function ko FormData deta hai (input name=... fields).
+// SIMPLE: HTML form had action="/url" — browser POSTed.
+// React 19 lets you use action={javascriptFunction}.
+// On submit React passes FormData to the function (input name=... fields).
 //
-// Socho restaurant order slip: har field ka naam + value slip pe;
-// waiter (action) slip le ke kitchen (server/API) bhejta hai.
+// Think restaurant order slip: every field name + value on the slip;
+// waiter (action) takes slip to kitchen (server/API).
 //
-// formAction = button/input pe alag action — ek form, multiple buttons,
-// alag-alag kaam (Save vs Delete).
+// formAction = different action on button/input — one form, multiple buttons,
+// different jobs (Save vs Delete).
 //
-// KYUN: Mid React interviews + Next.js forms ka base.
-// INTERVIEW: FormData kaise nikalte; progressive enhancement idea; formAction.
+// WHY: Mid React interviews + base for Next.js forms.
+// INTERVIEW: how to read FormData; progressive enhancement idea; formAction.
 //
 // ============================================================================
 
 import { useState } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: Sabse simple — <form action={fn}>
+// Q1: Simplest — <form action={fn}>
 //
-// Seedha matlab:
-// fn async ho sakti hai. Argument = FormData.
-// formData.get('email') se field lo (name attribute zaroori).
-// preventDefault manually zaroori nahi Action path me.
+// In simple words:
+// fn can be async. Argument = FormData.
+// Get field with formData.get('email') (name attribute required).
+// No manual preventDefault on Action path.
 // -----------------------------------------------------------------------------
 async function subscribeAction(formData) {
   const email = formData.get("email");
@@ -44,14 +44,14 @@ export function SubscribeForm() {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: [MID] FormData — name attribute bhoolna #1 bug
+// Q2: [MID] FormData — forgetting name attribute is bug #1
 //
-// Seedha matlab:
-// Bina name= ke field FormData me NAHI aati.
-// Controlled value={state} alag topic; Action + FormData = uncontrolled-ish fields.
+// In simple words:
+// Without name= field does NOT appear in FormData.
+// Controlled value={state} is separate topic; Action + FormData = uncontrolled-ish fields.
 // -----------------------------------------------------------------------------
 async function debugFormData(formData) {
-  // Saari entries dekhna (teaching)
+  // See all entries (teaching)
   for (const [key, value] of formData.entries()) {
     console.log(key, value);
   }
@@ -61,7 +61,7 @@ export function DebugFieldsForm() {
   return (
     <form action={debugFormData}>
       <input name="title" defaultValue="Hello" />
-      {/* name missing → FormData me nahi */}
+      {/* name missing → not in FormData */}
       <input defaultValue="ghost" />
       <button type="submit">Dump</button>
     </form>
@@ -71,10 +71,10 @@ export function DebugFieldsForm() {
 // -----------------------------------------------------------------------------
 // Q3: Multiple buttons — formAction
 //
-// Seedha matlab:
-// form pe common action; kisi button pe formAction={otherFn}.
-// Jo button dabao, uska action chalta hai.
-// Intent (save vs delete) alag functions me clean rehta hai.
+// In simple words:
+// Common action on form; formAction={otherFn} on a button.
+// Whichever button you click, its action runs.
+// Intent (save vs delete) stays clean in separate functions.
 // -----------------------------------------------------------------------------
 async function saveDraft(formData) {
   console.log("save", formData.get("body"));
@@ -97,11 +97,11 @@ export function PostFormTwoActions() {
 }
 
 // -----------------------------------------------------------------------------
-// Q4: Action ke andar validation + return value idea
+// Q4: Validation inside Action + return value idea
 //
-// Seedha matlab:
-// Action kuch return kar sakti hai — useActionState usse state banaata hai (file 30).
-// Yahan simple: early return / throw. Error boundaries / hooks baad me.
+// In simple words:
+// Action can return something — useActionState turns it into state (file 30).
+// Here simple: early return / throw. Error boundaries / hooks later.
 // -----------------------------------------------------------------------------
 async function loginAction(formData) {
   const user = String(formData.get("user") || "");
@@ -124,12 +124,12 @@ export function LoginFormActionOnly() {
 }
 
 // -----------------------------------------------------------------------------
-// Q5: [MID] Purana onSubmit vs naya action — kab kya?
+// Q5: [MID] Old onSubmit vs new action — when to use which?
 //
-// Seedha matlab:
-// onSubmit ab bhi valid — complex client validation, multi-step wizards.
+// In simple words:
+// onSubmit still valid — complex client validation, multi-step wizards.
 // action = server/FormData-first flows, pending UX with React 19 hooks.
-// Dono mix mat karo blindly; team convention follow.
+// Do not mix blindly; follow team convention.
 // -----------------------------------------------------------------------------
 export function OldStyleStillWorks() {
   const [status, setStatus] = useState("idle");
@@ -154,10 +154,10 @@ export function OldStyleStillWorks() {
 // -----------------------------------------------------------------------------
 // Q6: Reset / defaultValue after submit
 //
-// Seedha matlab:
-// Uncontrolled inputs defaultValue pe start hote.
-// Successful Action ke baad form reset chahiye to key change ya
-// useActionState se controlled reset pattern (file 30).
+// In simple words:
+// Uncontrolled inputs start at defaultValue.
+// After successful Action need reset: key change or
+// controlled reset pattern via useActionState (file 30).
 // -----------------------------------------------------------------------------
 export function FormWithKeyReset({ version }) {
   return (
@@ -171,9 +171,9 @@ export function FormWithKeyReset({ version }) {
 // -----------------------------------------------------------------------------
 // Q7: file input + FormData
 //
-// Seedha matlab:
+// In simple words:
 // <input type="file" name="avatar" /> → formData.get('avatar') File object.
-// Multipart upload Action me natural fit.
+// Multipart upload natural fit in Action.
 // -----------------------------------------------------------------------------
 async function uploadAvatar(formData) {
   const file = formData.get("avatar");
@@ -194,10 +194,10 @@ export function AvatarUploadForm() {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Progressive enhancement (mental model)
 //
-// Seedha matlab:
-// Ideal: JS se pehle bhi form kaam kare (server action / native action URL).
-// SPA-only apps me aksar JS required — phir bhi FormData mindset rakho.
-// Next.js Server Actions is story ko strong banate hain (file 38).
+// In simple words:
+// Ideal: form works before JS too (server action / native action URL).
+// SPA-only apps often require JS — still keep FormData mindset.
+// Next.js Server Actions strengthen this story (file 38).
 // -----------------------------------------------------------------------------
 const progressiveIdea = {
   withoutJS: "browser posts to URL / server action endpoint",
@@ -205,16 +205,16 @@ const progressiveIdea = {
 };
 
 // -----------------------------------------------------------------------------
-// Q9: [MID] action + onSubmit dono ek form pe — trap
+// Q9: [MID] action + onSubmit on same form — trap
 //
-// Kya karna hai:
-// Ek form pe action={fn} aur onSubmit={fn} mat mix karo blindly.
+// Task:
+// Do not blindly mix action={fn} and onSubmit={fn} on one form.
 //
-// Seedha matlab:
-// Dono fire ho sakte — double submit / confusing flow.
-// React 18 style onSubmit YA React 19 action — pick one pattern per form.
-// Controlled live validation: onChange local; submit ke liye action enough.
-// Common bug: preventDefault onSubmit me + action bhi → race.
+// In simple words:
+// Both may fire — double submit / confusing flow.
+// React 18 style onSubmit OR React 19 action — pick one pattern per form.
+// Controlled live validation: onChange local; action enough for submit.
+// Common bug: preventDefault in onSubmit + action too → race.
 // -----------------------------------------------------------------------------
 export function PickOnePatternForm() {
   async function saveAction(formData) {
@@ -231,14 +231,14 @@ export function PickOnePatternForm() {
 // -----------------------------------------------------------------------------
 // Q10: Checkbox / radio FormData
 //
-// Kya karna hai:
-// name same + value alag radios; checkbox checked hone pe hi aata.
+// Task:
+// Same name + different value for radios; checkbox only when checked.
 //
-// Seedha matlab:
+// In simple words:
 // formData.get('color') — selected radio value.
-// Checkbox: formData.get('agree') === 'on' ya null.
-// React 18: manually read e.target.checked; Action path FormData natural.
-// Edge: unchecked checkbox FormData me missing — server pe default false socho.
+// Checkbox: formData.get('agree') === 'on' or null.
+// React 18: manually read e.target.checked; Action path FormData is natural.
+// Edge: unchecked checkbox missing from FormData — default false on server.
 // -----------------------------------------------------------------------------
 async function prefsAction(formData) {
   const color = formData.get("color");
@@ -266,11 +266,11 @@ export function PrefsForm() {
 // -----------------------------------------------------------------------------
 // Q11: [MID] Select + textarea FormData
 //
-// Kya karna hai:
-// name attribute select/textarea pe; formData.get('field').
+// Task:
+// name attribute on select/textarea; formData.get('field').
 //
-// Seedha matlab:
-// Controlled select React 18 me value={state} common tha.
+// In simple words:
+// Controlled select was common in React 18 with value={state}.
 // Action path: defaultValue + name — uncontrolled FormData submit.
 // Multi-select: formData.getAll('tags') array values.
 // -----------------------------------------------------------------------------
@@ -297,13 +297,13 @@ export function NoteForm() {
 // -----------------------------------------------------------------------------
 // Q12: Hidden fields + intent pattern
 //
-// Kya karna hai:
-// type="hidden" name="id" value={id} — action ko context do bina UI ke.
+// Task:
+// type="hidden" name="id" value={id} — give action context without UI.
 //
-// Seedha matlab:
-// Delete/edit buttons: hidden id + formAction ya intent field.
-// React 18: onClick me id closure; Action: hidden field safer (FormData serializable).
-// Security: hidden id trust mat karo server pe — auth + ownership verify.
+// In simple words:
+// Delete/edit buttons: hidden id + formAction or intent field.
+// React 18: id in onClick closure; Action: hidden field safer (FormData serializable).
+// Security: do not trust hidden id on server — verify auth + ownership.
 // -----------------------------------------------------------------------------
 async function deleteItemAction(formData) {
   const id = formData.get("id");
@@ -322,12 +322,12 @@ export function DeleteItemForm({ itemId }) {
 // -----------------------------------------------------------------------------
 // Q13: [MID] Controlled input + Action — mix carefully
 //
-// Kya karna hai:
-// value={state} controlled ho to FormData me wahi value aati — name + onChange sync.
+// Task:
+// If value={state} controlled, FormData gets that value — sync name + onChange.
 //
-// Seedha matlab:
+// In simple words:
 // Pure Action/uncontrolled: defaultValue + name, no value prop.
-// Controlled + Action: possible but onChange se state update; submit pe FormData current DOM value.
+// Controlled + Action: possible but onChange updates state; submit FormData uses current DOM value.
 // Trap: value={state} without onChange → stale FormData on submit.
 // React 18 controlled forms: onSubmit + state; 19: mix only when team convention clear.
 // -----------------------------------------------------------------------------
@@ -351,13 +351,13 @@ export function ControlledActionMix() {
 // -----------------------------------------------------------------------------
 // Q14: formAction on input type="submit" image buttons
 //
-// Kya karna hai:
-// Multiple submit buttons — har ek ka formAction alag ho sakta hai.
+// Task:
+// Multiple submit buttons — each can have different formAction.
 //
-// Seedha matlab:
-// HTML pattern purana hai; React 19 me first-class.
-// name/value submit button se bhi FormData me aate (intent detection).
-// React 18: ek handler me e.nativeEvent.submitter check karte the.
+// In simple words:
+// Old HTML pattern; first-class in React 19.
+// name/value from submit button also go to FormData (intent detection).
+// React 18: check e.nativeEvent.submitter in one handler.
 // -----------------------------------------------------------------------------
 async function archiveAction(formData) {
   console.log("archive", formData.get("title"));
@@ -378,13 +378,13 @@ export function DualSubmitForm() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Action throw vs return error
 //
-// Kya karna hai:
+// Task:
 // throw → error boundary / framework error UI; return { error } → useActionState friendly.
 //
-// Seedha matlab:
-// Team me ek pattern choose karo — mixed throw/return confusing UX.
+// In simple words:
+// Pick one pattern in team — mixed throw/return is confusing UX.
 // React 18 onSubmit: try/catch + setError manual.
-// React 19: return { ok: false, error: '...' } with useActionState clean.
+// React 19: return { ok: false, error: '...' } with useActionState is clean.
 // Server Actions: prefer return error object for form validation messages.
 // -----------------------------------------------------------------------------
 async function riskyAction(formData) {
@@ -405,13 +405,13 @@ export function ErrorReturnForm() {
 // -----------------------------------------------------------------------------
 // Q16: form encType multipart — file uploads
 //
-// Kya karna hai:
-// File input ke saath FormData naturally multipart; fetch me body: formData.
+// Task:
+// With file input FormData is naturally multipart; fetch body: formData.
 //
-// Seedha matlab:
-// encType default browser handle karta file ke saath.
-// React 18: FormData manually from onSubmit; same data Action me auto.
-// Edge: empty file input — empty File ya skip; server validate size/type.
+// In simple words:
+// Browser handles encType default with file input.
+// React 18: FormData manually from onSubmit; same data auto in Action.
+// Edge: empty file input — empty File or skip; server validate size/type.
 // When NOT Action: chunked/resumable upload custom protocol → dedicated API.
 // -----------------------------------------------------------------------------
 async function uploadDocsAction(formData) {
@@ -433,13 +433,13 @@ export function DocUploadForm() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Action outside form — startTransition pattern
 //
-// Kya karna hai:
-// Form ke bina bhi async "action" mental model — button onClick + transition.
+// Task:
+// Action mental model beyond <form> — button onClick + transition.
 //
-// Seedha matlab:
-// Actions sirf <form> tak limited nahi — any async user intent.
+// In simple words:
+// Actions not limited to <form> — any async user intent.
 // React 18: startTransition(async () => ...) bridge.
-// React 19: useActionState bhi non-form triggers ke saath use ho sakta (advanced).
+// React 19: useActionState also works with non-form triggers (advanced).
 // Interview: "Action = async function handling user submission/intent".
 // -----------------------------------------------------------------------------
 export function NonFormActionIdea() {
@@ -454,13 +454,13 @@ export function NonFormActionIdea() {
 // -----------------------------------------------------------------------------
 // Q18: disabled submit while pending — without useActionState
 //
-// Kya karna hai:
-// Sirf action={fn} without hook — pending UI manually ya useFormStatus child.
+// Task:
+// Only action={fn} without hook — pending UI manually or useFormStatus child.
 //
-// Seedha matlab:
+// In simple words:
 // React 18: useState loading around submit.
 // React 19 minimal: child SubmitButton with useFormStatus (file 31).
-// Trap: action slow hai par button enabled — double submit risk.
+// Trap: action is slow but button enabled — double submit risk.
 // -----------------------------------------------------------------------------
 export function PendingViaChild() {
   return (
@@ -479,14 +479,14 @@ function SubmitHint() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] formData.get vs getAll vs has
 //
-// Kya karna hai:
-// get = first value; getAll = saari values; has = key exists?
+// Task:
+// get = first value; getAll = all values; has = key exists?
 //
-// Seedha matlab:
+// In simple words:
 // Multi-checkbox same name → getAll.
-// Missing field → get returns null — String() wrap karo validation me.
-// React 18 FormData same API — Action path me yeh standard skill.
-// Common bug: get('items') jab array chahiye → getAll use karo.
+// Missing field → get returns null — wrap with String() in validation.
+// React 18 FormData same API — standard skill for Action path.
+// Common bug: get('items') when you need array → use getAll.
 // -----------------------------------------------------------------------------
 async function cartFormAction(formData) {
   const hasCoupon = formData.has("coupon");
@@ -506,16 +506,16 @@ export function CartFormFields() {
 }
 
 // -----------------------------------------------------------------------------
-// Q20: [MID] Migration — onSubmit form ko Action me kaise?
+// Q20: [MID] Migration — how to move onSubmit form to Action?
 //
-// Kya karna hai:
-// e.preventDefault hatao; handler ko action={async (fd) => ...} banao.
+// Task:
+// Remove e.preventDefault; make handler action={async (fd) => ...}.
 //
-// Seedha matlab:
-// Step 1: FormData e.currentTarget se → formData arg direct.
+// In simple words:
+// Step 1: FormData from e.currentTarget → formData arg direct.
 // Step 2: loading state → useActionState / useFormStatus.
 // Step 3: setError → return { error } from action.
-// React 18 code chalta rahega — gradual file-by-file migrate karo.
+// React 18 code still runs — migrate gradually file by file.
 // -----------------------------------------------------------------------------
 const migrateOnSubmitSteps = [
   "remove preventDefault",
@@ -525,16 +525,16 @@ const migrateOnSubmitSteps = [
 ];
 
 // -----------------------------------------------------------------------------
-// Q21: [ADV] Security — client Action me secrets mat daalo
+// Q21: [ADV] Security — do not put secrets in client Action
 //
-// Kya karna hai:
-// Browser action function me API secret embed mat karo — visible hai.
+// Task:
+// Do not embed API secret in browser action function — it is visible.
 //
-// Seedha matlab:
+// In simple words:
 // Client Action → public API call with user token/session cookie OK.
-// Server Action (file 38) → secrets server pe safe.
-// React 18 same rule — yeh React 19 specific nahi, par interview me bolo.
-// Validate/sanitize FormData server pe — client validation convenience only.
+// Server Action (file 38) → secrets safe on server.
+// React 18 same rule — not React 19 specific, but say in interview.
+// Validate/sanitize FormData on server — client validation is convenience only.
 // -----------------------------------------------------------------------------
 const actionSecurityNote =
   "Client actions run in browser — no secrets; server validates all inputs.";
@@ -542,13 +542,13 @@ const actionSecurityNote =
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview trap — action sync function?
 //
-// Kya karna hai:
-// Action async ho sakti hai; sync bhi chalegi lekin pending UX short/ invisible.
+// Task:
+// Action can be async; sync also works but pending UX short/invisible.
 //
-// Seedha matlab:
-// Async await network — isPending true meaningful time tak.
-// Sync action: turant complete — useFormStatus flash barely visible.
-// React 18 onSubmit sync vs async same; 19 pending hooks async ke liye shine.
+// In simple words:
+// Async await network — isPending true for meaningful time.
+// Sync action: completes instantly — useFormStatus flash barely visible.
+// React 18 onSubmit sync vs async same; 19 pending hooks shine for async.
 // formAction null/undefined → native HTML submit behavior (full page) possible.
 // -----------------------------------------------------------------------------
 async function syncStyleAction(formData) {

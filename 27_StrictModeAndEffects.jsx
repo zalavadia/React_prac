@@ -1,18 +1,18 @@
 // ============================================================================
 // 27 — StrictMode And Effects
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: StrictMode = development teacher jo double-check karta. DEV me
-// effects mount → cleanup → dubara mount — yeh dekhne ke liye tumhara cleanup
-// sahi hai (warna prod me leak/bug chhup jaye).
+// SIMPLE: StrictMode = development teacher that double-checks. In DEV,
+// effects mount → cleanup → mount again — to see if your cleanup is correct
+// (otherwise prod leak/bug stays hidden).
 //
-// <React.StrictMode> wrap App. Production me double invoke nahi.
-// "Mera useEffect 2 baar kyun?" → often StrictMode, bug nahi (agar cleanup OK).
+// <React.StrictMode> wrap App. Production does not double invoke.
+// "Why does my useEffect run twice?" → often StrictMode, not a bug (if cleanup OK).
 //
-// KYUN: Fragile effects jaldi pakadna. Interview me double-mount explain.
+// WHY: Catch fragile effects early. Interview explains double mount.
 // INTERVIEW: why effects run twice in dev; idempotent setup/cleanup.
-// Vite/React 19 project me use — teaching file.
+// Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { StrictMode, useEffect, useLayoutEffect, useRef, useState } from "react"
 // -----------------------------------------------------------------------------
 // Q1: Wrap app in StrictMode
 //
-// Kya karna hai:
-// main.jsx me <StrictMode><App/></StrictMode>
+// Task:
+// main.jsx: <StrictMode><App/></StrictMode>
 //
-// Seedha matlab:
-// Extra checks sirf DEV. Prod bundle behavior normal.
+// In simple words:
+// Extra checks DEV only. Prod bundle behavior normal.
 // -----------------------------------------------------------------------------
 function Root() {
   return (
@@ -42,11 +42,11 @@ function App() {
 // -----------------------------------------------------------------------------
 // Q2: Effect double-invoke demo mindset
 //
-// Kya karna hai:
-// console.log mount/cleanup — DEV me mount, cleanup, mount.
+// Task:
+// console.log mount/cleanup — in DEV: mount, cleanup, mount.
 //
-// Seedha matlab:
-// React jaan-bujh ke. Cleanup likho jaise prod me bhi unmount ho.
+// In simple words:
+// React does this on purpose. Write cleanup as if prod unmounts too.
 // -----------------------------------------------------------------------------
 function Probe() {
   useEffect(() => {
@@ -59,11 +59,11 @@ function Probe() {
 // -----------------------------------------------------------------------------
 // Q3: Subscription must cleanup
 //
-// Kya karna hai:
-// addEventListener + remove in cleanup — double safe.
+// Task:
+// addEventListener + remove in cleanup — safe even when doubled.
 //
-// Seedha matlab:
-// Bina remove StrictMode me 2 listeners chipak sakte feel.
+// In simple words:
+// Without remove, StrictMode can feel like 2 listeners stuck.
 // -----------------------------------------------------------------------------
 function Width() {
   const [w, setW] = useState(window.innerWidth);
@@ -78,11 +78,11 @@ function Width() {
 // -----------------------------------------------------------------------------
 // Q4: Fetch with cancel / ignore flag
 //
-// Kya karna hai:
-// Double fetch DEV me OK; aborted/cancelled pe setState mat.
+// Task:
+// Double fetch in DEV OK; no setState on aborted/cancelled.
 //
-// Seedha matlab:
-// StrictMode 2 requests fire kar sakta — design resilient.
+// In simple words:
+// StrictMode can fire 2 requests — design resilient.
 // -----------------------------------------------------------------------------
 function User({ id }) {
   const [user, setUser] = useState(null);
@@ -103,11 +103,11 @@ function User({ id }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Don't "fix" by removing StrictMode
 //
-// Kya karna hai:
-// Double call se irritate → Mode hataana galat fix.
+// Task:
+// Irritated by double call → removing Mode is wrong fix.
 //
-// Seedha matlab:
-// Cleanup/idempotent banao. Mode friend hai.
+// In simple words:
+// Make cleanup/idempotent. Mode is your friend.
 // -----------------------------------------------------------------------------
 function Note() {
   return <p>Fix effects, don't delete StrictMode.</p>;
@@ -116,11 +116,11 @@ function Note() {
 // -----------------------------------------------------------------------------
 // Q6: Idempotent setup
 //
-// Kya karna hai:
-// Setup do baar chale to bhi sahi state (connect once via ref guard if needed).
+// Task:
+// Setup runs twice still OK (connect once via ref guard if needed).
 //
-// Seedha matlab:
-// External systems: connect/disconnect pair clear.
+// In simple words:
+// External systems: clear connect/disconnect pair.
 // -----------------------------------------------------------------------------
 function FakeSocket() {
   useEffect(() => {
@@ -137,11 +137,11 @@ function FakeSocket() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] setState in effect + StrictMode
 //
-// Kya karna hai:
-// Extra setup/cleanup/setup — state end me consistent hona chahiye.
+// Task:
+// Extra setup/cleanup/setup — state should end consistent.
 //
-// Seedha matlab:
-// Race flags. Final UI ek hi sahi data.
+// In simple words:
+// Race flags. Final UI one correct data.
 // -----------------------------------------------------------------------------
 function Consistent() {
   const [n, setN] = useState(0);
@@ -154,11 +154,11 @@ function Consistent() {
 // -----------------------------------------------------------------------------
 // Q8: What StrictMode also checks (concept)
 //
-// Kya karna hai:
+// Task:
 // Deprecated APIs, unsafe side effects in render — warnings.
 //
-// Seedha matlab:
-// Sirf effects double nahi — broader DEV safety net.
+// In simple words:
+// Not only effects double — broader DEV safety net.
 // -----------------------------------------------------------------------------
 function Concept() {
   return (
@@ -171,18 +171,18 @@ function Concept() {
 }
 
 // -----------------------------------------------------------------------------
-// Q9: Production — double invoke nahi hota
+// Q9: Production — double invoke does not happen
 //
-// Kya karna hai:
-// StrictMode DEV-only behavior; prod build me effect ek baar normal.
+// Task:
+// StrictMode DEV-only behavior; prod build effect runs once normally.
 //
-// Seedha matlab:
-// "Prod me 2 baar" report = bug likely real, StrictMode nahi.
+// In simple words:
+// "Runs twice in prod" report = likely real bug, not StrictMode.
 // -----------------------------------------------------------------------------
 function ProdNote() {
   return (
     <p>
-      StrictMode double mount/cleanup sirf development. Production = single
+      StrictMode double mount/cleanup DEV only. Production = single
       mount cycle.
     </p>
   );
@@ -191,11 +191,11 @@ function ProdNote() {
 // -----------------------------------------------------------------------------
 // Q10: [MID] Impure render detect — StrictMode extra render
 //
-// Kya karna hai:
-// Render me Math.random() / Date.now() — DEV me inconsistent UI dikhega.
+// Task:
+// Math.random() / Date.now() in render — DEV shows inconsistent UI.
 //
-// Seedha matlab:
-// Render pure hona chahiye — StrictMode impure patterns expose karta.
+// In simple words:
+// Render must be pure — StrictMode exposes impure patterns.
 // -----------------------------------------------------------------------------
 function ImpureRenderBad() {
   // const id = Math.random(); // ❌ impure render
@@ -206,24 +206,24 @@ function ImpureRenderBad() {
 // -----------------------------------------------------------------------------
 // Q11: Legacy StrictMode — findDOMNode etc warnings
 //
-// Kya karna hai:
-// Purane APIs pe warn — migrate to refs.
+// Task:
+// Warn on old APIs — migrate to refs.
 //
-// Seedha matlab:
-// StrictMode sirf effects double nahi — unsafe APIs bhi flag.
+// In simple words:
+// StrictMode not only doubles effects — also flags unsafe APIs.
 // -----------------------------------------------------------------------------
 function LegacyNote() {
   return <p>Legacy StrictMode: deprecated lifecycle/API warnings extra.</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q12: [MID] Refs double mount pe persist nahi — fresh instance
+// Q12: [MID] Refs do not persist on double mount — fresh instance
 //
-// Kya karna hai:
-// useRef initial value dubara mount pe reset — state bhi fresh.
+// Task:
+// useRef initial value resets on remount — state also fresh.
 //
-// Seedha matlab:
-// Double invoke = full unmount/remount sim — ref/state dono reset DEV cycle me.
+// In simple words:
+// Double invoke = full unmount/remount sim — ref/state reset in DEV cycle.
 // -----------------------------------------------------------------------------
 function RefResetDemo() {
   const ref = useRef({ count: 0 });
@@ -234,11 +234,11 @@ function RefResetDemo() {
 // -----------------------------------------------------------------------------
 // Q13: setInterval / setTimeout — cleanup mandatory
 //
-// Kya karna hai:
-// clearInterval/clearTimeout cleanup me — double mount pe duplicate timer na bane.
+// Task:
+// clearInterval/clearTimeout in cleanup — no duplicate timer on double mount.
 //
-// Seedha matlab:
-// Bina cleanup 2 timers DEV me — prod unmount pe leak.
+// In simple words:
+// Without cleanup: 2 timers in DEV — leak on prod unmount.
 // -----------------------------------------------------------------------------
 function TimerDemo() {
   const [n, setN] = useState(0);
@@ -250,13 +250,13 @@ function TimerDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q14: [MID] Analytics — double fire guard ref se
+// Q14: [MID] Analytics — double fire guard with ref
 //
-// Kya karna hai:
-// trackPageView — StrictMode double mount pe duplicate event na bhejo (idempotent).
+// Task:
+// trackPageView — no duplicate event on StrictMode double mount (idempotent).
 //
-// Seedha matlab:
-// External side effect dedupe ya accept DEV double — prod single.
+// In simple words:
+// Dedupe external side effect or accept DEV double — prod single.
 // -----------------------------------------------------------------------------
 function AnalyticsPage() {
   const sent = useRef(false);
@@ -269,13 +269,13 @@ function AnalyticsPage() {
 }
 
 // -----------------------------------------------------------------------------
-// Q15: useLayoutEffect bhi DEV double pattern
+// Q15: useLayoutEffect also DEV double pattern
 //
-// Kya karna hai:
-// Layout effect me DOM measure — cleanup symmetric rakho.
+// Task:
+// DOM measure in layout effect — keep cleanup symmetric.
 //
-// Seedha matlab:
-// useEffect vs useLayoutEffect dono StrictMode simulate — cleanup pair zaroori.
+// In simple words:
+// useEffect vs useLayoutEffect both StrictMode simulate — cleanup pair required.
 // -----------------------------------------------------------------------------
 function LayoutProbe() {
   useLayoutEffect(() => {
@@ -288,17 +288,17 @@ function LayoutProbe() {
 // -----------------------------------------------------------------------------
 // Q16: [MID] Global singleton — module level side effect danger
 //
-// Kya karna hai:
-// let socket = connect() module top pe — double import/init issues.
+// Task:
+// let socket = connect() at module top — double import/init issues.
 //
-// Seedha matlab:
-// Side effects effect me + cleanup; module scope global state careful.
+// In simple words:
+// Side effects in effect + cleanup; module scope global state needs care.
 // -----------------------------------------------------------------------------
 function SingletonNote() {
   return (
     <p>
-      Module-level singleton + StrictMode remount = surprising double init — effect
-      encapsulation prefer.
+      Module-level singleton + StrictMode remount = surprising double init — prefer
+      effect encapsulation.
     </p>
   );
 }
@@ -306,11 +306,11 @@ function SingletonNote() {
 // -----------------------------------------------------------------------------
 // Q17: [ADV] React 19 StrictMode — concurrent features alignment
 //
-// Kya karna hai:
-// Stricter checks continue; Actions/use patterns ke saath same cleanup rules.
+// Task:
+// Stricter checks continue; same cleanup rules with Actions/use patterns.
 //
-// Seedha matlab:
-// Version upgrade pe StrictMode hataana fix nahi — effects idempotent rakho.
+// In simple words:
+// Removing StrictMode on upgrade is not a fix — keep effects idempotent.
 // -----------------------------------------------------------------------------
 function React19StrictNote() {
   return <p>React 19: StrictMode still DEV teacher — new APIs same cleanup discipline.</p>;
@@ -319,11 +319,11 @@ function React19StrictNote() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] findDOMNode / string refs — warnings
 //
-// Kya karna hai:
-// useRef DOM node pe migrate — StrictMode warn karega legacy pe.
+// Task:
+// Migrate to useRef on DOM node — StrictMode warns on legacy.
 //
-// Seedha matlab:
-// Modern code me issue kam; interview me legacy mention suno.
+// In simple words:
+// Less issue in modern code; interview may mention legacy.
 // -----------------------------------------------------------------------------
 function FindDOMNote() {
   return <p>findDOMNode deprecated — StrictMode DEV warnings push refs migration.</p>;
@@ -332,37 +332,37 @@ function FindDOMNote() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] useInsertionEffect — CSS-in-JS StrictMode safe
 //
-// Kya karna hai:
-// Styles inject before layout — cleanup styles remove.
+// Task:
+// Inject styles before layout — cleanup removes styles.
 //
-// Seedha matlab:
-// Library authors ke liye; same mount/cleanup/mount DEV cycle apply.
+// In simple words:
+// For library authors; same mount/cleanup/mount DEV cycle applies.
 // -----------------------------------------------------------------------------
 function InsertionNote() {
   return <p>useInsertionEffect: inject/cleanup styles — StrictMode double safe pattern.</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q20: [ADV] Testing — StrictMode wrapper tests me
+// Q20: [ADV] Testing — StrictMode wrapper in tests
 //
-// Kya karna hai:
-// render(&lt;StrictMode&gt;&lt;App/&gt;&lt;/StrictMode&gt;) — cleanup bugs pakdo tests me.
+// Task:
+// render(&lt;StrictMode&gt;&lt;App/&gt;&lt;/StrictMode&gt;) — catch cleanup bugs in tests.
 //
-// Seedha matlab:
-// Test utils StrictMode optional — integration tests me helpful.
+// In simple words:
+// Test utils StrictMode optional — helpful in integration tests.
 // -----------------------------------------------------------------------------
 function TestStrictNote() {
-  return <p>Tests me StrictMode wrap karke double-invoke cleanup verify kar sakte ho.</p>;
+  return <p>Wrap with StrictMode in tests to verify double-invoke cleanup.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q21: [ADV] AbortController + StrictMode fetch
 //
-// Kya karna hai:
-// Mount cleanup abort — double fetch fire ho sakta DEV; ek response win.
+// Task:
+// Abort on mount cleanup — double fetch may fire in DEV; one response wins.
 //
-// Seedha matlab:
-// ignore flag ya abort — duplicate setState race na ho.
+// In simple words:
+// ignore flag or abort — no duplicate setState race.
 // -----------------------------------------------------------------------------
 function StrictFetch({ id }) {
   const [data, setData] = useState(null);
@@ -380,22 +380,22 @@ function StrictFetch({ id }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q22: [ADV] Interview — junior ko double effect explain
+// Q22: [ADV] Interview — explain double effect to junior
 //
-// Kya karna hai:
+// Task:
 // DEV rehearsal for cleanup; prod single; fix effect not remove StrictMode.
 //
-// Seedha matlab:
-// 30 sec answer: kyun, kya expect, kaise fix — interview gold.
+// In simple words:
+// 30 sec answer: why, what to expect, how to fix — interview gold.
 // -----------------------------------------------------------------------------
 function StrictInterview() {
   return (
     <ol>
       <li>StrictMode = DEV-only extra checks</li>
       <li>Effects: mount → cleanup → mount simulate</li>
-      <li>Cleanup sahi ho to final state OK</li>
-      <li>Prod me double tax nahi</li>
-      <li>StrictMode hataana = symptom hide, fix nahi</li>
+      <li>Good cleanup → final state OK</li>
+      <li>Prod has no double tax</li>
+      <li>Removing StrictMode = hide symptom, not fix</li>
     </ol>
   );
 }

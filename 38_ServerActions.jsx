@@ -1,29 +1,29 @@
 // ============================================================================
 // 38 — Server Actions ('use server')
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Server Action = function jo SERVER pe chalti, lekin CLIENT se
-// call / form se trigger ho sakti.
+// SIMPLE: A Server Action is a function that runs on the SERVER, but can be triggered from the CLIENT
+// via a call or a form.
 //
-// File ya function ke upar: 'use server'
+// At the top of a file or function: 'use server'
 // Form: action={serverAction} — progressive enhancement friendly (frameworks).
-// Client: await serverAction(data) bhi (with rules).
+// Client: await serverAction(data) as well (with rules).
 //
-// Socho remote control: button ghar me (client), TV kitchen me (server) channel badle.
-// Network pe serialized call jati — magic nahi, RPC-ish.
+// Think of a remote control: the button is at home (client), the TV in the kitchen (server) changes the channel.
+// A serialized call goes over the network — not magic, more like RPC.
 //
-// KYUN: Next.js + React 19 forms ka pair; mid interviews frequent.
-// INTERVIEW: validation/auth zaroori; secrets; revalidate; vs API route.
+// WHY: Pairs with Next.js + React 19 forms; common in mid-level interviews.
+// INTERVIEW: validation/auth required; secrets; revalidate; vs API route.
 //
 // ============================================================================
 
 // -----------------------------------------------------------------------------
 // Q1: File-level 'use server'
 //
-// Seedha matlab:
-// Poori file server actions export karti.
-// Client components in actions ko import karke call / form pe laga sakte.
+// In simple words:
+// The whole file exports server actions.
+// Client components can import actions and call them / attach to forms.
 // -----------------------------------------------------------------------------
 // "use server";
 //
@@ -35,9 +35,9 @@
 // -----------------------------------------------------------------------------
 // Q2: Inline / function-level 'use server'
 //
-// Seedha matlab:
-// Server Component ke andar async function with 'use server' pehli line.
-// Closures: sirf serializable values close karo — heavy gotcha.
+// In simple words:
+// Inside a Server Component, async function with 'use server' as first line.
+// Closures: only close over serializable values — heavy gotcha.
 // -----------------------------------------------------------------------------
 // // Server Component file:
 // export default function Page() {
@@ -49,11 +49,11 @@
 // }
 
 // -----------------------------------------------------------------------------
-// Q3: Form me Server Action
+// Q3: Server Action in form
 //
-// Seedha matlab:
-// Client JS ke bina bhi framework POST handle kare (progressive).
-// React 19 action={fn} model yahi pe power dikhata.
+// In simple words:
+// Framework can handle POST even without client JS (progressive).
+// React 19 action={fn} model shows its power here.
 // -----------------------------------------------------------------------------
 // import { createPost } from "./actions";
 //
@@ -67,12 +67,12 @@
 // }
 
 // -----------------------------------------------------------------------------
-// Q4: [MID] Client Component se call
+// Q4: [MID] Call from Client Component
 //
-// Seedha matlab:
-// 'use client' file action import karke onClick / await createPost().
+// In simple words:
+// 'use client' file imports action and uses onClick / await createPost().
 // Returns serializable result. Errors handle try/catch.
-// Still server pe execute — browser me source secrets nahi.
+// Still executes on server — no source secrets in browser.
 // -----------------------------------------------------------------------------
 // "use client";
 // import { createPost } from "./actions";
@@ -92,9 +92,9 @@
 // -----------------------------------------------------------------------------
 // Q5: useActionState + Server Action
 //
-// Seedha matlab:
-// Same hook (file 30) — action ab server function.
-// pending UI client pe; mutation server pe.
+// In simple words:
+// Same hook (file 30) — action is now a server function.
+// pending UI on client; mutation on server.
 // -----------------------------------------------------------------------------
 // "use client";
 // import { useActionState } from "react";
@@ -114,10 +114,10 @@
 // -----------------------------------------------------------------------------
 // Q6: [MID] Auth & validation — MUST
 //
-// Seedha matlab:
-// Client se koi bhi action hit kar sakta (tampered FormData).
-// Server pe: session check, zod/yup validate, authorize resource.
-// UI validation convenience; server validation security.
+// In simple words:
+// Anyone can hit an action from the client (tampered FormData).
+// On server: session check, zod/yup validate, authorize resource.
+// UI validation is convenience; server validation is security.
 // -----------------------------------------------------------------------------
 // "use server";
 // export async function deleteUser(formData) {
@@ -131,20 +131,20 @@
 // -----------------------------------------------------------------------------
 // Q7: revalidate / cache update (Next mental model)
 //
-// Seedha matlab:
-// Mutation ke baad stale page mat chhodo.
+// In simple words:
+// After mutation, do not leave a stale page.
 // revalidatePath / revalidateTag (Next) common.
-// Other frameworks: apna cache invalidation.
+// Other frameworks: your own cache invalidation.
 // -----------------------------------------------------------------------------
 const afterMutation = ["revalidatePath", "revalidateTag", "router.refresh()"];
 
 // -----------------------------------------------------------------------------
 // Q8: [MID] Server Action vs API Route
 //
-// Seedha matlab:
+// In simple words:
 // Action: tight React/forms integration, typed imports, less boilerplate.
 // API route: public HTTP API, webhooks, non-React clients.
-// Dono valid — use-case choose.
+// Both are valid — choose by use case.
 // -----------------------------------------------------------------------------
 const compare = {
   serverAction: "first-class for React forms/mutations in supported frameworks",
@@ -154,10 +154,10 @@ const compare = {
 // -----------------------------------------------------------------------------
 // Q9: Errors & return values
 //
-// Seedha matlab:
+// In simple words:
 // throw → error UI / boundary depending on setup.
 // return { error: '...' } → useActionState friendly (no throw).
-// Prefer consistent pattern in team.
+// Prefer a consistent pattern on the team.
 // -----------------------------------------------------------------------------
 // export async function save(prev, formData) {
 //   "use server";
@@ -172,9 +172,9 @@ const compare = {
 // -----------------------------------------------------------------------------
 // Q10: [MID] Security checklist interview answer
 //
-// Seedha matlab:
+// In simple words:
 // 1) Authenticate 2) Authorize 3) Validate input 4) No secret leak in returns
-// 5) CSRF/framework protections samajh ke raho (Next docs).
+// 5) Understand CSRF/framework protections (Next docs).
 // -----------------------------------------------------------------------------
 export const serverActionSecurity = [
   "authn",
@@ -187,14 +187,14 @@ export const serverActionSecurity = [
 // -----------------------------------------------------------------------------
 // Q11: [MID] FormData tampering — server must re-validate
 //
-// Kya karna hai:
-// Browser DevTools se hidden field badlo — server pe zod schema validate.
+// Task:
+// Change hidden fields in Browser DevTools — validate with zod schema on server.
 //
-// Seedha matlab:
-// Client required attribute bypass ho sakta hai.
+// In simple words:
+// Client required attribute can be bypassed.
 // React 18 API route same threat model.
-// Never trust formData.get('role') === 'admin' bina session check.
-// Return generic errors — leak internals mat karo.
+// Never trust formData.get('role') === 'admin' without a session check.
+// Return generic errors — do not leak internals.
 // Rate limit destructive actions server-side.
 // -----------------------------------------------------------------------------
 const formTamperNote =
@@ -203,14 +203,14 @@ const formTamperNote =
 // -----------------------------------------------------------------------------
 // Q12: Idempotent server actions
 //
-// Kya karna hai:
+// Task:
 // Duplicate submit same idempotency key — double charge avoid.
 //
-// Seedha matlab:
-// Network retry / double click → same action twice possible.
-// React 19 isPending helps client; server still idempotent design.
+// In simple words:
+// Network retry / double click → same action twice is possible.
+// React 19 isPending helps on client; server still needs idempotent design.
 // React 18 POST API same requirement.
-// DB unique constraints + idempotency tokens payments me standard.
+// DB unique constraints + idempotency tokens standard in payments.
 // Return same success response on replay OK.
 // -----------------------------------------------------------------------------
 const idempotentActions =
@@ -219,13 +219,13 @@ const idempotentActions =
 // -----------------------------------------------------------------------------
 // Q13: [MID] Server Action + redirect
 //
-// Kya karna hai:
+// Task:
 // Login success → redirect('/') from server action (Next redirect() helper).
 //
-// Seedha matlab:
-// Framework helpers throw special redirect — catch mat karo wrong.
+// In simple words:
+// Framework helpers throw a special redirect — do not catch it incorrectly.
 // React 18 client router.navigate after fetch login manual.
-// Progressive enhancement: form POST login redirect without JS possible.
+// Progressive enhancement: form POST login redirect without JS is possible.
 // Return vs redirect choose per UX.
 // -----------------------------------------------------------------------------
 export function RedirectActionNote() {
@@ -239,12 +239,12 @@ export function RedirectActionNote() {
 // -----------------------------------------------------------------------------
 // Q14: Cookies / session in server action
 //
-// Kya karna hai:
+// Task:
 // await cookies().set('session', token) — server-only APIs.
 //
-// Seedha matlab:
-// HttpOnly cookies client JS se read nahi — security win.
-// React 18 client login sets cookie via Set-Cookie header from API response manual.
+// In simple words:
+// HttpOnly cookies cannot be read by client JS — security win.
+// React 18 client login sets cookie manually via Set-Cookie header from API response.
 // Server action colocates mutation + session update.
 // Secrets stay off client bundle.
 // -----------------------------------------------------------------------------
@@ -254,15 +254,15 @@ const sessionCookieNote =
 // -----------------------------------------------------------------------------
 // Q15: [MID] Server Action vs fetch to API route — code compare
 //
-// Kya karna hai:
+// Task:
 // Action: import { save } from './actions'; form action={save}.
 // API: fetch('/api/save', { method:'POST', body }) + JSON parse.
 //
-// Seedha matlab:
-// Action less boilerplate typed imports React apps me.
-// API route public contract mobile app / third party ke liye.
+// In simple words:
+// Action has less boilerplate with typed imports in React apps.
+// API route as public contract for mobile app / third party.
 // React 18 typically fetch API routes only.
-// Both execute server logic — duplication avoid — shared service layer.
+// Both execute server logic — avoid duplication — shared service layer.
 // -----------------------------------------------------------------------------
 const actionVsFetchBoilerplate = {
   serverAction: "direct import + form action prop",
@@ -272,11 +272,11 @@ const actionVsFetchBoilerplate = {
 // -----------------------------------------------------------------------------
 // Q16: Closure capture inline server action trap
 //
-// Kya karna hai:
+// Task:
 // Inline 'use server' closure captures non-serializable value — build/runtime error.
 //
-// Seedha matlab:
-// Capture productId string OK; capture DB connection object ❌.
+// In simple words:
+// Capturing productId string OK; capturing DB connection object ❌.
 // React 18 N/A — pattern new with inline actions.
 // Prefer module-level 'use server' functions for clarity.
 // Pass ids via FormData/hidden fields not closures when possible.
@@ -287,11 +287,11 @@ const closureTrap =
 // -----------------------------------------------------------------------------
 // Q17: [MID] Optimistic UI + server action
 //
-// Kya karna hai:
-// Client useOptimistic; action={serverFn}; fail pe rollback (file 32).
+// Task:
+// Client useOptimistic; action={serverFn}; rollback on fail (file 32).
 //
-// Seedha matlab:
-// Server action latency higher — optimistic UX valuable.
+// In simple words:
+// Server action latency is higher — optimistic UX is valuable.
 // React 18 optimistic + fetch API route same combo.
 // Client component required for useOptimistic.
 // Server returns error object not throw for form validation UX.
@@ -307,11 +307,11 @@ export function OptimisticServerActionNote() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] CSRF / framework protections
 //
-// Kya karna hai:
-// Next Server Actions POST with origin checks / encrypted action ids — framework docs padho.
+// Task:
+// Next Server Actions POST with origin checks / encrypted action ids — read your framework docs.
 //
-// Seedha matlab:
-// Don't assume CSRF impossible — know your framework story.
+// In simple words:
+// Do not assume CSRF is impossible — know your framework story.
 // React 18 custom API routes need CSRF tokens if cookie auth.
 // Same-site cookies + POST-only actions help.
 // Interview: "rely on framework + still validate auth".
@@ -322,14 +322,14 @@ const csrfNote =
 // -----------------------------------------------------------------------------
 // Q19: [MID] Logging and observability
 //
-// Kya karna hai:
-// Server action me structured logs — user id, action name, duration.
+// Task:
+// Structured logs in server action — user id, action name, duration.
 //
-// Seedha matlab:
+// In simple words:
 // Client console.log secrets ❌; server logs OK with care.
 // React 18 API route handlers same observability.
 // Correlate with request id tracing production debugging.
-// Don't log raw passwords FormData se.
+// Do not log raw passwords from FormData.
 // -----------------------------------------------------------------------------
 const serverActionLogging =
   "Log mutations server-side with correlation ids — never log secrets from FormData.";
@@ -337,11 +337,11 @@ const serverActionLogging =
 // -----------------------------------------------------------------------------
 // Q20: [ADV] When NOT Server Actions
 //
-// Kya karna hai:
+// Task:
 // Public REST API products, webhooks Stripe, non-React mobile clients.
 //
-// Seedha matlab:
-// Server Actions React-centric RPC — not universal HTTP API replacement.
+// In simple words:
+// Server Actions are React-centric RPC — not a universal HTTP API replacement.
 // React 18 REST remains fine.
 // File uploads huge — dedicated storage API sometimes better.
 // GraphQL federation — different layer.
@@ -357,10 +357,10 @@ const whenNotServerActions = [
 // -----------------------------------------------------------------------------
 // Q21: [MID] Testing server actions
 //
-// Kya karna hai:
+// Task:
 // Import action in test; call with FormData; mock db module.
 //
-// Seedha matlab:
+// In simple words:
 // Unit test server function like service layer.
 // Integration test with test DB optional.
 // React 18 API route supertest similar.
@@ -374,10 +374,10 @@ export function TestingServerActionsNote() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — Server Actions checklist
 //
-// Kya karna hai:
+// Task:
 // 'use server', form/client call, validate auth, serializable returns, revalidate, CSRF awareness.
 //
-// Seedha matlab:
+// In simple words:
 // vs React 18: fetch + API routes → less boilerplate in React apps.
 // vs API routes: not for public HTTP; Actions for app mutations.
 // Traps: trust FormData; closure capture; secrets client-side; no revalidate after mutate.

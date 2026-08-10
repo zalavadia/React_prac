@@ -1,18 +1,18 @@
 // ============================================================================
 // 11 — useContext
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Props drilling = parcel har floor pe haath se dena (App→A→B→C).
-// Context = building ka intercom — theme/user seedha sunne wale ko.
-// createContext → Provider value= → useContext(MyContext) child me.
+// SIMPLE: Props drilling = handing a parcel floor by floor by hand (App→A→B→C).
+// Context = building intercom — theme/user goes straight to whoever needs it.
+// createContext → Provider value= → useContext(MyContext) in child.
 //
-// Overuse mat karo — har cheez global mat. Sirf "tree-wide" data: theme, auth, locale.
-// Value object har render naya = consumers re-render (memo/split careful).
+// Don't overuse — don't make everything global. Only "tree-wide" data: theme, auth, locale.
+// New value object every render = consumers re-render (be careful with memo/split).
 //
-// KYUN: Clean architecture; avoid 10-level props.
+// WHY: Clean architecture; avoid 10-level props.
 // INTERVIEW: when context vs props vs redux; re-render cost.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -29,11 +29,11 @@ import {
 // -----------------------------------------------------------------------------
 // Q1: Create + Provider + consume
 //
-// Kya karna hai:
+// Task:
 // ThemeContext, Provider "dark", child useContext.
 //
-// Seedha matlab:
-// Teen step: create, provide, consume. Bina Provider default.
+// In simple words:
+// Three steps: create, provide, consume. Without Provider, default is used.
 // -----------------------------------------------------------------------------
 const ThemeContext = createContext("light");
 
@@ -53,11 +53,11 @@ function AppTheme() {
 // -----------------------------------------------------------------------------
 // Q2: Dynamic theme toggle
 //
-// Kya karna hai:
-// state theme + setTheme context value me.
+// Task:
+// state theme + setTheme in context value.
 //
-// Seedha matlab:
-// Value me { theme, toggle } — children update kar sakein.
+// In simple words:
+// Value has { theme, toggle } — children can update.
 // -----------------------------------------------------------------------------
 const ThemeCtx = createContext(null);
 
@@ -75,11 +75,11 @@ function ToggleBtn() {
 // -----------------------------------------------------------------------------
 // Q3: Auth user context sketch
 //
-// Kya karna hai:
-// user + login/logout provide.
+// Task:
+// Provide user + login/logout.
 //
-// Seedha matlab:
-// Auth classic context use-case. Real app me token/secure storage bhi.
+// In simple words:
+// Auth is a classic context use case. Real apps also need token/secure storage.
 // -----------------------------------------------------------------------------
 const AuthCtx = createContext(null);
 
@@ -107,11 +107,11 @@ function WhoAmI() {
 // -----------------------------------------------------------------------------
 // Q4: Custom hook wrapper
 //
-// Kya karna hai:
-// useTheme() — context null pe throw (Provider bhool gaye).
+// Task:
+// useTheme() — throw if context is null (forgot Provider).
 //
-// Seedha matlab:
-// Better DX. Har consumer me null check mat.
+// In simple words:
+// Better DX. Don't null-check in every consumer.
 // -----------------------------------------------------------------------------
 function useTheme() {
   const ctx = useContext(ThemeCtx);
@@ -127,11 +127,11 @@ function SafeToggle() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Memoize context value
 //
-// Kya karna hai:
-// useMemo(() => ({ theme, toggle }), [theme]) — stable ref jab theme same.
+// Task:
+// useMemo(() => ({ theme, toggle }), [theme]) — stable ref when theme is same.
 //
-// Seedha matlab:
-// Inline object har render naya → sab consumers re-render. Memo help.
+// In simple words:
+// Inline object is new every render → all consumers re-render. Memo helps.
 // -----------------------------------------------------------------------------
 function MemoThemeProvider({ children }) {
   const [theme, setTheme] = useState("light");
@@ -148,11 +148,11 @@ function MemoThemeProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q6: Split contexts (state vs dispatch)
 //
-// Kya karna hai:
-// CountStateCtx + CountDispatchCtx — sirf button wale kam re-render.
+// Task:
+// CountStateCtx + CountDispatchCtx — only buttons re-render less.
 //
-// Seedha matlab:
-// Advanced optimize: jo sirf dispatch use kare state change pe na roye.
+// In simple words:
+// Advanced optimize: dispatch-only users don't re-render on state change.
 // -----------------------------------------------------------------------------
 const CountState = createContext(0);
 const CountDispatch = createContext(() => {});
@@ -169,11 +169,11 @@ function CountProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Default value vs Provider missing
 //
-// Kya karna hai:
-// createContext(default) — Provider na ho to default.
+// Task:
+// createContext(default) — without Provider, default is used.
 //
-// Seedha matlab:
-// Default useful tests/storybook. Production me often null + throw hook.
+// In simple words:
+// Default useful for tests/storybook. Production often uses null + throw in hook.
 // -----------------------------------------------------------------------------
 const LocaleCtx = createContext("en");
 function Label() {
@@ -184,41 +184,41 @@ function Label() {
 // -----------------------------------------------------------------------------
 // Q8: Props still better for local
 //
-// Kya karna hai:
-// Parent→child ek level — props use karo, context overkill.
+// Task:
+// Parent→child one level — use props, context is overkill.
 //
-// Seedha matlab:
-// Context = wide & rare change. Props = explicit & easy debug.
+// In simple words:
+// Context = wide & rare change. Props = explicit & easy to debug.
 // -----------------------------------------------------------------------------
 function LocalBetter({ title }) {
-  return <h1>{title}</h1>; // props fine — context mat lao
+  return <h1>{title}</h1>; // props fine — don't bring in context
 }
 
 // -----------------------------------------------------------------------------
 // Q9: createContext default value trap
 //
-// Kya karna hai:
-// createContext({ theme: "light" }) — Provider bhool gaye to default chalta.
+// Task:
+// createContext({ theme: "light" }) — if you forget Provider, default runs.
 //
-// Seedha matlab:
-// Default object har consumer ko milta — "working" lag sakta hai par bug hai.
-// Production me null default + hook me throw safer.
+// In simple words:
+// Default object goes to every consumer — can look "working" but is a bug.
+// Production: null default + throw in hook is safer.
 // -----------------------------------------------------------------------------
 const BadDefaultCtx = createContext({ count: 0, inc: () => {} });
 function SilentBug() {
-  const { count, inc } = useContext(BadDefaultCtx); // Provider nahi — default inc noop
-  return <button onClick={inc}>{count}</button>; // click pe kuch nahi hoga
+  const { count, inc } = useContext(BadDefaultCtx); // no Provider — default inc is noop
+  return <button onClick={inc}>{count}</button>; // click does nothing
 }
 
 // -----------------------------------------------------------------------------
 // Q10: Consumer (legacy) vs useContext
 //
-// Kya karna hai:
-// <ThemeContext.Consumer>{(v) => ...}</ThemeContext.Consumer> — purana pattern.
+// Task:
+// <ThemeContext.Consumer>{(v) => ...}</ThemeContext.Consumer> — old pattern.
 //
-// Seedha matlab:
-// Interview me sunoge. Aaj useContext prefer — cleaner, hooks ke saath fit.
-// Class components me Consumer ab bhi dikhega legacy code me.
+// In simple words:
+// You may hear this in interviews. Today prefer useContext — cleaner, fits hooks.
+// Legacy code still shows Consumer in class components.
 // -----------------------------------------------------------------------------
 function LegacyConsumerDemo() {
   return (
@@ -229,18 +229,18 @@ function LegacyConsumerDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: [MID] Performance — sab consumers re-render
+// Q11: [MID] Performance — all consumers re-render
 //
-// Kya karna hai:
-// Provider value change → har useContext wala subtree re-render (memo ke bina).
+// Task:
+// Provider value change → every useContext subtree re-renders (without memo).
 //
-// Seedha matlab:
-// Context cheap nahi hai har cheez ke liye. Frequent updates (mouse move) mat do.
-// Split context ya selector libraries jab scale ho.
+// In simple words:
+// Context is not cheap for everything. Don't put frequent updates (mouse move).
+// Split context or use selector libraries when you scale.
 // -----------------------------------------------------------------------------
 function HeavyCtxProvider({ children }) {
   const [tick, setTick] = useState(0);
-  const value = useMemo(() => ({ tick }), [tick]); // tick badle → sab consumers
+  const value = useMemo(() => ({ tick }), [tick]); // tick changes → all consumers
   return (
     <ThemeCtx.Provider value={value}>
       <button onClick={() => setTick((t) => t + 1)}>tick</button>
@@ -252,12 +252,12 @@ function HeavyCtxProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q12: Memo children under Provider
 //
-// Kya karna hai:
-// React.memo child + stable context value → unnecessary re-render skip.
+// Task:
+// React.memo child + stable context value → skip unnecessary re-render.
 //
-// Seedha matlab:
-// Provider value identity stable ho to memo children bach sakte hain.
-// Value har render naya object → memo bhi fail.
+// In simple words:
+// If Provider value identity is stable, memo children can be saved.
+// New object every render → memo fails too.
 // -----------------------------------------------------------------------------
 const MemoChild = memo(function MemoChild({ label }) {
   console.log("MemoChild render");
@@ -277,12 +277,12 @@ function MemoChildrenDemo() {
 // -----------------------------------------------------------------------------
 // Q13: React 19 Provider syntax note
 //
-// Kya karna hai:
-// React 19 me <ThemeContext value="dark"> — .Provider optional shorthand.
+// Task:
+// React 19: <ThemeContext value="dark"> — .Provider optional shorthand.
 //
-// Seedha matlab:
-// Dono valid: <Ctx.Provider value={x}> ya <Ctx value={x}> (React 19+).
-// Purane codebases me .Provider common — interview me dono jaano.
+// In simple words:
+// Both valid: <Ctx.Provider value={x}> or <Ctx value={x}> (React 19+).
+// Older codebases use .Provider often — know both in interviews.
 // -----------------------------------------------------------------------------
 function React19ProviderNote() {
   // React 19+: <ThemeContext value="dark"><ThemedButton /></ThemeContext>
@@ -296,17 +296,17 @@ function React19ProviderNote() {
 // -----------------------------------------------------------------------------
 // Q14: Context vs props decision
 //
-// Kya karna hai:
+// Task:
 // 1-2 level + local data → props. Tree-wide + rare change → context.
 //
-// Seedha matlab:
-// Props explicit, debug easy. Context implicit, coupling badhata hai.
-// Redux/Zustand jab global + devtools + middleware chahiye.
+// In simple words:
+// Props explicit, debug easy. Context implicit, increases coupling.
+// Redux/Zustand when you want global + devtools + middleware.
 // -----------------------------------------------------------------------------
 function ContextVsPropsNote() {
   return (
     <p>
-      Props = neighbour ko parcel. Context = building intercom. Redux = post office.
+      Props = parcel to neighbour. Context = building intercom. Redux = post office.
     </p>
   );
 }
@@ -314,12 +314,12 @@ function ContextVsPropsNote() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Testing context
 //
-// Kya karna hai:
-// Test me wrap: render(&lt;AuthProvider&gt;&lt;WhoAmI /&gt;&lt;/AuthProvider&gt;).
+// Task:
+// In test wrap: render(&lt;AuthProvider&gt;&lt;WhoAmI /&gt;&lt;/AuthProvider&gt;).
 //
-// Seedha matlab:
-// Custom render helper banao jo default providers wrap kare.
-// Mock Provider value={{ user: mockUser }} se isolated test.
+// In simple words:
+// Create a custom render helper that wraps default providers.
+// Mock Provider value={{ user: mockUser }} for isolated test.
 // -----------------------------------------------------------------------------
 function TestWrapper({ children }) {
   return <AuthProvider>{children}</AuthProvider>;
@@ -329,12 +329,12 @@ function TestWrapper({ children }) {
 // -----------------------------------------------------------------------------
 // Q16: Nested Providers
 //
-// Kya karna hai:
-// ThemeProvider ke andar AuthProvider — dono alag context, order matter nahi.
+// Task:
+// ThemeProvider inside AuthProvider — separate contexts, order doesn't matter.
 //
-// Seedha matlab:
-// Compose multiple contexts like Russian dolls. Har ek apna value.
-// Deep nesting messy ho to ek Provider combine karo (careful — re-render).
+// In simple words:
+// Compose multiple contexts like Russian dolls. Each has its own value.
+// Deep nesting gets messy — combine into one Provider (careful — re-render).
 // -----------------------------------------------------------------------------
 function AppProviders({ children }) {
   return (
@@ -345,14 +345,14 @@ function AppProviders({ children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q17: Context value me function stability
+// Q17: Context value function stability
 //
-// Kya karna hai:
-// toggle inline arrow har render naya → value memo ke bina unstable.
+// Task:
+// Inline arrow toggle is new every render → value unstable without memo.
 //
-// Seedha matlab:
+// In simple words:
 // useCallback toggle + useMemo value = stable bundle.
-// Sirf theme change pe consumers update — toggle ref same rahe.
+// Consumers update only on theme change — toggle ref stays same.
 // -----------------------------------------------------------------------------
 function StableToggleProvider({ children }) {
   const [theme, setTheme] = useState("light");
@@ -367,12 +367,12 @@ function StableToggleProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q18: useContext outside Provider — null check
 //
-// Kya karna hai:
+// Task:
 // createContext(null) + optional chaining vs throw in custom hook.
 //
-// Seedha matlab:
-// null default = "Provider missing" detect karna easy.
-// useTheme() throw = fail fast, better DX dev me.
+// In simple words:
+// null default = easy to detect "Provider missing".
+// useTheme() throw = fail fast, better DX in dev.
 // -----------------------------------------------------------------------------
 function OptionalTheme() {
   const ctx = useContext(ThemeCtx);
@@ -383,11 +383,11 @@ function OptionalTheme() {
 // -----------------------------------------------------------------------------
 // Q19: [MID] Selective re-render with split + memo
 //
-// Kya karna hai:
-// CountDisplay sirf CountState; IncBtn sirf CountDispatch.
+// Task:
+// CountDisplay only CountState; IncBtn only CountDispatch.
 //
-// Seedha matlab:
-// Split contexts = built-in selector pattern. Display count change pe button na roye.
+// In simple words:
+// Split contexts = built-in selector pattern. Button doesn't re-render on count change.
 // -----------------------------------------------------------------------------
 function CountDisplay() {
   const n = useContext(CountState);
@@ -402,12 +402,12 @@ function IncBtn() {
 // -----------------------------------------------------------------------------
 // Q20: Context + useReducer combo sketch
 //
-// Kya karna hai:
+// Task:
 // Provider value={{ state, dispatch }} — light Redux (see 12).
 //
-// Seedha matlab:
+// In simple words:
 // Complex global state: reducer + context = scalable mid-size pattern.
-// dispatch stable hota hai — split karke state alag context me rakho.
+// dispatch is stable — split and keep state in a separate context.
 // -----------------------------------------------------------------------------
 const StoreCtx = createContext(null);
 function StoreProvider({ children }) {
@@ -422,12 +422,12 @@ function StoreProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q21: Updating context from deep child
 //
-// Kya karna hai:
-// Child sirf dispatch/setter le — state mutate direct mat.
+// Task:
+// Child only takes dispatch/setter — don't mutate state directly.
 //
-// Seedha matlab:
-// Context me setTheme pass karo, theme direct overwrite mat.
-// Immutable updates — React re-render trigger properly.
+// In simple words:
+// Pass setTheme in context, don't overwrite theme directly.
+// Immutable updates — React re-render triggers properly.
 // -----------------------------------------------------------------------------
 function DeepToggle() {
   const { toggle } = useTheme();
@@ -437,15 +437,15 @@ function DeepToggle() {
 // -----------------------------------------------------------------------------
 // Q22: [MID] Anti-pattern — context for everything
 //
-// Kya karna hai:
-// Form field state global context me mat rakho — local/colocate better.
+// Task:
+// Don't put form field state in global context — local/colocate is better.
 //
-// Seedha matlab:
+// In simple words:
 // Context overuse = hidden deps, hard debug, extra re-renders.
-// Sirf genuinely shared / tree-wide data. Baaki props ya colocated state.
+// Only genuinely shared / tree-wide data. Rest use props or colocated state.
 // -----------------------------------------------------------------------------
 function ContextAntiPatternNote() {
-  return <p>Har input ka value context me = pain. Local state pehle socho.</p>;
+  return <p>Every input value in context = pain. Think local state first.</p>;
 }
 
 export {

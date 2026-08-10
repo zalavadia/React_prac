@@ -1,18 +1,18 @@
 // ============================================================================
 // 17 — React.memo
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: React.memo = child se kehna "agar meri props same dikhein to
-// dubara mat paint". Parent re-render pe default children bhi re-render.
-// memo shallow compare props — skip jab equal.
+// SIMPLE: React.memo = tell child "if my props look the same, don't
+// paint again". Parent re-render by default re-renders children too.
+// memo shallow compares props — skip when equal.
 //
-// Kaam tab: expensive child + parent aksar re-render + props stable.
-// Props me naya object/fn har baar → memo fail (useCallback/useMemo saath).
+// Works when: expensive child + parent often re-renders + props stable.
+// New object/fn in props every time → memo fails (use useCallback/useMemo together).
 //
-// KYUN: List rows, pure presentational widgets optimize.
+// WHY: List rows, pure presentational widgets optimize.
 // INTERVIEW: shallow compare; memo + callback duo; when useless.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { memo, useCallback, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Wrap pure component
 //
-// Kya karna hai:
+// Task:
 // export default memo(function Expensive({ label }) ...)
 //
-// Seedha matlab:
-// Same label → skip render. Parent counter badle to bhi.
+// In simple words:
+// Same label → skip render. Even when parent counter changes.
 // -----------------------------------------------------------------------------
 const Expensive = memo(function Expensive({ label }) {
   console.log("Expensive render", label);
@@ -45,10 +45,10 @@ function Parent() {
 // -----------------------------------------------------------------------------
 // Q2: Memo breaks on inline object
 //
-// Kya karna hai:
-// style={{}} har render naya → child re-render.
+// Task:
+// style={{}} new every render → child re-renders.
 //
-// Seedha matlab:
+// In simple words:
 // Referential inequality. Hoist style or memoize.
 // -----------------------------------------------------------------------------
 const Box = memo(function Box({ style }) {
@@ -71,11 +71,11 @@ const staticStyle = { color: "red" };
 // -----------------------------------------------------------------------------
 // Q3: memo + useCallback
 //
-// Kya karna hai:
-// onClick stable pass to memo child.
+// Task:
+// Pass stable onClick to memo child.
 //
-// Seedha matlab:
-// Duo classic interview answer.
+// In simple words:
+// Classic interview duo.
 // -----------------------------------------------------------------------------
 const Item = memo(function Item({ onClick, text }) {
   return <button onClick={onClick}>{text}</button>;
@@ -95,11 +95,11 @@ function List() {
 // -----------------------------------------------------------------------------
 // Q4: Custom compare (rare)
 //
-// Kya karna hai:
+// Task:
 // memo(Comp, (prev, next) => prev.id === next.id)
 //
-// Seedha matlab:
-// true return = props equal = SKIP. Easy galat — default shallow usually enough.
+// In simple words:
+// true return = props equal = SKIP. Easy to get wrong — default shallow usually enough.
 // -----------------------------------------------------------------------------
 const Row = memo(
   function Row({ user }) {
@@ -111,11 +111,11 @@ const Row = memo(
 // -----------------------------------------------------------------------------
 // Q5: [MID] Children prop often breaks memo
 //
-// Kya karna hai:
-// <Memo><span/></Memo> — children naya element har baar.
+// Task:
+// <Memo><span/></Memo> — children is new element every time.
 //
-// Seedha matlab:
-// Element objects naye. Composition + memo careful.
+// In simple words:
+// Element objects are new. Composition + memo needs care.
 // -----------------------------------------------------------------------------
 const Frame = memo(function Frame({ children }) {
   console.log("Frame");
@@ -125,11 +125,11 @@ const Frame = memo(function Frame({ children }) {
 // -----------------------------------------------------------------------------
 // Q6: When NOT to memo
 //
-// Kya karna hai:
-// Cheap component / props hamesha change — mat wrap.
+// Task:
+// Cheap component / props always change — don't wrap.
 //
-// Seedha matlab:
-// Compare cost + mental load. Profile pehle.
+// In simple words:
+// Compare cost + mental load. Profile first.
 // -----------------------------------------------------------------------------
 function Cheap({ t }) {
   return <span>{t}</span>; // memo optional / skip
@@ -138,22 +138,22 @@ function Cheap({ t }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] memo is not useMemo
 //
-// Kya karna hai:
-// React.memo = component. useMemo = value. Alag tools.
+// Task:
+// React.memo = component. useMemo = value. Different tools.
 //
-// Seedha matlab:
-// Interview confusion common — clear rakho.
+// In simple words:
+// Interview confusion common — keep them clear.
 // -----------------------------------------------------------------------------
 // memo(Component) vs useMemo(() => value, deps)
 
 // -----------------------------------------------------------------------------
 // Q8: List of memo rows
 //
-// Kya karna hai:
+// Task:
 // Parent filter state; unchanged rows skip with memo + stable props.
 //
-// Seedha matlab:
-// Big lists me meaningful. Virtualization alag topic.
+// In simple words:
+// Meaningful in big lists. Virtualization is a separate topic.
 // -----------------------------------------------------------------------------
 const TodoRow = memo(function TodoRow({ todo, onToggle }) {
   return (
@@ -166,12 +166,12 @@ const TodoRow = memo(function TodoRow({ todo, onToggle }) {
 // -----------------------------------------------------------------------------
 // Q9: Shallow compare — what memo checks
 //
-// Kya karna hai:
-// prevProps.a === nextProps.a — top level only, nested object fields nahi.
+// Task:
+// prevProps.a === nextProps.a — top level only, not nested object fields.
 //
-// Seedha matlab:
-// user object same ref but user.name change → memo skip (shallow pass).
-// Deep compare mat — custom areEqual ya immutable data.
+// In simple words:
+// user object same ref but user.name change → memo skips (shallow pass).
+// Don't deep compare — custom areEqual or immutable data.
 // -----------------------------------------------------------------------------
 const ShallowDemo = memo(function ShallowDemo({ user }) {
   return <span>{user.name}</span>;
@@ -180,12 +180,12 @@ const ShallowDemo = memo(function ShallowDemo({ user }) {
 // -----------------------------------------------------------------------------
 // Q10: Custom areEqual — when useful
 //
-// Kya karna hai:
+// Task:
 // memo(Row, (prev, next) => prev.item.id === next.item.id)
 //
-// Seedha matlab:
-// true return = SKIP render (props "equal"). Ulta lagta hai — dhyan se.
-// Sirf jab id same pe poora row same maan sakte ho.
+// In simple words:
+// true return = SKIP render (props "equal"). Feels backwards — be careful.
+// Only when same id means whole row is same.
 // -----------------------------------------------------------------------------
 const ItemRow = memo(
   function ItemRow({ item }) {
@@ -197,12 +197,12 @@ const ItemRow = memo(
 // -----------------------------------------------------------------------------
 // Q11: [MID] Children problem deep dive
 //
-// Kya karna hai:
-// <MemoParent><div>{dynamic}</div></MemoParent> — children har render naya.
+// Task:
+// <MemoParent><div>{dynamic}</div></MemoParent> — children new every render.
 //
-// Seedha matlab:
-// JSX children = prop. Element create hota hai har render.
-// Fix: memo leaf, children hoist, ya composition restructure.
+// In simple words:
+// JSX children = prop. Element created every render.
+// Fix: memo leaf, hoist children, or restructure composition.
 // -----------------------------------------------------------------------------
 function ChildrenProblemParent() {
   const [n, setN] = useState(0);
@@ -219,12 +219,12 @@ function ChildrenProblemParent() {
 // -----------------------------------------------------------------------------
 // Q12: memo + useCallback full combo demo
 //
-// Kya karna hai:
+// Task:
 // MemoListItem + stable onClick + stable item ref from normalized store.
 //
-// Seedha matlab:
-// Teen piece: memo child, useCallback handler, stable data refs.
-// Interview "golden trio" list optimization ke liye.
+// In simple words:
+// Three pieces: memo child, useCallback handler, stable data refs.
+// Interview "golden trio" for list optimization.
 // -----------------------------------------------------------------------------
 const MemoListItem = memo(function MemoListItem({ id, onPick }) {
   return <button onClick={() => onPick(id)}>{id}</button>;
@@ -247,40 +247,40 @@ function MemoComboList() {
 // -----------------------------------------------------------------------------
 // Q13: When memo useless — props always change
 //
-// Kya karna hai:
-// <Clock time={Date.now()} /> — har render naya time, memo zero benefit.
+// Task:
+// <Clock time={Date.now()} /> — new time every render, memo zero benefit.
 //
-// Seedha matlab:
-// Agar koi prop har baar change ho — skip memo entirely.
-// Compare overhead bina gain.
+// In simple words:
+// If any prop changes every time — skip memo entirely.
+// Compare overhead with no gain.
 // -----------------------------------------------------------------------------
 function Clock({ time }) {
-  return <time>{time}</time>; // memo mat — time har tick change
+  return <time>{time}</time>; // skip memo — time changes every tick
 }
 
 // -----------------------------------------------------------------------------
 // Q14: [MID] memo on component using context
 //
-// Kya karna hai:
-// memo child context consume kare — context change pe render hoga anyway.
+// Task:
+// memo child consumes context — context change still forces render.
 //
-// Seedha matlab:
-// memo sirf props compare karta hai. Context update = re-render forced.
-// Context split (11) + memo combo socho.
+// In simple words:
+// memo only compares props. Context update = forced re-render.
+// Think context split (11) + memo combo.
 // -----------------------------------------------------------------------------
 function ContextConsumerMemoNote() {
-  return <p>Context change beats memo — props equal bhi render hoga.</p>;
+  return <p>Context change beats memo — will render even if props equal.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q15: Default export memo pattern
 //
-// Kya karna hai:
+// Task:
 // export default memo(MyComponent) — HOC wrap.
 //
-// Seedha matlab:
-// displayName set karo debug ke liye: MemoComp.displayName = "MyComponent"
-// Named export bhi common teaching files me.
+// In simple words:
+// Set displayName for debug: MemoComp.displayName = "MyComponent"
+// Named export also common in teaching files.
 // -----------------------------------------------------------------------------
 const NamedMemo = memo(function NamedMemo({ v }) {
   return <em>{v}</em>;
@@ -290,12 +290,12 @@ NamedMemo.displayName = "NamedMemo";
 // -----------------------------------------------------------------------------
 // Q16: Primitive props — memo works great
 //
-// Kya karna hai:
+// Task:
 // label string, count number — shallow equal easy true.
 //
-// Seedha matlab:
+// In simple words:
 // Presentational dumb components with primitives = memo sweet spot.
-// Parent state unrelated field change → child skip.
+// Parent unrelated field change → child skips.
 // -----------------------------------------------------------------------------
 const Label = memo(function Label({ text }) {
   return <label>{text}</label>;
@@ -315,12 +315,12 @@ function PrimitiveMemoParent() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] memo vs shouldComponentUpdate legacy
 //
-// Kya karna hai:
+// Task:
 // Class: shouldComponentUpdate return false. Functional: memo equivalent.
 //
-// Seedha matlab:
+// In simple words:
 // Interview bridge question class → hooks era.
-// PureComponent bhi shallow compare — same idea.
+// PureComponent also shallow compare — same idea.
 // -----------------------------------------------------------------------------
 function LegacyBridgeNote() {
   return <p>PureComponent / memo = shallow props compare skip render.</p>;
@@ -329,12 +329,12 @@ function LegacyBridgeNote() {
 // -----------------------------------------------------------------------------
 // Q18: Passing unstable default prop
 //
-// Kya karna hai:
-// items = [] default param — har render naya array module level se bachao.
+// Task:
+// items = [] default param — avoid new array every render from module level.
 //
-// Seedha matlab:
+// In simple words:
 // const EMPTY = []; function C({ items = EMPTY }) — stable default.
-// Inline [] default har call naya — subtle memo break parent me bhi.
+// Inline [] default new every call — subtle memo break in parent too.
 // -----------------------------------------------------------------------------
 const EMPTY_ARR = [];
 function ListWithDefault({ items = EMPTY_ARR }) {
@@ -344,39 +344,39 @@ function ListWithDefault({ items = EMPTY_ARR }) {
 // -----------------------------------------------------------------------------
 // Q19: Double memo — usually pointless
 //
-// Kya karna hai:
+// Task:
 // memo(memo(Comp)) — redundant wrap.
 //
-// Seedha matlab:
-// Ek baar kaafi. Nested memo koi extra benefit nahi.
-// HOC chain me alag baat — par double memo same component silly.
+// In simple words:
+// Once is enough. Nested memo no extra benefit.
+// HOC chain different story — but double memo same component is silly.
 // -----------------------------------------------------------------------------
 function DoubleMemoNote() {
-  return <p>memo(memo(X)) = waste. Ek layer enough.</p>;
+  return <p>memo(memo(X)) = waste. One layer enough.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q20: [MID] Profiler verify memo working
 //
-// Kya karna hai:
-// React DevTools Profiler — "MemoChild (Memo)" skipped renders dekho.
+// Task:
+// React DevTools Profiler — see "MemoChild (Memo)" skipped renders.
 //
-// Seedha matlab:
-// Assume mat karo memo kaam kar raha — measure.
+// In simple words:
+// Don't assume memo works — measure.
 // Gray = skipped in profiler (React 18+).
 // -----------------------------------------------------------------------------
 function ProfilerNote() {
-  return <p>Profiler se confirm karo memo actually skip kar raha hai.</p>;
+  return <p>Use Profiler to confirm memo actually skips renders.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q21: State inside memo component
 //
-// Kya karna hai:
-// memo child apna useState — parent re-render pe bhi child state safe.
+// Task:
+// memo child has its own useState — parent re-render, child state safe.
 //
-// Seedha matlab:
-// Skip render = child function dubara nahi chalti — local state preserved.
+// In simple words:
+// Skip render = child function doesn't run again — local state preserved.
 // Props same → internal state intact. Important interview point.
 // -----------------------------------------------------------------------------
 const StatefulMemo = memo(function StatefulMemo({ seed }) {
@@ -387,15 +387,15 @@ const StatefulMemo = memo(function StatefulMemo({ seed }) {
 // -----------------------------------------------------------------------------
 // Q22: Anti-pattern — memo everything
 //
-// Kya karna hai:
-// Har chhoti component memo — bundle + compare cost, readability down.
+// Task:
+// memo every tiny component — bundle + compare cost, readability down.
 //
-// Seedha matlab:
+// In simple words:
 // Target hot paths: big lists, heavy charts, frequent parent updates.
 // Default: no memo. Add surgically with profiler proof.
 // -----------------------------------------------------------------------------
 function MemoEverythingNote() {
-  return <p>Sab pe memo = overkill. Expensive + stable props pe focus.</p>;
+  return <p>Memo on everything = overkill. Focus on expensive + stable props.</p>;
 }
 
 export {

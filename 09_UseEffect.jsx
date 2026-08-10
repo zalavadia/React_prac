@@ -1,20 +1,20 @@
 // ============================================================================
 // 09 — useEffect
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: useEffect = "paint ke baad yeh extra kaam karo" — fetch, timer,
-// document.title, event listener. Render pure rakho; side effects yahan.
+// SIMPLE: useEffect = "after paint, do this extra work" — fetch, timer,
+// document.title, event listener. Keep render pure; side effects go here.
 //
 // useEffect(fn, deps):
-//   [] = mount pe ek baar (strict mode dev me 2x — 27).
-//   [x] = x change pe dubara.
-//   no deps = har render pe (rare, careful).
-// Cleanup return () => {...} — unmount / pehle deps change pe (clearInterval).
+//   [] = once on mount (strict mode dev runs 2x — see 27).
+//   [x] = again when x changes.
+//   no deps = every render (rare, be careful).
+// Cleanup return () => {...} — on unmount / before deps change (clearInterval).
 //
-// KYUN: Data fetch, sync bahar duniya — React ka official door.
+// WHY: Data fetch, sync with outside world — React's official side-effect door.
 // INTERVIEW: deps array; cleanup; infinite loop; race conditions.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
@@ -23,11 +23,11 @@ import { useEffect, useRef, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: document.title sync
 //
-// Kya karna hai:
-// count badle to title update.
+// Task:
+// Update title when count changes.
 //
-// Seedha matlab:
-// Browser API = side effect. Effect me karo, render me nahi.
+// In simple words:
+// Browser API = side effect. Do it in effect, not in render.
 // -----------------------------------------------------------------------------
 function TitleCounter() {
   const [count, setCount] = useState(0);
@@ -40,11 +40,11 @@ function TitleCounter() {
 // -----------------------------------------------------------------------------
 // Q2: Mount-only fetch sketch
 //
-// Kya karna hai:
-// [] deps — load pe data lao.
+// Task:
+// [] deps — load data on mount.
 //
-// Seedha matlab:
-// Empty deps ≈ componentDidMount feel. Cleanup me abort useful.
+// In simple words:
+// Empty deps ≈ componentDidMount feel. Abort in cleanup is useful.
 // -----------------------------------------------------------------------------
 function Users() {
   const [users, setUsers] = useState([]);
@@ -65,11 +65,11 @@ function Users() {
 // -----------------------------------------------------------------------------
 // Q3: Cleanup interval
 //
-// Kya karna hai:
-// setInterval + clearInterval return me.
+// Task:
+// setInterval + clearInterval in return.
 //
-// Seedha matlab:
-// Bina cleanup memory leak / setState on unmounted.
+// In simple words:
+// Without cleanup: memory leak / setState on unmounted component.
 // -----------------------------------------------------------------------------
 function Clock() {
   const [t, setT] = useState(0);
@@ -83,10 +83,10 @@ function Clock() {
 // -----------------------------------------------------------------------------
 // Q4: Deps — search when query changes
 //
-// Kya karna hai:
-// query change pe naya search effect.
+// Task:
+// New search effect when query changes.
 //
-// Seedha matlab:
+// In simple words:
 // Missing dep = stale bug. Extra dep = extra runs. ESLint exhaustive-deps.
 // -----------------------------------------------------------------------------
 function Search({ query }) {
@@ -112,26 +112,26 @@ function Search({ query }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Infinite loop trap
 //
-// Kya karna hai:
-// Effect me setState + missing/wrong deps → loop.
+// Task:
+// setState inside effect + missing/wrong deps → loop.
 //
-// Seedha matlab:
-// useEffect(() => setX(x+1)) bina soch → infinite. Deps samjho.
+// In simple words:
+// useEffect(() => setX(x+1)) without thought → infinite. Understand deps.
 // -----------------------------------------------------------------------------
 function LoopWarning() {
   const [n, setN] = useState(0);
-  // BAD: useEffect(() => setN(n + 1)); // har render → dubara effect
-  // OK: user event pe setN, ya [someExternal]
+  // BAD: useEffect(() => setN(n + 1)); // every render → effect again
+  // OK: setN on user event, or [someExternal]
   return <p>{n}</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q6: Event listener subscribe
 //
-// Kya karna hai:
-// window resize pe width state; cleanup removeEventListener.
+// Task:
+// window resize updates width state; cleanup removeEventListener.
 //
-// Seedha matlab:
+// In simple words:
 // Subscribe/unsubscribe pair = classic cleanup.
 // -----------------------------------------------------------------------------
 function WindowWidth() {
@@ -149,11 +149,11 @@ function WindowWidth() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Syncing props → state (careful)
 //
-// Kya karna hai:
-// Kabhi prop change pe local draft reset — effect se.
+// Task:
+// Sometimes reset local draft when prop changes — via effect.
 //
-// Seedha matlab:
-// Often key={id} remount better. Effect sync smell ho sakta — soch ke use.
+// In simple words:
+// Often key={id} remount is better. Effect sync can be a smell — use thoughtfully.
 // -----------------------------------------------------------------------------
 function Draft({ savedText }) {
   const [text, setText] = useState(savedText);
@@ -166,10 +166,10 @@ function Draft({ savedText }) {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Race: slow response overwrite
 //
-// Kya karna hai:
-// Fast typing: purani fetch late aake naya result overwrite na kare.
+// Task:
+// Fast typing: old fetch should not overwrite newer result when it arrives late.
 //
-// Seedha matlab:
+// In simple words:
 // cancelled flag / AbortController. Interview favorite.
 // -----------------------------------------------------------------------------
 function RaceSafeSearch({ q }) {
@@ -188,13 +188,13 @@ function RaceSafeSearch({ q }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q9: No deps — har render pe run
+// Q9: No deps — runs every render
 //
-// Kya karna hai:
-// useEffect(() => {...}) — deps array hi nahi.
+// Task:
+// useEffect(() => {...}) — no deps array.
 //
-// Seedha matlab:
-// Har paint ke baad chalega. Rare; usually bug ya logging. Avoid unless sure.
+// In simple words:
+// Runs after every paint. Rare; usually bug or logging. Avoid unless sure.
 // -----------------------------------------------------------------------------
 function EveryRenderLog({ value }) {
   useEffect(() => {
@@ -206,11 +206,11 @@ function EveryRenderLog({ value }) {
 // -----------------------------------------------------------------------------
 // Q10: Empty deps [] — mount once
 //
-// Kya karna hai:
+// Task:
 // Analytics init, one-time setup — [].
 //
-// Seedha matlab:
-// Sirf mount + cleanup unmount. Props/state andar use mat karo bina deps ke.
+// In simple words:
+// Only mount + cleanup on unmount. Do not use props/state inside without listing deps.
 // -----------------------------------------------------------------------------
 function AnalyticsInit() {
   useEffect(() => {
@@ -220,13 +220,13 @@ function AnalyticsInit() {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Full deps — sab external values list
+// Q11: Full deps — list all external values
 //
-// Kya karna hai:
-// [userId, filter] — dono change pe effect dubara.
+// Task:
+// [userId, filter] — effect runs again when either changes.
 //
-// Seedha matlab:
-// ESLint exhaustive-deps follow karo. Missing = stale closure bug.
+// In simple words:
+// Follow ESLint exhaustive-deps. Missing = stale closure bug.
 // -----------------------------------------------------------------------------
 function UserPosts({ userId, filter }) {
   const [posts, setPosts] = useState([]);
@@ -241,11 +241,11 @@ function UserPosts({ userId, filter }) {
 // -----------------------------------------------------------------------------
 // Q12: Cleanup before re-run
 //
-// Kya karna hai:
-// deps change → pehle cleanup, phir naya effect body.
+// Task:
+// When deps change → cleanup first, then new effect body.
 //
-// Seedha matlab:
-// Purana subscription/timer band, naya start. Order guaranteed.
+// In simple words:
+// Old subscription/timer stops, new one starts. Order is guaranteed.
 // -----------------------------------------------------------------------------
 function DebouncedLog({ text }) {
   useEffect(() => {
@@ -258,11 +258,11 @@ function DebouncedLog({ text }) {
 // -----------------------------------------------------------------------------
 // Q13: [MID] Strict Mode double mount
 //
-// Kya karna hai:
-// Dev me React mount → unmount → mount dubara — cleanup test.
+// Task:
+// Dev: React mount → unmount → mount again — tests cleanup.
 //
-// Seedha matlab:
-// Effect 2x run ho sakta dev me. Cleanup sahi ho to OK. Prod me ek baar.
+// In simple words:
+// Effect may run 2x in dev. With good cleanup it is OK. Prod runs once.
 // -----------------------------------------------------------------------------
 function StrictModeSafe() {
   useEffect(() => {
@@ -273,13 +273,13 @@ function StrictModeSafe() {
 }
 
 // -----------------------------------------------------------------------------
-// Q14: Derived state — effect mat
+// Q14: Derived state — no effect
 //
-// Kya karna hai:
-// fullName = first + last render me — useEffect se setFullName mat.
+// Task:
+// fullName = first + last in render — do not setFullName in useEffect.
 //
-// Seedha matlab:
-// Jo props/state se compute ho sakta render me — wahi karo. Extra effect = lag.
+// In simple words:
+// If it can be computed from props/state in render — do that. Extra effect = lag.
 // -----------------------------------------------------------------------------
 function FullName({ first, last }) {
   const fullName = `${first} ${last}`.trim();
@@ -289,11 +289,11 @@ function FullName({ first, last }) {
 // -----------------------------------------------------------------------------
 // Q15: When NOT to use effect — event handler
 //
-// Kya karna hai:
-// Button click pe POST — onClick me karo, useEffect me mat.
+// Task:
+// POST on button click — do in onClick, not useEffect.
 //
-// Seedha matlab:
-// User action = event. Mount/sync external = effect. Confuse mat karo.
+// In simple words:
+// User action = event. Mount/sync external = effect. Do not confuse them.
 // -----------------------------------------------------------------------------
 function SaveButton({ data }) {
   function save() {
@@ -305,11 +305,11 @@ function SaveButton({ data }) {
 // -----------------------------------------------------------------------------
 // Q16: Fetch with loading/error states
 //
-// Kya karna hai:
-// effect me setLoading true → fetch → setData/setError → finally setLoading false.
+// Task:
+// In effect: setLoading true → fetch → setData/setError → finally setLoading false.
 //
-// Seedha matlab:
-// Classic pattern. Race guard bhi rakho (Q8 jaisa).
+// In simple words:
+// Classic pattern. Keep race guard too (like Q8).
 // -----------------------------------------------------------------------------
 function FetchWithStates({ id }) {
   const [data, setData] = useState(null);
@@ -341,11 +341,11 @@ function FetchWithStates({ id }) {
 // -----------------------------------------------------------------------------
 // Q17: localStorage sync effect
 //
-// Kya karna hai:
+// Task:
 // theme state change → localStorage.setItem in effect.
 //
-// Seedha matlab:
-// Browser storage = external system. Effect ya event dono OK; effect for sync after render.
+// In simple words:
+// Browser storage = external system. Effect or event both OK; effect syncs after render.
 // -----------------------------------------------------------------------------
 function ThemeSync({ theme }) {
   useEffect(() => {
@@ -357,11 +357,11 @@ function ThemeSync({ theme }) {
 // -----------------------------------------------------------------------------
 // Q18: [MID] Sync external store contrast
 //
-// Kya karna hai:
-// useSyncExternalStore for subscribe API — raw effect + listener se behtar.
+// Task:
+// useSyncExternalStore for subscribe API — better than raw effect + listener.
 //
-// Seedha matlab:
-// window matchMedia, Redux subscribe — official hook tearing avoid karta hai.
+// In simple words:
+// window matchMedia, Redux subscribe — official hook avoids tearing.
 // -----------------------------------------------------------------------------
 function ExternalStoreNote() {
   // useSyncExternalStore(subscribe, getSnapshot) — see React docs
@@ -375,13 +375,13 @@ function ExternalStoreNote() {
 }
 
 // -----------------------------------------------------------------------------
-// Q19: Object dep — stabilize or fields
+// Q19: Object dep — stabilize or use fields
 //
-// Kya karna hai:
-// deps me [config] — har render naya object = effect loop.
+// Task:
+// deps [config] — new object every render = effect loop.
 //
-// Seedha matlab:
-// Primitive fields deps me lo, ya useMemo config. Reference equality matter.
+// In simple words:
+// Put primitive fields in deps, or useMemo config. Reference equality matters.
 // -----------------------------------------------------------------------------
 function ConfigFetch({ url, page }) {
   const [data, setData] = useState(null);
@@ -394,11 +394,11 @@ function ConfigFetch({ url, page }) {
 // -----------------------------------------------------------------------------
 // Q20: Timer reset on dep change
 //
-// Kya karna hai:
-// countdown restarts jab seconds prop badle — cleanup clearTimeout.
+// Task:
+// countdown restarts when seconds prop changes — cleanup clearTimeout.
 //
-// Seedha matlab:
-// Naya dep = purana timer band, naya start. Leak mat chhodo.
+// In simple words:
+// New dep = stop old timer, start new. Do not leak.
 // -----------------------------------------------------------------------------
 function Countdown({ seconds }) {
   const [left, setLeft] = useState(seconds);
@@ -413,11 +413,11 @@ function Countdown({ seconds }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Effect vs event — form submit
 //
-// Kya karna hai:
-// data change pe auto-save effect? Usually blur/submit event better.
+// Task:
+// Auto-save on every data change in effect? Usually blur/submit event is better.
 //
-// Seedha matlab:
-// Har keystroke effect = spam. Debounced effect ya explicit save button prefer.
+// In simple words:
+// Effect on every keystroke = spam. Prefer debounced effect or explicit save button.
 // -----------------------------------------------------------------------------
 function AutoSaveNote({ draft }) {
   useEffect(() => {
@@ -432,11 +432,11 @@ function AutoSaveNote({ draft }) {
 // -----------------------------------------------------------------------------
 // Q22: AbortController cleanup pattern
 //
-// Kya karna hai:
-// return () => ac.abort() — in-flight fetch cancel.
+// Task:
+// return () => ac.abort() — cancel in-flight fetch.
 //
-// Seedha matlab:
-// Unmount ya dep change pe purani request band. Network + setState race fix.
+// In simple words:
+// On unmount or dep change stop old request. Fixes network + setState race.
 // -----------------------------------------------------------------------------
 function AbortFetch({ query }) {
   const [result, setResult] = useState(null);
@@ -454,11 +454,11 @@ function AbortFetch({ query }) {
 // -----------------------------------------------------------------------------
 // Q23: [ADV] Layout measurement — useLayoutEffect note
 //
-// Kya karna hai:
-// DOM measure before paint — useLayoutEffect; flicker avoid.
+// Task:
+// Measure DOM before paint — useLayoutEffect; avoid flicker.
 //
-// Seedha matlab:
-// useEffect = after paint (flash ho sakta). Layout sync = layoutEffect. Rare need.
+// In simple words:
+// useEffect = after paint (may flash). Layout sync = layoutEffect. Rare need.
 // -----------------------------------------------------------------------------
 function MeasureNote() {
   const ref = useRef(null);
@@ -471,11 +471,11 @@ function MeasureNote() {
 // -----------------------------------------------------------------------------
 // Q24: Conditional effect early return
 //
-// Kya karna hai:
-// if (!enabled) return; inside effect — subscribe mat jab off.
+// Task:
+// if (!enabled) return; inside effect — do not subscribe when off.
 //
-// Seedha matlab:
-// enabled dep me rakho. Off pe cleanup still chalega previous run ka.
+// In simple words:
+// Put enabled in deps. Off still runs cleanup from previous run.
 // -----------------------------------------------------------------------------
 function ConditionalSub({ enabled, channel }) {
   useEffect(() => {

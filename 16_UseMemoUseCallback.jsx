@@ -1,17 +1,17 @@
 // ============================================================================
 // 16 — useMemo And useCallback
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: useMemo = mehengi cooking pehle se tiffin me — deps same to dubara
-// mat paka. useCallback = function ka same reference rakh (deps same).
+// SIMPLE: useMemo = prep expensive cooking ahead in a tiffin — if deps same, don't
+// cook again. useCallback = keep the same function reference (deps same).
 //
-// Dono OPTIMIZATION tools — pehle sahi code, phir measure, phir memoize.
-// Overuse = complexity + kabhi kabhi slower (deps compare cost).
+// Both are OPTIMIZATION tools — first write correct code, then measure, then memoize.
+// Overuse = complexity + sometimes slower (deps compare cost).
 //
-// KYUN: Heavy calc; stable fn for memo children / effect deps.
+// WHY: Heavy calc; stable fn for memo children / effect deps.
 // INTERVIEW: referential equality; when NOT to memoize; deps mistakes.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -20,11 +20,11 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: useMemo heavy filter
 //
-// Kya karna hai:
-// bigList filter jab query change.
+// Task:
+// bigList filter when query changes.
 //
-// Seedha matlab:
-// Har parent keystroke pe O(n) save — jab list genuinely badi.
+// In simple words:
+// Save O(n) on every parent keystroke — when list is genuinely big.
 // -----------------------------------------------------------------------------
 function FilteredList({ items, query }) {
   const filtered = useMemo(() => {
@@ -44,11 +44,11 @@ function FilteredList({ items, query }) {
 // -----------------------------------------------------------------------------
 // Q2: useCallback stable handler
 //
-// Kya karna hai:
-// onSelect = useCallback(..., [deps]) memo child ke liye.
+// Task:
+// onSelect = useCallback(..., [deps]) for memo child.
 //
-// Seedha matlab:
-// Inline () => onSelect(id) har render naya. Callback + memo = skip render.
+// In simple words:
+// Inline () => onSelect(id) is new every render. Callback + memo = skip render.
 // -----------------------------------------------------------------------------
 function ParentList({ items }) {
   const [selected, setSelected] = useState(null);
@@ -70,11 +70,11 @@ function Row({ item, onSelect }) {
 // -----------------------------------------------------------------------------
 // Q3: Don't memo trivial math
 //
-// Kya karna hai:
-// total = a+b — useMemo waste.
+// Task:
+// total = a+b — useMemo is waste.
 //
-// Seedha matlab:
-// Cheap calc pehle se sasta. Premature optimization avoid.
+// In simple words:
+// Cheap calc is already fast. Avoid premature optimization.
 // -----------------------------------------------------------------------------
 function Sum({ a, b }) {
   const total = a + b; // ✅ no useMemo needed
@@ -84,11 +84,11 @@ function Sum({ a, b }) {
 // -----------------------------------------------------------------------------
 // Q4: Object/array dependency trap
 //
-// Kya karna hai:
-// useMemo(() => ({...}), [user.id]) — poora user object mat deps me befikr.
+// Task:
+// useMemo(() => ({...}), [user.id]) — don't put whole user object in deps carelessly.
 //
-// Seedha matlab:
-// Naya object literal parent se → memo toot. Stabilize parent ya pick fields.
+// In simple words:
+// New object literal from parent → memo breaks. Stabilize parent or pick fields.
 // -----------------------------------------------------------------------------
 function Card({ userId }) {
   const options = useMemo(() => ({ id: userId, mode: "view" }), [userId]);
@@ -98,21 +98,21 @@ function Card({ userId }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] useMemo for context value (see 11)
 //
-// Kya karna hai:
-// Provider value object memoize.
+// Task:
+// Memoize Provider value object.
 //
-// Seedha matlab:
-// Context consumers tabhi re-render jab value identity change.
+// In simple words:
+// Context consumers re-render only when value identity changes.
 // -----------------------------------------------------------------------------
 // const value = useMemo(() => ({ n, setN }), [n]);
 
 // -----------------------------------------------------------------------------
 // Q6: [MID] useCallback deps must be right
 //
-// Kya karna hai:
-// Callback me use hone wali values deps me.
+// Task:
+// Values used inside callback must be in deps.
 //
-// Seedha matlab:
+// In simple words:
 // Missing dep = stale bug. Extra = identity churn. Same rules as useEffect.
 // -----------------------------------------------------------------------------
 function Search({ query, onResults }) {
@@ -125,11 +125,11 @@ function Search({ query, onResults }) {
 // -----------------------------------------------------------------------------
 // Q7: Derived data vs state
 //
-// Kya karna hai:
+// Task:
 // sorted = useMemo(() => [...items].sort(), [items])
 //
-// Seedha matlab:
-// Sorted alag state mat — derive + optional memo.
+// In simple words:
+// Don't keep sorted as separate state — derive + optional memo.
 // -----------------------------------------------------------------------------
 function Sorted({ items }) {
   const sorted = useMemo(
@@ -142,12 +142,12 @@ function Sorted({ items }) {
 // -----------------------------------------------------------------------------
 // Q8: [MID] React Compiler note
 //
-// Kya karna hai:
-// Naye setups me compiler auto memo — phir bhi concept samjho interview ke liye.
+// Task:
+// In new setups compiler auto memoizes — still learn concept for interviews.
 //
-// Seedha matlab:
-// Manual useMemo/useCallback ab bhi legacy + intentional optimize me.
-// Yeh file teaching — pehle mental model.
+// In simple words:
+// Manual useMemo/useCallback still in legacy + intentional optimize.
+// This file is teaching — build mental model first.
 // -----------------------------------------------------------------------------
 function Concept() {
   return <p>Measure first, memo second.</p>;
@@ -156,12 +156,12 @@ function Concept() {
 // -----------------------------------------------------------------------------
 // Q9: When useMemo helps — expensive calc
 //
-// Kya karna hai:
-// 10k items sort/filter — deps [items, sortKey] pe memo.
+// Task:
+// 10k items sort/filter — memo on deps [items, sortKey].
 //
-// Seedha matlab:
-// Measurable slow render → memo try. DevTools Profiler se verify.
-// Micro lists pe memo overhead > savings.
+// In simple words:
+// Measurable slow render → try memo. Verify with DevTools Profiler.
+// On tiny lists memo overhead > savings.
 // -----------------------------------------------------------------------------
 function HeavySort({ items, keyName }) {
   const sorted = useMemo(() => {
@@ -173,26 +173,26 @@ function HeavySort({ items, keyName }) {
 // -----------------------------------------------------------------------------
 // Q10: When useMemo hurts — cheap + always new deps
 //
-// Kya karna hai:
-// useMemo(() => x + 1, [x]) jab x har render change — waste.
+// Task:
+// useMemo(() => x + 1, [x]) when x changes every render — waste.
 //
-// Seedha matlab:
-// Memo cost: memory + deps compare. Kabhi slower bana deta hai.
-// Premature optimization = complexity bina gain.
+// In simple words:
+// Memo cost: memory + deps compare. Can sometimes make things slower.
+// Premature optimization = complexity without gain.
 // -----------------------------------------------------------------------------
 function CheapPlus({ x }) {
-  return <p>{x + 1}</p>; // useMemo mat — sasta hai
+  return <p>{x + 1}</p>; // skip useMemo — it's cheap
 }
 
 // -----------------------------------------------------------------------------
 // Q11: [MID] Referential equality explained
 //
-// Kya karna hai:
-// {} === {} false — har render naya object, memo child fail.
+// Task:
+// {} === {} false — new object every render, memo child fails.
 //
-// Seedha matlab:
-// JS reference compare. useMemo/useCallback same reference preserve karte hain.
-// React.memo bhi shallow reference check karta hai props pe.
+// In simple words:
+// JS reference compare. useMemo/useCallback preserve same reference.
+// React.memo also shallow reference check on props.
 // -----------------------------------------------------------------------------
 function RefEqualityDemo() {
   const a = { n: 1 };
@@ -204,26 +204,26 @@ function RefEqualityDemo() {
 // -----------------------------------------------------------------------------
 // Q12: useCallback empty deps pitfall
 //
-// Kya karna hai:
-// useCallback(() => doThing(id), []) — id stale reh jayega.
+// Task:
+// useCallback(() => doThing(id), []) — id stays stale.
 //
-// Seedha matlab:
-// Missing dep = bug. ESLint exhaustive-deps suno.
-// Functional update ya ref pattern jab intentional stable chahiye.
+// In simple words:
+// Missing dep = bug. Listen to ESLint exhaustive-deps.
+// Functional update or ref pattern when you want intentional stability.
 // -----------------------------------------------------------------------------
 function StaleCallback({ id }) {
-  const log = useCallback(() => console.log(id), [id]); // id deps me
+  const log = useCallback(() => console.log(id), [id]); // id in deps
   return <button onClick={log}>Log {id}</button>;
 }
 
 // -----------------------------------------------------------------------------
 // Q13: useMemo for stable object to memo child
 //
-// Kya karna hai:
+// Task:
 // const config = useMemo(() => ({ theme, size }), [theme, size])
 //
-// Seedha matlab:
-// Memo child ko object prop pass — memoize object warna useless.
+// In simple words:
+// Pass object prop to memo child — memoize object or it's useless.
 // Pair pattern: memo + useMemo/useCallback.
 // -----------------------------------------------------------------------------
 function ConfigChild({ config }) {
@@ -244,13 +244,13 @@ function ConfigParent() {
 // -----------------------------------------------------------------------------
 // Q14: [MID] React 19 Compiler — auto memoization
 //
-// Kya karna hai:
-// Compiler analyze karke khud memo insert — manual kam ho sakta hai.
+// Task:
+// Compiler analyzes and inserts memo itself — less manual work possible.
 //
-// Seedha matlab:
-// Concept ab bhi interview me: referential equality, deps samjho.
-// Legacy code + edge cases me manual useMemo/useCallback rahega.
-// "Measure first" rule compiler ke baad bhi valid.
+// In simple words:
+// Concept still in interviews: referential equality, understand deps.
+// Legacy code + edge cases still need manual useMemo/useCallback.
+// "Measure first" rule still valid after compiler.
 // -----------------------------------------------------------------------------
 function CompilerNote() {
   return (
@@ -263,12 +263,12 @@ function CompilerNote() {
 // -----------------------------------------------------------------------------
 // Q15: useMemo !== only on render
 //
-// Kya karna hai:
-// Expensive init bhi: useMemo(() => buildGraph(data), [data])
+// Task:
+// Expensive init too: useMemo(() => buildGraph(data), [data])
 //
-// Seedha matlab:
-// Lazy init useState(() => ...) bhi option first mount ke liye.
-// useMemo jab data change pe rebuild chahiye.
+// In simple words:
+// Lazy init useState(() => ...) also option for first mount.
+// useMemo when you need rebuild on data change.
 // -----------------------------------------------------------------------------
 function GraphView({ data }) {
   const graph = useMemo(() => data.map((d) => ({ ...d, score: d.v * 2 })), [data]);
@@ -278,11 +278,11 @@ function GraphView({ data }) {
 // -----------------------------------------------------------------------------
 // Q16: Inline function in JSX — when OK
 //
-// Kya karna hai:
+// Task:
 // onClick={() => setX(1)} — cheap child, no memo → fine.
 //
-// Seedha matlab:
-// Har jagah useCallback mat lagao. Memo child + list row tab matter.
+// In simple words:
+// Don't useCallback everywhere. Matters for memo child + list rows.
 // Readability > micro-opt usually.
 // -----------------------------------------------------------------------------
 function InlineOk() {
@@ -293,12 +293,12 @@ function InlineOk() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] useCallback for effect dependency stability
 //
-// Kya karna hai:
+// Task:
 // const load = useCallback(...); useEffect(() => { load() }, [load]);
 //
-// Seedha matlab:
-// Effect ko stable fn chahiye warna infinite loop / extra runs.
-// Alternative: logic effect ke andar inline.
+// In simple words:
+// Effect needs stable fn or infinite loop / extra runs.
+// Alternative: put logic inline inside effect.
 // -----------------------------------------------------------------------------
 function EffectStable({ userId }) {
   const load = useCallback(async () => {
@@ -313,26 +313,26 @@ function EffectStable({ userId }) {
 // -----------------------------------------------------------------------------
 // Q18: Memoizing children JSX — usually wrong
 //
-// Kya karna hai:
+// Task:
 // useMemo(() => <Expensive />, []) — rare, often smell.
 //
-// Seedha matlab:
-// Component memo wrap better than memo JSX element.
-// children element har render naya — parent memo strategy socho.
+// In simple words:
+// Wrap component with memo better than memo JSX element.
+// children element new every render — rethink parent memo strategy.
 // -----------------------------------------------------------------------------
 function MemoJsxNote() {
-  return <p>useMemo JSX ke liye last resort — React.memo component pe.</p>;
+  return <p>useMemo for JSX is last resort — use React.memo on component.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q19: Deps array reference — items prop
 //
-// Kya karna hai:
-// Parent har render items={[...]} naya array → useMemo rerun.
+// Task:
+// Parent items={[...]} new array every render → useMemo reruns.
 //
-// Seedha matlab:
-// Stabilize data source parent me. Redux/state same ref jab data same.
-// Memo downstream tabhi kaam jab upstream stable.
+// In simple words:
+// Stabilize data source in parent. Redux/state same ref when data same.
+// Memo downstream only works when upstream is stable.
 // -----------------------------------------------------------------------------
 function StableItemsParent() {
   const [items] = useState([{ id: 1, name: "a" }]); // stable ref
@@ -342,12 +342,12 @@ function StableItemsParent() {
 // -----------------------------------------------------------------------------
 // Q20: [MID] Premature optimization checklist
 //
-// Kya karna hai:
-// 1) Profile 2) Bottleneck confirm 3) Memo targeted 4) Re-profile.
+// Task:
+// 1) Profile 2) Confirm bottleneck 3) Memo targeted 4) Re-profile.
 //
-// Seedha matlab:
-// Bina measure memo = guesswork. Interview: "default no memo until proven slow."
-// Readable code pehle, optimize baad me.
+// In simple words:
+// Memo without measure = guesswork. Interview: "default no memo until proven slow."
+// Readable code first, optimize later.
 // -----------------------------------------------------------------------------
 function OptChecklist() {
   return <ol><li>Profile</li><li>Prove slow</li><li>Memo surgical</li></ol>;
@@ -356,12 +356,12 @@ function OptChecklist() {
 // -----------------------------------------------------------------------------
 // Q21: useMemo + useCallback together in list
 //
-// Kya karna hai:
+// Task:
 // Parent: filtered useMemo, onToggle useCallback, Row memo.
 //
-// Seedha matlab:
-// Full stack optimization pattern — sirf big lists me worth.
-// Ek piece missing → poora chain fail.
+// In simple words:
+// Full stack optimization pattern — only worth it for big lists.
+// One missing piece → whole chain fails.
 // -----------------------------------------------------------------------------
 function OptimizedList({ todos }) {
   const [filter, setFilter] = useState("");
@@ -392,11 +392,11 @@ const MemoRow = memo(function MemoRow({ todo, onToggle }) {
 // -----------------------------------------------------------------------------
 // Q22: Breaking memo with inline object spread
 //
-// Kya karna hai:
-// <Child {...objectLit} /> har render naya spread object.
+// Task:
+// <Child {...objectLit} /> new spread object every render.
 //
-// Seedha matlab:
-// Pick primitives ya memoize props object.
+// In simple words:
+// Pick primitives or memoize props object.
 // spread + inline = referential death.
 // -----------------------------------------------------------------------------
 function SpreadTrap() {

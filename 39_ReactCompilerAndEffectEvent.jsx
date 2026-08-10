@@ -1,24 +1,24 @@
 // ============================================================================
 // 39 — React Compiler + useEffectEvent (React 19.2)
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Do alag tools, aksar ek saath discuss:
+// SIMPLE: Two separate tools, often discussed together:
 //
 // 1) React Compiler (aka React Forget) —
-//    build-time tool jo automatically memoize soch (useMemo/useCallback/React.memo
-//    manually kam). Abhi opt-in / ecosystem adopt — "magic compiler on" samajh ke
-//    rules of React follow karo (pure render, etc.).
+//    build-time tool that automatically thinks in terms of memoization (useMemo/useCallback/React.memo
+//    less manually). Still opt-in / ecosystem adoption — understand "magic compiler on" and
+//    still follow the rules of React (pure render, etc.).
 //
 // 2) useEffectEvent (React 19.2) —
-//    Effect ke ANDAR aisa function jo HAMESHA latest props/state padhe,
-//    lekin effect ko dubara run na karaye sirf un values ke change pe.
-//    Ye "stale closure" vs "too many effect runs" tension solve karta.
+//    A function INSIDE an effect that ALWAYS reads the latest props/state,
+//    but does not re-run the effect just because those values changed.
+//    This solves the tension between "stale closure" and "too many effect runs".
 //
-// ❌ GALAT use: dependency array khali rakhne / eslint suppress karne ka shortcut.
-// ✅ SAHI use: effect subscribe logic stable; event handler ke andar fresh values.
+// ❌ WRONG use: a shortcut to keep an empty dependency array / suppress eslint.
+// ✅ CORRECT use: keep effect subscribe logic stable; use fresh values inside the event handler.
 //
-// KYUN: 19.2 interviews + "compiler se memo hata do?" nuance.
+// WHY: 19.2 interviews + the nuance of "can we remove memo because of the compiler?".
 // INTERVIEW: EffectEvent ≠ missing dep fix; compiler constraints.
 //
 // ============================================================================
@@ -26,13 +26,13 @@
 import { useState, useEffect, useEffectEvent } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: React Compiler — seedha matlab
+// Q1: React Compiler — in simple words
 //
-// Seedha matlab:
-// Compiler analyze karta: kaunsa JSX/calc cache ho sakta.
-// Tum manually React.memo har jagah nahi chipkate.
-// Phir bhi: impure render (math.random during render), mutating props —
-// compiler + React dono naraz.
+// In simple words:
+// The compiler analyzes which JSX/calc can be cached.
+// You do not manually slap React.memo everywhere.
+// Still: impure render (math.random during render), mutating props —
+// both the compiler and React will be unhappy.
 // -----------------------------------------------------------------------------
 const compilerIdea = {
   goal: "auto-memoize safe values/components",
@@ -41,11 +41,11 @@ const compilerIdea = {
 };
 
 // -----------------------------------------------------------------------------
-// Q2: [MID] Compiler aane se useMemo hata dein?
+// Q2: [MID] Should we remove useMemo when the compiler arrives?
 //
-// Seedha matlab:
+// In simple words:
 // Gradually: measure, follow compiler docs/compatibility.
-// Manual memo ab bhi valid jab intentional / compiler off / edge cases.
+// Manual memo is still valid when intentional / compiler off / edge cases.
 // Interview: "compiler reduces NEED, not understanding of referential equality".
 // -----------------------------------------------------------------------------
 export function ExpensiveList({ items }) {
@@ -64,9 +64,9 @@ export function ExpensiveList({ items }) {
 // -----------------------------------------------------------------------------
 // Q3: Stale closure problem (why EffectEvent exists)
 //
-// Seedha matlab:
-// Effect me handler [] deps ke saath — andar count PURANA.
-// count deps me daalo — effect har count pe re-subscribe (waste / bugs).
+// In simple words:
+// Effect handler with [] deps — count inside is OLD.
+// Put count in deps — effect re-subscribes on every count change (waste / bugs).
 // -----------------------------------------------------------------------------
 export function StaleChatBad({ roomId }) {
   const [messages, setMessages] = useState([]);
@@ -74,13 +74,13 @@ export function StaleChatBad({ roomId }) {
 
   useEffect(() => {
     function onMessage(msg) {
-      // ❌ agar count yahan use aur deps [roomId] only → stale count
+      // ❌ if count is used here and deps are [roomId] only → stale count
       console.log("got", msg, "count was", count);
       setMessages((m) => [...m, msg]);
     }
     // fakeSubscribe(roomId, onMessage);
     // return () => fakeUnsubscribe(roomId, onMessage);
-  }, [roomId, count]); // count se re-subscribe — sometimes unwanted
+  }, [roomId, count]); // count causes re-subscribe — sometimes unwanted
 
   return (
     <button onClick={() => setCount((c) => c + 1)}>
@@ -92,10 +92,10 @@ export function StaleChatBad({ roomId }) {
 // -----------------------------------------------------------------------------
 // Q4: useEffectEvent — latest values, stable effect deps
 //
-// Seedha matlab:
+// In simple words:
 // onMessage = useEffectEvent((msg) => { ... use latest count ... })
-// Effect sirf [roomId] pe subscribe.
-// Event function identity effect deps me NAHI dalni.
+// Effect subscribes only on [roomId].
+// Do NOT put the event function identity in effect deps.
 // -----------------------------------------------------------------------------
 export function ChatWithEffectEvent({ roomId }) {
   const [messages, setMessages] = useState([]);
@@ -125,9 +125,9 @@ export function ChatWithEffectEvent({ roomId }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] DON'T use EffectEvent to silence eslint
 //
-// Seedha matlab:
-// Agar data effect ke RUN trigger me hona chahiye (fetch id change),
-// woh dependency ME hona chahiye — EffectEvent me mat chhupao.
+// In simple words:
+// If data should trigger the effect RUN (fetch id change),
+// it belongs in the dependency array — do not hide it in EffectEvent.
 // EffectEvent = "event fired later, read latest".
 // Reactive input to effect = real dependency.
 // -----------------------------------------------------------------------------
@@ -153,8 +153,8 @@ export function FetchUser({ userId }) {
 // -----------------------------------------------------------------------------
 // Q6: Analytics click — EffectEvent-shaped thinking
 //
-// Seedha matlab:
-// Subscribe once; jab event aaye tab latest theme/user padho.
+// In simple words:
+// Subscribe once; when the event fires, read the latest theme/user.
 // Classic EffectEvent fit.
 // -----------------------------------------------------------------------------
 export function TrackClicks({ userId, theme }) {
@@ -176,10 +176,10 @@ export function TrackClicks({ userId, theme }) {
 // -----------------------------------------------------------------------------
 // Q7: React 19.2 Activity (brief)
 //
-// Seedha matlab:
-// Activity = UI ko hide/show with better semantics than display:none hacks
+// In simple words:
+// Activity = hide/show UI with better semantics than display:none hacks
 // (state preserve / priority — follow current React 19.2 docs).
-// Overview pehle file 28; yahan sirf yaad: "exists, don't invent API from memory".
+// Overview in file 28 first; here just remember: "exists, don't invent API from memory".
 // -----------------------------------------------------------------------------
 const activityNote =
   "Activity in 19.2: check official docs for hide/show + preserve patterns.";
@@ -187,10 +187,10 @@ const activityNote =
 // -----------------------------------------------------------------------------
 // Q8: [MID] Compiler + Effects together
 //
-// Seedha matlab:
-// Compiler re-renders kam kare; effects phir bhi sync external systems.
-// Effects ko "derive state" ke liye mat use karo — calculate during render.
-// EffectEvent external event/subscribe paths clean rakhe.
+// In simple words:
+// The compiler reduces re-renders; effects still sync external systems.
+// Do not use effects to "derive state" — calculate during render.
+// EffectEvent keeps external event/subscribe paths clean.
 // -----------------------------------------------------------------------------
 const together = {
   compiler: "render cost / referential stability",
@@ -201,7 +201,7 @@ const together = {
 // -----------------------------------------------------------------------------
 // Q9: Interview closer
 //
-// Seedha matlab:
+// In simple words:
 // "Compiler memoizes safely when code follows Rules of React.
 // useEffectEvent latest values in effect callbacks — NOT a deps escape hatch.
 // Missing dep that should re-fire effect = still a bug."
@@ -212,10 +212,10 @@ export const interviewCloser =
 // -----------------------------------------------------------------------------
 // Q10: [MID] React Compiler — what breaks memo assumptions
 //
-// Kya karna hai:
+// Task:
 // Mutating props, context, or module vars during render — compiler can't save you.
 //
-// Seedha matlab:
+// In simple words:
 // Pure render: same props+state → same JSX output.
 // React 18 manual memo also fails with impure render.
 // Compiler opt-in project config — not global React default yet.
@@ -232,10 +232,10 @@ const compilerBreaks = [
 // -----------------------------------------------------------------------------
 // Q11: Compiler vs React.memo — coexistence
 //
-// Kya karna hai:
-// Compiler on hone pe bhi explicit memo harmful nahi — redundant ho sakta.
+// Task:
+// Even with compiler on, explicit memo is not harmful — may be redundant.
 //
-// Seedha matlab:
+// In simple words:
 // Library components export memo for consumers without compiler.
 // React 18 libs still ship React.memo — valid.
 // Gradual adoption: enable compiler on app, profile, remove redundant memos.
@@ -248,14 +248,14 @@ export function CompilerMemoCoexist() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] useEffectEvent — NOT callable during render
 //
-// Kya karna hai:
-// onMessage() render me mat bulao — sirf effect/subscription callback ke andar.
+// Task:
+// Do not call onMessage() during render — only inside effect/subscription callback.
 //
-// Seedha matlab:
-// EffectEvent function render phase me forbidden — rules similar event handler.
+// In simple words:
+// Calling EffectEvent function during render is forbidden — rules similar to event handler.
 // React 19.2 new — older versions lack hook.
 // React 18 workaround: ref holding latest callback manually (callback ref pattern).
-// Trap: EffectEvent ko normal event handler ki tarah JSX onClick me mat daalo blindly.
+// Trap: do not blindly put EffectEvent on JSX onClick like a normal event handler.
 // -----------------------------------------------------------------------------
 export function EffectEventRenderTrap() {
   const log = useEffectEvent(() => {
@@ -271,12 +271,12 @@ export function EffectEventRenderTrap() {
 // -----------------------------------------------------------------------------
 // Q13: Ref pattern before EffectEvent (React 18 style)
 //
-// Kya karna hai:
+// Task:
 // latestCallbackRef.current = fn; effect subscribes stable wrapper calling ref.current().
 //
-// Seedha matlab:
+// In simple words:
 // Manual latest ref pattern — EffectEvent replaces boilerplate.
-// React 18 codebase me yeh pattern common tha subscriptions me.
+// This pattern was common in React 18 codebases for subscriptions.
 // Migration 19.2: replace ref callback bridge with useEffectEvent where fit.
 // Still valid without 19.2 — don't block upgrade.
 // -----------------------------------------------------------------------------
@@ -286,12 +286,12 @@ const react18LatestRefPattern =
 // -----------------------------------------------------------------------------
 // Q14: [MID] EffectEvent vs useCallback deps
 //
-// Kya karna hai:
-// useCallback(fn, [many deps]) effect me pass → deps change → resubscribe.
+// Task:
+// Pass useCallback(fn, [many deps]) to effect → deps change → resubscribe.
 //
-// Seedha matlab:
+// In simple words:
 // EffectEvent when values needed at event time not subscription time.
-// useCallback still fine normal JSX handlers ke liye.
+// useCallback is still fine for normal JSX handlers.
 // React 18: useCallback + deps on handler passed to effect → same resubscribe issue.
 // Choose: reactive deps → put in effect deps; non-reactive read → EffectEvent.
 // -----------------------------------------------------------------------------
@@ -306,11 +306,11 @@ export function EffectEventVsCallback() {
 // -----------------------------------------------------------------------------
 // Q15: Activity API — when to look (19.2)
 //
-// Kya karna hai:
-// Hidden tabs preserving state — Activity component docs follow; don't invent API.
+// Task:
+// Hidden tabs preserving state — follow Activity component docs; do not invent API.
 //
-// Seedha matlab:
-// Alternative display:none + keep mounted hacks possibly cleaner semantics.
+// In simple words:
+// Alternative to display:none + keep mounted hacks possibly cleaner semantics.
 // React 18: conditional render loses state unless keep mounted manually.
 // Exact props/check official 19.2 release notes — interview say "know it exists".
 // Framework integration may vary.
@@ -321,10 +321,10 @@ const activityWhen =
 // -----------------------------------------------------------------------------
 // Q16: [MID] Compiler + Context unstable value
 //
-// Kya karna hai:
-// Compiler context read optimize kar sakta but unstable Provider value still re-renders consumers.
+// Task:
+// Compiler may optimize context read but unstable Provider value still re-renders consumers.
 //
-// Seedha matlab:
+// In simple words:
 // Compiler ≠ fix context value={{}} trap automatically always.
 // React 18 useMemo on provider value; 19 same (file 36).
 // Profile before assuming compiler solved perf.
@@ -337,10 +337,10 @@ export function CompilerContextInteraction() {
 // -----------------------------------------------------------------------------
 // Q17: [ADV] EffectEvent in Strict Mode dev
 //
-// Kya karna hai:
+// Task:
 // Effect double setup dev — subscription must cleanup; EffectEvent identity stable.
 //
-// Seedha matlab:
+// In simple words:
 // React 18 Strict Mode same double invoke.
 // EffectEvent designed stable across renders — don't put in effect deps.
 // Verify cleanup on unmount still runs.
@@ -352,10 +352,10 @@ const effectEventStrict =
 // -----------------------------------------------------------------------------
 // Q18: [MID] When NOT enable React Compiler yet
 //
-// Kya karna hai:
+// Task:
 // Legacy code impure, incompatible libs, no time to fix eslint violations.
 //
-// Seedha matlab:
+// In simple words:
 // Opt-in toolchain — Babel/plugin setup required.
 // React 18 apps run fine without compiler indefinitely.
 // Team bandwidth to fix purity violations first.
@@ -370,14 +370,14 @@ const whenNotCompiler = [
 // -----------------------------------------------------------------------------
 // Q19: [ADV] derive during render vs EffectEvent
 //
-// Kya karna hai:
-// displayed = props.a + props.b → render me; EffectEvent mat lagao.
+// Task:
+// displayed = props.a + props.b → in render; do not use EffectEvent.
 //
-// Seedha matlab:
-// EffectEvent external event timing ke liye — websocket message, DOM event.
+// In simple words:
+// EffectEvent is for external event timing — websocket message, DOM event.
 // React 18: derive in render same rule.
-// Compiler loves derived render values — effects se derive mat karo.
-// Missing dep in effect fetch userId — EffectEvent WRONG fix; userId dep me hona chahiye (Q5).
+// Compiler loves derived render values — do not derive from effects.
+// Missing dep in effect fetch userId — EffectEvent is WRONG fix; userId must be in deps (Q5).
 // -----------------------------------------------------------------------------
 export function DeriveInRender({ a, b }) {
   const sum = a + b;
@@ -387,13 +387,13 @@ export function DeriveInRender({ a, b }) {
 // -----------------------------------------------------------------------------
 // Q20: [MID] Migration React 18 → 19.2 EffectEvent
 //
-// Kya karna hai:
+// Task:
 // Find ref-bridge patterns in effects → replace with useEffectEvent stepwise.
 //
-// Seedha matlab:
+// In simple words:
 // Requires react 19.2+ — feature detect / version check docs.
-// React 18 latestRef in subscription effects common migration target.
-// Don't migrate effect deps that should stay reactive.
+// React 18 latestRef in subscription effects is a common migration target.
+// Do not migrate effect deps that should stay reactive.
 // Test subscription behavior after refactor thoroughly.
 // -----------------------------------------------------------------------------
 const effectEventMigration =
@@ -402,10 +402,10 @@ const effectEventMigration =
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Compiler interview traps
 //
-// Kya karna hai:
+// Task:
 // "Compiler on so Rules of React optional?" — NO. "All useMemo delete?" — measure first.
 //
-// Seedha matlab:
+// In simple words:
 // Compiler doesn't remove need for keys, pure components, proper state design.
 // React 18 devs still need referential equality understanding debugging.
 // Third-party memo expectations may remain.
@@ -421,15 +421,15 @@ export const compilerInterviewTraps = [
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Full stack answer — Compiler + EffectEvent + React 19 forms
 //
-// Kya karna hai:
+// Task:
 // Tie together: compiler reduces render cost; actions handle async forms; EffectEvent cleans subscriptions.
 //
-// Seedha matlab:
+// In simple words:
 // Orthogonal tools — not replacements for each other.
 // React 18 upgrade path: 19 hooks first, compiler optional, EffectEvent when on 19.2.
 // Activity exploratory 19.2.
 // Interview close: purity + correct deps + Actions for forms + EffectEvent for effect events only.
-// Common bug: EffectEvent to hide fetch deps — still wrong.
+// Common bug: using EffectEvent to hide fetch deps — still wrong.
 // -----------------------------------------------------------------------------
 export const fullStackReact19_2Answer = {
   compiler: "build-time memoization — purity required",

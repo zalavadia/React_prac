@@ -1,29 +1,29 @@
 // ============================================================================
 // 02 — Functional Components
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Component = kitchen ka station (chai counter, tandoor). Har station
-// apna kaam karta hai. Functional component = normal JS function jo JSX return kare.
-// Naam Capital se start — <Button /> React ko batata hai yeh component hai, HTML tag nahi.
+// SIMPLE: Component = a station in the kitchen (tea counter, tandoor). Each station
+// does its own job. Functional component = a normal JS function that returns JSX.
+// Name starts with Capital — <Button /> tells React this is a component, not an HTML tag.
 //
-// Ek file me kai components ho sakte hain. App = root jahan sab jodte ho.
-// Props baad me (03). Abhi: function banao, return JSX, use karo.
+// One file can have many components. App = root where you wire everything together.
+// Props come later (03). For now: write a function, return JSX, use it.
 //
-// KYUN: React aaj functional components + hooks pe chalta hai. Class purani style.
-// INTERVIEW: Why capital name; pure function soch; default vs named export.
-// Vite/React 19 project me use — teaching file.
+// WHY: React today runs on functional components + hooks. Class components are the old style.
+// INTERVIEW: Why capital name; pure function idea; default vs named export.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
 // -----------------------------------------------------------------------------
 // Q1: Simplest functional component
 //
-// Kya karna hai:
+// Task:
 // function Title() { return <h1>My App</h1> }
 //
-// Seedha matlab:
-// Function + return JSX = component. Bas itna.
+// In simple words:
+// Function + return JSX = component. That is all.
 // -----------------------------------------------------------------------------
 function Title() {
   return <h1>My App</h1>;
@@ -32,22 +32,22 @@ function Title() {
 // -----------------------------------------------------------------------------
 // Q2: Arrow function component
 //
-// Kya karna hai:
+// Task:
 // const Subtitle = () => <p>Learn React</p>
 //
-// Seedha matlab:
-// Arrow bhi chalega. Short return me () optional wrapping.
+// In simple words:
+// Arrow functions work too. Short return can skip extra () wrapping.
 // -----------------------------------------------------------------------------
 const Subtitle = () => <p>Learn React</p>;
 
 // -----------------------------------------------------------------------------
-// Q3: Component ke andar doosra component
+// Q3: Component inside another component
 //
-// Kya karna hai:
-// Header me Logo use karo — composition.
+// Task:
+// Use Logo inside Header — composition.
 //
-// Seedha matlab:
-// Bade UI = chhote pieces jodna. Copy-paste mat karo — component reuse.
+// In simple words:
+// Big UI = join small pieces. Do not copy-paste — reuse components.
 // -----------------------------------------------------------------------------
 function Logo() {
   return <span className="logo">⚛️ Prac</span>;
@@ -65,11 +65,11 @@ function Header() {
 // -----------------------------------------------------------------------------
 // Q4: Multiple returns? Early return pattern
 //
-// Kya karna hai:
-// Agar loading true ho to <p>Loading...</p>, warna content.
+// Task:
+// If loading is true, return <p>Loading...</p>, otherwise content.
 //
-// Seedha matlab:
-// Component me early return allowed — clean if/else.
+// In simple words:
+// Early return is allowed in components — clean if/else.
 // (Conditional rendering detail: 06)
 // -----------------------------------------------------------------------------
 function Panel({ loading }) {
@@ -80,11 +80,11 @@ function Panel({ loading }) {
 // -----------------------------------------------------------------------------
 // Q5: Default export App pattern
 //
-// Kya karna hai:
-// App me Title + Subtitle render karo.
+// Task:
+// Render Title + Subtitle inside App.
 //
-// Seedha matlab:
-// App usually root component. main.jsx me <App /> mount hota hai.
+// In simple words:
+// App is usually the root component. main.jsx mounts <App />.
 // -----------------------------------------------------------------------------
 function App() {
   return (
@@ -97,17 +97,17 @@ function App() {
 }
 
 // -----------------------------------------------------------------------------
-// Q6: [MID] Component = pure UI function soch
+// Q6: [MID] Component = pure UI function mindset
 //
-// Kya karna hai:
-// Same props → same JSX. Side-effect render me mat daalo (alert, fetch).
+// Task:
+// Same props → same JSX. Do not put side effects in render (alert, fetch).
 //
-// Seedha matlab:
-// Render predictible hona chahiye. Effects ke liye useEffect (09).
+// In simple words:
+// Render should be predictable. Use useEffect (09) for effects.
 // Interview: "Don't cause side effects during render."
 // -----------------------------------------------------------------------------
 function PurePrice({ amount }) {
-  // GOOD: sirf calculate + return
+  // GOOD: only calculate + return
   const tax = amount * 0.18;
   return <p>Total: {amount + tax}</p>;
   // BAD during render: fetch(...); localStorage.setItem(...)
@@ -116,36 +116,36 @@ function PurePrice({ amount }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Named vs default export
 //
-// Kya karna hai:
-// Named export { Title } vs export default App — kab kya.
+// Task:
+// Named export { Title } vs export default App — when to use which.
 //
-// Seedha matlab:
-// Default: ek main cheez file se. Named: kai pieces.
-// Team style follow karo; mix confuse karta hai.
+// In simple words:
+// Default: one main thing from a file. Named: many pieces.
+// Follow team style; mixing both causes confusion.
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Q8: [MID] Component file organization
 //
-// Kya karna hai:
-// Ek component ek file (team rule) YA folder/index — project convention follow.
+// Task:
+// One component per file (team rule) OR folder/index — follow project convention.
 //
-// Seedha matlab:
+// In simple words:
 // Button.jsx, Button.module.css — colocate related files.
-// Barrel export (index.js) se import clean: import { Button } from "./ui".
+// Barrel export (index.js) keeps imports clean: import { Button } from "./ui".
 // -----------------------------------------------------------------------------
 // components/Button/Button.jsx
 // components/Button/index.js  → export { default } from "./Button";
 
 // -----------------------------------------------------------------------------
-// Q9: Composition — small pieces jodna
+// Q9: Composition — join small pieces
 //
-// Kya karna hai:
-// Page = Sidebar + Content — har piece alag function.
+// Task:
+// Page = Sidebar + Content — each piece is a separate function.
 //
-// Seedha matlab:
-// Bada component copy-paste nahi — chhote reusable blocks.
-// Real apps me composition > inheritance (React me inheritance rare).
+// In simple words:
+// Do not copy-paste big components — use small reusable blocks.
+// Real apps: composition > inheritance (inheritance is rare in React).
 // -----------------------------------------------------------------------------
 function Sidebar() {
   return <aside>Menu</aside>;
@@ -167,11 +167,11 @@ function Page() {
 // -----------------------------------------------------------------------------
 // Q10: props.children as composition slot
 //
-// Kya karna hai:
-// Card wrapper children accept kare — parent decide kare andar kya.
+// Task:
+// Card wrapper accepts children — parent decides what goes inside.
 //
-// Seedha matlab:
-// children = "slot" pattern. Layout components isi se flexible hote hain.
+// In simple words:
+// children = "slot" pattern. Layout components stay flexible this way.
 // -----------------------------------------------------------------------------
 function Card({ title, children }) {
   return (
@@ -192,14 +192,14 @@ function CardDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Kab component split karein?
+// Q11: When to split a component?
 //
-// Kya karna hai:
-// Same JSX do jagah copy? → extract. Alag responsibility? → naya component.
+// Task:
+// Same JSX copied in two places? → extract. Different responsibility? → new component.
 //
-// Seedha matlab:
-// Rule of thumb: reuse, readability, testability. Har line pe mat todo.
-// Over-splitting bhi confusing — balance.
+// In simple words:
+// Rule of thumb: reuse, readability, testability. Do not split every line.
+// Over-splitting is also confusing — find balance.
 // -----------------------------------------------------------------------------
 function UserAvatar({ name }) {
   return <span className="avatar">{name[0]}</span>;
@@ -216,14 +216,14 @@ function UserRow({ name, role }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: displayName debugging ke liye
+// Q12: displayName for debugging
 //
-// Kya karna hai:
-// Anonymous arrow ko displayName do — DevTools me naam dikhe.
+// Task:
+// Give anonymous arrow a displayName — name shows in DevTools.
 //
-// Seedha matlab:
-// React DevTools me component tree readable hota hai.
-// HOC/wrapper me especially useful.
+// In simple words:
+// React DevTools makes the component tree readable.
+// Especially useful for HOC/wrapper components.
 // -----------------------------------------------------------------------------
 const Mystery = () => <span>?</span>;
 Mystery.displayName = "MysteryWidget";
@@ -231,11 +231,11 @@ Mystery.displayName = "MysteryWidget";
 // -----------------------------------------------------------------------------
 // Q13: Fragment return — no extra DOM
 //
-// Kya karna hai:
-// Table row jaisi jagah extra div nahi — <> return.
+// Task:
+// Places like table rows — no extra div — return <>.
 //
-// Seedha matlab:
-// DOM structure matter kare (CSS grid, table) — Fragment bachata hai.
+// In simple words:
+// When DOM structure matters (CSS grid, table) — Fragment saves you.
 // -----------------------------------------------------------------------------
 function PairLines() {
   return (
@@ -249,12 +249,12 @@ function PairLines() {
 // -----------------------------------------------------------------------------
 // Q14: Conditional component type
 //
-// Kya karna hai:
-// as prop se tag badlo — <Text as="h1" /> vs as="p".
+// Task:
+// Change tag with as prop — <Text as="h1" /> vs as="p".
 //
-// Seedha matlab:
-// Ek component multiple HTML elements render kar sakta hai.
-// Design systems me common — polymorphic component.
+// In simple words:
+// One component can render multiple HTML elements.
+// Common in design systems — polymorphic component.
 // -----------------------------------------------------------------------------
 function Text({ as: Tag = "p", children }) {
   return <Tag>{children}</Tag>;
@@ -264,12 +264,12 @@ function Text({ as: Tag = "p", children }) {
 // -----------------------------------------------------------------------------
 // Q15: Wrapper component pattern
 //
-// Kya karna hai:
-// StyledBox — className + children wrap kare.
+// Task:
+// StyledBox — wraps className + children.
 //
-// Seedha matlab:
-// Shared styling/layout bina har jagah div repeat kiye.
-// props spread se onClick etc pass through (03).
+// In simple words:
+// Shared styling/layout without repeating div everywhere.
+// Pass through onClick etc with props spread (03).
 // -----------------------------------------------------------------------------
 function StyledBox({ className = "", children, ...rest }) {
   return (
@@ -280,29 +280,29 @@ function StyledBox({ className = "", children, ...rest }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] Render me side-effect anti-pattern
+// Q16: [MID] Side-effect anti-pattern in render
 //
-// Kya karna hai:
-// Render ke dauran fetch/alert/localStorage MAT karo.
+// Task:
+// Do NOT fetch/alert/localStorage during render.
 //
-// Seedha matlab:
-// Side effects = useEffect (09) ya event handlers.
-// Render = sirf UI calculate. Violation = bugs + slow re-renders.
+// In simple words:
+// Side effects = useEffect (09) or event handlers.
+// Render = only calculate UI. Violation = bugs + slow re-renders.
 // -----------------------------------------------------------------------------
 function SafeCounter({ count }) {
-  // ❌ render me: console.log("side effect every render");
+  // ❌ in render: console.log("side effect every render");
   return <p>Count: {count}</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q17: [MID] Component variable me store (careful)
+// Q17: [MID] Store component in a variable (careful)
 //
-// Kya karna hai:
+// Task:
 // const Widget = condition ? A : B; return <Widget /> — valid pattern.
 //
-// Seedha matlab:
-// Component reference variable me rakh ke render — dynamic choice.
-// Capital letter variable = React component treat karega.
+// In simple words:
+// Store component reference in variable — dynamic choice.
+// Capital letter variable = React treats it as a component.
 // -----------------------------------------------------------------------------
 function Icon({ big }) {
   const Size = big ? BigIcon : SmallIcon;
@@ -318,12 +318,12 @@ function SmallIcon() {
 }
 
 // -----------------------------------------------------------------------------
-// Q18: [ADV] Higher-order layout — children function nahi, JSX
+// Q18: [ADV] Higher-order layout — children function no, JSX yes
 //
-// Kya karna hai:
-// AuthGate — allowed false to fallback, warna children.
+// Task:
+// AuthGate — if allowed is false, show fallback, else children.
 //
-// Seedha matlab:
+// In simple words:
 // Wrapper decides render based on logic — composition + early return.
 // -----------------------------------------------------------------------------
 function AuthGate({ allowed, fallback, children }) {
@@ -334,11 +334,11 @@ function AuthGate({ allowed, fallback, children }) {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] List of components pattern
 //
-// Kya karna hai:
-// sections array me { id, Component } — map se render.
+// Task:
+// sections array with { id, Component } — render with map.
 //
-// Seedha matlab:
-// Config-driven UI. Dashboard tabs, wizard steps — data se component pick.
+// In simple words:
+// Config-driven UI. Dashboard tabs, wizard steps — pick component from data.
 // -----------------------------------------------------------------------------
 function SectionA() {
   return <p>Section A</p>;
@@ -364,14 +364,14 @@ function SectionList() {
 }
 
 // -----------------------------------------------------------------------------
-// Q20: [ADV] Memo-friendly — props stable rakho soch
+// Q20: [ADV] Memo-friendly — keep props stable mindset
 //
-// Kya karna hai:
-// Inline object/function har render naya — memo child ko confuse (16).
+// Task:
+// Inline object/function is new every render — confuses memo child (16).
 //
-// Seedha matlab:
-// function PriceRow({ style, onBuy }) — parent me inline {} / () => har bar new ref.
-// Abhi basics; memo baad me — lekin component design me yaad rakho.
+// In simple words:
+// function PriceRow({ style, onBuy }) — parent inline {} / () => new ref every time.
+// Basics for now; memo later — but remember in component design.
 // -----------------------------------------------------------------------------
 function PriceRow({ label, price }) {
   return (
@@ -398,12 +398,12 @@ function PriceList() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Single responsibility component
 //
-// Kya karna hai:
-// Fetch + UI + form ek function me mat ghusao — split karo.
+// Task:
+// Do not cram fetch + UI + form in one function — split them.
 //
-// Seedha matlab:
-// Real-world: UserList (display) + useUsers (data hook 11) alag.
-// Test aur reuse easy hota hai.
+// In simple words:
+// Real-world: UserList (display) + useUsers (data hook 11) separate.
+// Testing and reuse become easy.
 // -----------------------------------------------------------------------------
 function TodoItem({ text, done }) {
   return (
@@ -424,12 +424,12 @@ function TodoList({ items }) {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview trap — lowercase = DOM tag
 //
-// Kya karna hai:
-// function button() {} → <button /> HTML, <Button /> component.
+// Task:
+// function button() {} → <button /> is HTML, <Button /> is a component.
 //
-// Seedha matlab:
+// In simple words:
 // Lowercase name = built-in DOM element. Capital = custom component.
-// Bug: component import galat / typo → silent wrong element.
+// Bug: wrong import / typo → silent wrong element.
 // -----------------------------------------------------------------------------
 function CustomButton({ children }) {
   return <button type="button" className="custom">{children}</button>;

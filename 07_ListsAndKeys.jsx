@@ -1,31 +1,31 @@
 // ============================================================================
 // 07 — Lists And Keys
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: List = thali me kai bowls. map() se array → JSX items.
-// key = har item ka naam tag — React ko pata chale kaun moved/added/deleted.
-// Bina sahi key ke React confuse — galat state, flicker, bugs.
+// SIMPLE: List = many bowls on a tray. map() turns array → JSX items.
+// key = name tag for each item — React knows what moved/added/deleted.
+// Without correct keys React gets confused — wrong state, flicker, bugs.
 //
-// key={index} last resort — list reorder/delete pe toot sakti hai.
-// Stable id (db id, uuid) best. key prop child ko props me nahi milta.
+// key={index} is last resort — breaks on reorder/delete.
+// Stable id (db id, uuid) is best. key prop is not passed to child as props.
 //
-// KYUN: Har dashboard/table/feed list pe chalta hai.
+// WHY: Every dashboard/table/feed uses lists.
 // INTERVIEW: why keys; index as key problem; reconciliation (26).
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
 import { Fragment, useState } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: map se list
+// Q1: List with map
 //
-// Kya karna hai:
+// Task:
 // fruits.map(f => <li key={f}>{f}</li>)
 //
-// Seedha matlab:
-// Array → elements. return me { } ke andar map.
+// In simple words:
+// Array → elements. map goes inside { } in return.
 // -----------------------------------------------------------------------------
 function FruitList() {
   const fruits = ["Mango", "Apple", "Banana"];
@@ -41,11 +41,11 @@ function FruitList() {
 // -----------------------------------------------------------------------------
 // Q2: Objects with id keys
 //
-// Kya karna hai:
-// users pe key={user.id}
+// Task:
+// key={user.id} on users.
 //
-// Seedha matlab:
-// Real data me unique id. Name duplicate ho sakta — id nahi.
+// In simple words:
+// Real data has unique id. Names can duplicate — ids should not.
 // -----------------------------------------------------------------------------
 function UserList() {
   const users = [
@@ -64,11 +64,11 @@ function UserList() {
 // -----------------------------------------------------------------------------
 // Q3: Dynamic add + key
 //
-// Kya karna hai:
-// Button se item add; list update.
+// Task:
+// Add item with button; update list.
 //
-// Seedha matlab:
-// State array + map. key stable rakho (id counter).
+// In simple words:
+// State array + map. Keep key stable (id counter).
 // -----------------------------------------------------------------------------
 function DynamicList() {
   const [items, setItems] = useState([
@@ -94,11 +94,11 @@ function DynamicList() {
 // -----------------------------------------------------------------------------
 // Q4: Filter list (derived)
 //
-// Kya karna hai:
-// Active todos hi dikhao — filter + map.
+// Task:
+// Show only active todos — filter + map.
 //
-// Seedha matlab:
-// Render me derived list theek. Alag state mat banao sync ke liye.
+// In simple words:
+// Derived list in render is fine. Do not create extra state just to sync.
 // -----------------------------------------------------------------------------
 function ActiveTodos({ todos }) {
   const active = todos.filter((t) => !t.done);
@@ -114,11 +114,11 @@ function ActiveTodos({ todos }) {
 // -----------------------------------------------------------------------------
 // Q5: Delete by id
 //
-// Kya karna hai:
-// filter se item hatao; key id pe.
+// Task:
+// Remove with filter; key on id.
 //
-// Seedha matlab:
-// Sahi key → React baaki items ki state preserve.
+// In simple words:
+// Correct key → React preserves state on remaining items.
 // -----------------------------------------------------------------------------
 function Removable() {
   const [items, setItems] = useState([
@@ -140,14 +140,14 @@ function Removable() {
 }
 
 // -----------------------------------------------------------------------------
-// Q6: [MID] Index as key — kab problem
+// Q6: [MID] Index as key — when it causes problems
 //
-// Kya karna hai:
-// Reorder list with inputs — index key pe input value galat chipak sakti.
+// Task:
+// Reorder list with inputs — index key can stick wrong input value.
 //
-// Seedha matlab:
-// Index = position. Item move → React sochta same position same component.
-// Static never-reorder list pe index OK-ish; prefer id.
+// In simple words:
+// Index = position. Item moves → React thinks same position = same component.
+// Index OK-ish for static never-reorder list; prefer id.
 // -----------------------------------------------------------------------------
 function IndexKeyWarning() {
   // Prefer: key={item.id} not key={index}
@@ -164,11 +164,11 @@ function IndexKeyWarning() {
 // -----------------------------------------------------------------------------
 // Q7: Nested lists
 //
-// Kya karna hai:
-// Categories → products; dono levels pe unique keys.
+// Task:
+// Categories → products; unique keys at both levels.
 //
-// Seedha matlab:
-// Key sibling list me unique. Alag lists me same id OK.
+// In simple words:
+// Key unique among siblings. Same id in different lists is OK.
 // -----------------------------------------------------------------------------
 function Catalog({ categories }) {
   return (
@@ -190,11 +190,11 @@ function Catalog({ categories }) {
 // -----------------------------------------------------------------------------
 // Q8: [MID] key helps remount
 //
-// Kya karna hai:
-// Form reset: key={userId} change → component remount, state wipe.
+// Task:
+// Form reset: change key={userId} → component remounts, state wipes.
 //
-// Seedha matlab:
-// Trick: key change = React purana destroy, naya bana. Intentional reset.
+// In simple words:
+// Trick: key change = React destroys old, creates new. Intentional reset.
 // -----------------------------------------------------------------------------
 function Editor({ userId }) {
   return <UserForm key={userId} userId={userId} />;
@@ -214,18 +214,18 @@ function UserForm({ userId }) {
 // -----------------------------------------------------------------------------
 // Q9: Empty list UX
 //
-// Kya karna hai:
-// items.length === 0 pe friendly message + CTA button.
+// Task:
+// When items.length === 0, show friendly message + CTA button.
 //
-// Seedha matlab:
-// Blank ul mat chhodo — user ko next step batao.
+// In simple words:
+// Do not leave blank ul — tell user the next step.
 // -----------------------------------------------------------------------------
 function EmptyTodos({ todos, onAdd }) {
   if (todos.length === 0) {
     return (
       <div>
-        <p>Abhi koi todo nahi</p>
-        <button onClick={onAdd}>Pehla todo banao</button>
+        <p>No todos yet</p>
+        <button onClick={onAdd}>Create first todo</button>
       </div>
     );
   }
@@ -239,13 +239,13 @@ function EmptyTodos({ todos, onAdd }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q10: Index key kab OK hai
+// Q10: When index key is OK
 //
-// Kya karna hai:
-// Static list — kabhi reorder/delete nahi, sirf display.
+// Task:
+// Static list — never reorder/delete, display only.
 //
-// Seedha matlab:
-// ["Mon","Tue","Wed"] jaisa fixed — index theek. Input/state wali list me nahi.
+// In simple words:
+// ["Mon","Tue","Wed"] fixed — index is fine. Not for lists with input/state.
 // -----------------------------------------------------------------------------
 function Weekdays() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
@@ -261,11 +261,11 @@ function Weekdays() {
 // -----------------------------------------------------------------------------
 // Q11: [MID] Reorder bug with index keys
 //
-// Kya karna hai:
-// List reorder + checkbox — index key pe galat item checked reh sakta.
+// Task:
+// List reorder + checkbox — wrong item may stay checked with index key.
 //
-// Seedha matlab:
-// React position = identity samajhta hai index se. Reorder = wrong state reuse.
+// In simple words:
+// React treats position as identity with index. Reorder = wrong state reuse.
 // -----------------------------------------------------------------------------
 function ReorderBugDemo() {
   const [items, setItems] = useState([
@@ -292,11 +292,11 @@ function ReorderBugDemo() {
 // -----------------------------------------------------------------------------
 // Q12: Fragment with key in list
 //
-// Kya karna hai:
-// map me <Fragment key={id}> ya <React.Fragment key={id}>.
+// Task:
+// In map use <Fragment key={id}> or <React.Fragment key={id}>.
 //
-// Seedha matlab:
-// Fragment pe key tab jab ek item multiple top-level nodes return kare.
+// In simple words:
+// Key on Fragment when one item returns multiple top-level nodes.
 // -----------------------------------------------------------------------------
 function PairedRows({ rows }) {
   return (
@@ -312,13 +312,13 @@ function PairedRows({ rows }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q13: Sort list — key id same rehna chahiye
+// Q13: Sort list — key id should stay the same
 //
-// Kya karna hai:
-// sort() se order badle, key={item.id} mat badlo.
+// Task:
+// Change order with sort(), keep key={item.id}, do not change key.
 //
-// Seedha matlab:
-// Sort = reorder, not new items. Stable id → React sahi move karta hai.
+// In simple words:
+// Sort = reorder, not new items. Stable id → React moves correctly.
 // -----------------------------------------------------------------------------
 function SortedNames({ names }) {
   const sorted = [...names].sort((a, b) => a.localeCompare(b));
@@ -332,13 +332,13 @@ function SortedNames({ names }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q14: Filter + map — keys source array se
+// Q14: Filter + map — keys from source array
 //
-// Kya karna hai:
-// filtered.map — key original item.id, index nahi.
+// Task:
+// filtered.map — key from original item.id, not index.
 //
-// Seedha matlab:
-// Filtered list me bhi stable id. Index filter ke baad shift ho sakta hai.
+// In simple words:
+// Stable id in filtered list too. Index shifts after filter.
 // -----------------------------------------------------------------------------
 function DoneTodos({ todos }) {
   const done = todos.filter((t) => t.done);
@@ -354,11 +354,11 @@ function DoneTodos({ todos }) {
 // -----------------------------------------------------------------------------
 // Q15: Duplicate keys warning
 //
-// Kya karna hai:
-// Do items same key={1} — React warn, unpredictable behavior.
+// Task:
+// Two items with same key={1} — React warns, unpredictable behavior.
 //
-// Seedha matlab:
-// Keys sibling me unique honi chahiye. Duplicate = reconciliation toot-ti hai.
+// In simple words:
+// Keys must be unique among siblings. Duplicate = broken reconciliation.
 // -----------------------------------------------------------------------------
 function UniqueKeyRule({ items }) {
   // BAD: key={items[0].category} if categories repeat
@@ -374,11 +374,11 @@ function UniqueKeyRule({ items }) {
 // -----------------------------------------------------------------------------
 // Q16: Inline list creation anti-pattern
 //
-// Kya karna hai:
-// {[1,2,3].map(...)} render me — har render naya array (minor perf).
+// Task:
+// {[1,2,3].map(...)} in render — new array every render (minor perf).
 //
-// Seedha matlab:
-// Chhota OK; bada data state/props se lao. keys still needed.
+// In simple words:
+// Small lists OK; large data from state/props. keys still needed.
 // -----------------------------------------------------------------------------
 function InlineList() {
   return (
@@ -393,11 +393,11 @@ function InlineList() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Virtualization mention
 //
-// Kya karna hai:
-// 10,000 rows — poora map slow; react-window sirf visible render.
+// Task:
+// 10,000 rows — full map is slow; react-window renders only visible rows.
 //
-// Seedha matlab:
-// Keys concept same — visible slice me bhi stable id. DOM me sab mat daalo.
+// In simple words:
+// Same key concept — stable id in visible slice too. Do not put all in DOM.
 // -----------------------------------------------------------------------------
 function BigListNote({ items }) {
   // Real app: <FixedSizeList itemKey={(i) => items[i].id} ... />
@@ -414,11 +414,11 @@ function BigListNote({ items }) {
 // -----------------------------------------------------------------------------
 // Q18: List + conditional empty inside map
 //
-// Kya karna hai:
-// items.map me null return skip — filter pehle better.
+// Task:
+// Return null inside items.map to skip — filter first is better.
 //
-// Seedha matlab:
-// map me null OK lekin filter + map zyada clear for hidden items.
+// In simple words:
+// null in map is OK but filter + map is clearer for hidden items.
 // -----------------------------------------------------------------------------
 function VisibleOnly({ items }) {
   return (
@@ -435,11 +435,11 @@ function VisibleOnly({ items }) {
 // -----------------------------------------------------------------------------
 // Q19: Composite key fallback
 //
-// Kya karna hai:
-// No id? key={`${catId}-${sku}`} — better than index if stable combo.
+// Task:
+// No id? key={`${catId}-${sku}`} — better than index if combo is stable.
 //
-// Seedha matlab:
-// Last resort composite. Random Math.random() key mat — har render remount.
+// In simple words:
+// Composite as last resort. Never Math.random() key — remounts every render.
 // -----------------------------------------------------------------------------
 function CompositeKey({ categoryId, products }) {
   return (
@@ -452,13 +452,13 @@ function CompositeKey({ categoryId, products }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q20: key prop child ko nahi milta
+// Q20: key prop not received by child
 //
-// Kya karna hai:
-// <Row key={id} id={id} /> — Row ke andar props.key undefined.
+// Task:
+// <Row key={id} id={id} /> — props.key is undefined inside Row.
 //
-// Seedha matlab:
-// key React internal hai. Chahiye to id alag prop pass karo.
+// In simple words:
+// key is internal to React. Pass id as separate prop if you need it.
 // -----------------------------------------------------------------------------
 function Row({ id, label }) {
   return <tr data-id={id}><td>{label}</td></tr>;
@@ -479,11 +479,11 @@ function Table({ rows }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] key remount reset state — deep
 //
-// Kya karna hai:
-// <ChatRoom key={roomId} /> — room change = purana chat state wipe.
+// Task:
+// <ChatRoom key={roomId} /> — room change wipes old chat state.
 //
-// Seedha matlab:
-// useEffect reset se behtar jab poora subtree fresh chahiye.
+// In simple words:
+// Better than useEffect reset when you want a fresh subtree.
 // -----------------------------------------------------------------------------
 function ChatRoom({ roomId }) {
   const [draft, setDraft] = useState("");
@@ -503,11 +503,11 @@ function ChatSwitcher({ roomId }) {
 // -----------------------------------------------------------------------------
 // Q22: Spread new array on update
 //
-// Kya karna hai:
-// setItems([...items, newOne]) — mutate mat karo items.push.
+// Task:
+// setItems([...items, newOne]) — do not items.push.
 //
-// Seedha matlab:
-// Immutable update → React detect change. Same reference → skip re-render bug.
+// In simple words:
+// Immutable update → React detects change. Same reference → skip re-render bug.
 // -----------------------------------------------------------------------------
 function AppendItem() {
   const [items, setItems] = useState([{ id: 1, text: "First" }]);
@@ -529,11 +529,11 @@ function AppendItem() {
 // -----------------------------------------------------------------------------
 // Q23: List item component extract
 //
-// Kya karna hai:
-// map callback lambada lambi na — <TodoItem key={t.id} todo={t} />.
+// Task:
+// Do not keep long map callback — <TodoItem key={t.id} todo={t} />.
 //
-// Seedha matlab:
-// key parent map pe. Child me key pass karne ki zaroorat nahi.
+// In simple words:
+// key goes on parent map. Child does not need key passed inside.
 // -----------------------------------------------------------------------------
 function TodoItem({ todo }) {
   return <li>{todo.text}</li>;
@@ -552,11 +552,11 @@ function TodoList({ todos }) {
 // -----------------------------------------------------------------------------
 // Q24: [ADV] Index key + async load reorder
 //
-// Kya karna hai:
-// Data load hone pe order badle — index keys = flash wrong content.
+// Task:
+// Order changes when data loads — index keys = flash wrong content.
 //
-// Seedha matlab:
-// Server id aate hi key switch karo. Temp id bhi stable rakho load tak.
+// In simple words:
+// Switch to server id when it arrives. Keep temp id stable until then.
 // -----------------------------------------------------------------------------
 function AsyncList({ items }) {
   return (

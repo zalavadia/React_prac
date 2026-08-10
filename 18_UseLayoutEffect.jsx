@@ -1,18 +1,18 @@
 // ============================================================================
 // 18 — useLayoutEffect
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: useEffect = paint KE BAAD kaam (user flash dekh sakta).
-// useLayoutEffect = DOM update ke baad, BROWSER PAINT SE PEHLE sync.
-// Jaise measure karke position set — flash avoid.
+// SIMPLE: useEffect = work AFTER paint (user may see a flash).
+// useLayoutEffect = after DOM update, BEFORE browser paint, sync.
+// Like measure then set position — avoid flash.
 //
-// Default prefer useEffect. useLayoutEffect blocking — jyada use = jank.
+// Default prefer useEffect. useLayoutEffect is blocking — too much = jank.
 // SSR: useLayoutEffect warning — client-only measure patterns.
 //
-// KYUN: Tooltip position, scroll lock measure, avoid flicker.
+// WHY: Tooltip position, scroll lock measure, avoid flicker.
 // INTERVIEW: effect vs layoutEffect timing; when necessary.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Measure DOM before paint
 //
-// Kya karna hai:
-// ref height padh ke state — layoutEffect me.
+// Task:
+// Read ref height into state — in layoutEffect.
 //
-// Seedha matlab:
-// useEffect me measure → pehle galat frame flash ho sakta.
+// In simple words:
+// Measure in useEffect → wrong frame may flash first.
 // -----------------------------------------------------------------------------
 function Measure() {
   const ref = useRef(null);
@@ -44,11 +44,11 @@ function Measure() {
 // -----------------------------------------------------------------------------
 // Q2: Tooltip position
 //
-// Kya karna hai:
-// Anchor rect → tooltip top/left set before paint.
+// Task:
+// Anchor rect → set tooltip top/left before paint.
 //
-// Seedha matlab:
-// Classic layoutEffect use-case.
+// In simple words:
+// Classic layoutEffect use case.
 // -----------------------------------------------------------------------------
 function Tooltip({ anchorRef, text }) {
   const tipRef = useRef(null);
@@ -70,10 +70,10 @@ function Tooltip({ anchorRef, text }) {
 // -----------------------------------------------------------------------------
 // Q3: Prefer useEffect for data fetch
 //
-// Kya karna hai:
-// Fetch layoutEffect me mat — UI block.
+// Task:
+// Don't fetch in layoutEffect — blocks UI.
 //
-// Seedha matlab:
+// In simple words:
 // Network = async = useEffect. Rule of thumb.
 // -----------------------------------------------------------------------------
 function Users() {
@@ -89,10 +89,10 @@ function Users() {
 // -----------------------------------------------------------------------------
 // Q4: Sync scroll position
 //
-// Kya karna hai:
-// Restore scrollY before paint — kam flicker.
+// Task:
+// Restore scrollY before paint — less flicker.
 //
-// Seedha matlab:
+// In simple words:
 // Visual sync → layoutEffect candidate.
 // -----------------------------------------------------------------------------
 function RestoreScroll({ y }) {
@@ -105,11 +105,11 @@ function RestoreScroll({ y }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] setState in layoutEffect still re-render
 //
-// Kya karna hai:
-// Measure → setState → extra render pehle paint — intentional.
+// Task:
+// Measure → setState → extra render before paint — intentional.
 //
-// Seedha matlab:
-// Double render cost accept for correct first paint.
+// In simple words:
+// Accept double render cost for correct first paint.
 // -----------------------------------------------------------------------------
 function Box() {
   const ref = useRef(null);
@@ -123,11 +123,11 @@ function Box() {
 // -----------------------------------------------------------------------------
 // Q6: Cleanup same as useEffect
 //
-// Kya karna hai:
+// Task:
 // return () => cleanup — listeners etc.
 //
-// Seedha matlab:
-// Timing alag; cleanup API same.
+// In simple words:
+// Different timing; same cleanup API.
 // -----------------------------------------------------------------------------
 function LockScroll() {
   useLayoutEffect(() => {
@@ -143,10 +143,10 @@ function LockScroll() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] SSR warning awareness
 //
-// Kya karna hai:
-// Server pe layoutEffect nahi chalta — hydrate mismatch careful.
+// Task:
+// layoutEffect doesn't run on server — hydrate mismatch careful.
 //
-// Seedha matlab:
+// In simple words:
 // Measure-only after mount. Initial render safe default.
 // -----------------------------------------------------------------------------
 function ClientOnlyMeasure() {
@@ -159,11 +159,11 @@ function ClientOnlyMeasure() {
 // -----------------------------------------------------------------------------
 // Q8: Decision cheat
 //
-// Kya karna hai:
+// Task:
 // Flicker/measure/DOM read-write sync? layout. Else effect.
 //
-// Seedha matlab:
-// Interview one-liner yahi.
+// In simple words:
+// Interview one-liner.
 // -----------------------------------------------------------------------------
 function CheatSheet() {
   return (
@@ -176,12 +176,12 @@ function CheatSheet() {
 // -----------------------------------------------------------------------------
 // Q9: Paint blocking explained
 //
-// Kya karna hai:
-// useLayoutEffect browser ko paint rokta hai jab tak sync work khatam na ho.
+// Task:
+// useLayoutEffect blocks browser paint until sync work finishes.
 //
-// Seedha matlab:
-// Lamba layoutEffect = jank, FPS drop. Chhota sync DOM tweak OK.
-// Default useEffect — paint pehle, user responsive feel.
+// In simple words:
+// Long layoutEffect = jank, FPS drop. Small sync DOM tweak OK.
+// Default useEffect — paint first, user feels responsive.
 // -----------------------------------------------------------------------------
 function PaintBlockNote() {
   return <p>layoutEffect sync = main thread block until done.</p>;
@@ -190,11 +190,11 @@ function PaintBlockNote() {
 // -----------------------------------------------------------------------------
 // Q10: Flicker fix — measure then setState
 //
-// Kya karna hai:
-// Tooltip pehle (0,0) paint hota useEffect me → flash. layoutEffect me fix.
+// Task:
+// Tooltip paints at (0,0) first in useEffect → flash. Fix in layoutEffect.
 //
-// Seedha matlab:
-// User ko wrong frame nahi dikhega. Measure → correct pos → phir paint.
+// In simple words:
+// User won't see wrong frame. Measure → correct pos → then paint.
 // Classic interview before/after example.
 // -----------------------------------------------------------------------------
 function FlickerTooltip({ show, anchorRef }) {
@@ -211,11 +211,11 @@ function FlickerTooltip({ show, anchorRef }) {
 // -----------------------------------------------------------------------------
 // Q11: [MID] useEffect vs useLayoutEffect timing diagram
 //
-// Kya karna hai:
+// Task:
 // Render → DOM commit → layoutEffect → paint → useEffect.
 //
-// Seedha matlab:
-// DOM ready dono me. layout paint se pehle; effect paint ke baad.
+// In simple words:
+// DOM ready in both. layout before paint; effect after paint.
 // Read layout → write DOM sync = layoutEffect territory.
 // -----------------------------------------------------------------------------
 function TimingNote() {
@@ -229,11 +229,11 @@ function TimingNote() {
 // -----------------------------------------------------------------------------
 // Q12: Auto-focus input without flash
 //
-// Kya karna hai:
-// Modal open → input focus layoutEffect me — pehle frame unfocused avoid.
+// Task:
+// Modal open → focus input in layoutEffect — avoid unfocused first frame.
 //
-// Seedha matlab:
-// UX polish. User focus jump paint se pehle ho jaye.
+// In simple words:
+// UX polish. Focus jump happens before paint.
 // -----------------------------------------------------------------------------
 function AutoFocusInput({ open }) {
   const ref = useRef(null);
@@ -247,10 +247,10 @@ function AutoFocusInput({ open }) {
 // -----------------------------------------------------------------------------
 // Q13: DOM measurement for animation start
 //
-// Kya karna hai:
-// Element height measure → animate to height layoutEffect me start.
+// Task:
+// Measure element height → start animate to height in layoutEffect.
 //
-// Seedha matlab:
+// In simple words:
 // Expand/collapse animation wrong start = flicker. Measure first frame sync.
 // -----------------------------------------------------------------------------
 function MeasuredExpand({ open, children }) {
@@ -269,12 +269,12 @@ function MeasuredExpand({ open, children }) {
 // -----------------------------------------------------------------------------
 // Q14: [MID] SSR warning — suppressHydration / client-only
 //
-// Kya karna hai:
-// Server: layoutEffect skip. Client mount ke baad measure — mismatch avoid.
+// Task:
+// Server: layoutEffect skip. Measure after client mount — avoid mismatch.
 //
-// Seedha matlab:
-// "useLayoutEffect does nothing on the server" warning normal SSR me.
-// ClientOnlyMeasure pattern (Q7) ya dynamic import ssr:false.
+// In simple words:
+// "useLayoutEffect does nothing on the server" warning normal in SSR.
+// ClientOnlyMeasure pattern (Q7) or dynamic import ssr:false.
 // Initial HTML safe defaults; measure post-hydrate.
 // -----------------------------------------------------------------------------
 function SsrSafeMeasure() {
@@ -287,12 +287,12 @@ function SsrSafeMeasure() {
 // -----------------------------------------------------------------------------
 // Q15: When NOT useLayoutEffect — subscriptions
 //
-// Kya karna hai:
-// window resize listener — useEffect OK, paint block mat karo.
+// Task:
+// window resize listener — useEffect OK, don't block paint.
 //
-// Seedha matlab:
+// In simple words:
 // Listeners, fetch, timers = useEffect. DOM visual sync = layoutEffect.
-// Rule of thumb yaad rakho interview me.
+// Remember rule of thumb in interviews.
 // -----------------------------------------------------------------------------
 function ResizeListener() {
   const [w, setW] = useState(window.innerWidth);
@@ -307,12 +307,12 @@ function ResizeListener() {
 // -----------------------------------------------------------------------------
 // Q16: Read then write DOM — forced reflow
 //
-// Kya karna hai:
-// offsetHeight read → style.width set — ek layoutEffect batch me.
+// Task:
+// offsetHeight read → style.width set — batch in one layoutEffect.
 //
-// Seedha matlab:
-// useEffect me read/write = extra layout thrashing possible.
-// Sync read-write layoutEffect me = ek forced layout, controlled.
+// In simple words:
+// read/write in useEffect = extra layout thrashing possible.
+// Sync read-write in layoutEffect = one forced layout, controlled.
 // -----------------------------------------------------------------------------
 function ReadWriteSync() {
   const ref = useRef(null);
@@ -328,12 +328,12 @@ function ReadWriteSync() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Double render with layoutEffect setState
 //
-// Kya karna hai:
+// Task:
 // Render 1 → layoutEffect setState → Render 2 → paint.
 //
-// Seedha matlab:
-// Cost accept karte hain correct visual ke liye.
-// React 18 batching se better but still 2 commits possible.
+// In simple words:
+// We accept cost for correct visual.
+// React 18 batching helps but still 2 commits possible.
 // -----------------------------------------------------------------------------
 function DoubleRenderNote() {
   return <p>layoutEffect setState = extra render before paint — intentional.</p>;
@@ -342,10 +342,10 @@ function DoubleRenderNote() {
 // -----------------------------------------------------------------------------
 // Q18: Tooltip vs popover positioning libs
 //
-// Kya karna hai:
+// Task:
 // Floating UI / Popper — internally layoutEffect or similar sync measure.
 //
-// Seedha matlab:
+// In simple words:
 // Manual tooltip = layoutEffect. Libraries handle edge cases.
 // Interview: know WHY libs use sync measure.
 // -----------------------------------------------------------------------------
@@ -356,11 +356,11 @@ function PopperNote() {
 // -----------------------------------------------------------------------------
 // Q19: useLayoutEffect dependency changes
 //
-// Kya karna hai:
-// anchor move pe tooltip reposition — deps [anchorRef, open].
+// Task:
+// Reposition tooltip when anchor moves — deps [anchorRef, open].
 //
-// Seedha matlab:
-// Har relevant change pe re-measure before paint.
+// In simple words:
+// Re-measure before paint on every relevant change.
 // Missing dep = stale position flash.
 // -----------------------------------------------------------------------------
 function FollowAnchor({ anchorRef, open }) {
@@ -377,25 +377,25 @@ function FollowAnchor({ anchorRef, open }) {
 // -----------------------------------------------------------------------------
 // Q20: [MID] useInsertionEffect — CSS-in-JS note
 //
-// Kya karna hai:
+// Task:
 // Styled-components inject styles BEFORE layoutEffect — even earlier.
 //
-// Seedha matlab:
+// In simple words:
 // Timeline: insertionEffect → layoutEffect → paint → effect.
-// CSS inject order ke liye — rare interview deep dive.
+// For CSS inject order — rare interview deep dive.
 // -----------------------------------------------------------------------------
 function InsertionEffectNote() {
-  return <p>useInsertionEffect = styles inject, layout se bhi pehle.</p>;
+  return <p>useInsertionEffect = inject styles, even before layout.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q21: Avoid layoutEffect for logging/analytics
 //
-// Kya karna hai:
-// console.log / track() — useEffect, paint block mat.
+// Task:
+// console.log / track() — useEffect, don't block paint.
 //
-// Seedha matlab:
-// Non-visual side effects paint ke baad theek. User wait nahi karega analytics.
+// In simple words:
+// Non-visual side effects fine after paint. User shouldn't wait for analytics.
 // -----------------------------------------------------------------------------
 function AnalyticsOnMount({ id }) {
   useEffect(() => {
@@ -407,12 +407,12 @@ function AnalyticsOnMount({ id }) {
 // -----------------------------------------------------------------------------
 // Q22: Decision flowchart recap
 //
-// Kya karna hai:
+// Task:
 // DOM measure/read/write visual sync? → layoutEffect. Else → useEffect.
 //
-// Seedha matlab:
+// In simple words:
 // Flicker complaint + DOM measure = first fix to try.
-// 95% cases useEffect enough — layoutEffect surgical tool.
+// 95% cases useEffect enough — layoutEffect is surgical tool.
 // -----------------------------------------------------------------------------
 function LayoutDecision() {
   return (

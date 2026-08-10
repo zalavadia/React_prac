@@ -1,17 +1,17 @@
 // ============================================================================
 // 45 — Concurrent React: useTransition, useDeferredValue, startTransition
-// Level: MID–ADV  |  Sequence: pehle 24 (perf), phir yeh
+// Level: MID–ADV  |  Sequence: after 24 (perf), then this
 // ============================================================================
 //
-// LAYMAN: Concurrent React = UI ko interrupt karke urgent kaam pehle dikhao.
-// Typing snappy rahe; heavy filter/list peeche update ho — user ko lag nahi.
-// useTransition / startTransition = "yeh update non-urgent hai".
-// useDeferredValue = value ka thoda purana version dikhao jab naya slow ho.
+// SIMPLE: Concurrent React = interrupt the UI to show urgent work first.
+// Keep typing snappy; heavy filter/list updates in the background — user feels no lag.
+// useTransition / startTransition = "this update is non-urgent".
+// useDeferredValue = show a slightly older version of the value when the new one is slow.
 //
-// KYUN: Big lists, tab switches, search — input freeze mat karo.
+// WHY: Big lists, tab switches, search — don't freeze the input.
 // INTERVIEW: urgent vs transition; transition vs deferred; flushSync contrast;
-// transitions speed nahi badhate — responsiveness badhate hain.
-// Vite/React 19 project me use — teaching file.
+// transitions don't increase speed — they improve responsiveness.
+// Use in Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -30,13 +30,13 @@ import { flushSync } from "react-dom";
 // -----------------------------------------------------------------------------
 // Q1: useTransition — isPending + startTransition basics
 //
-// Kya karna hai:
-// Hook se non-urgent state updates wrap karo; pending UI dikhao.
+// Task:
+// Wrap non-urgent state updates with the hook; show pending UI.
 //
-// Seedha matlab:
+// In simple words:
 // [isPending, startTransition] = useTransition().
-// startTransition(() => setHeavy(...)) — React input jaisa urgent pehle.
-// isPending true jab transition abhi render complete nahi hua.
+// startTransition(() => setHeavy(...)) — React handles urgent things like input first.
+// isPending is true when the transition render is not complete yet.
 // -----------------------------------------------------------------------------
 export function SearchWithTransition({ allItems }) {
   const [query, setQuery] = useState("");
@@ -45,7 +45,7 @@ export function SearchWithTransition({ allItems }) {
 
   function onChange(e) {
     const q = e.target.value;
-    setQuery(q); // urgent — input turant update
+    setQuery(q); // urgent — input updates immediately
     startTransition(() => {
       setFiltered(allItems.filter((item) => item.includes(q))); // non-urgent
     });
@@ -67,13 +67,13 @@ export function SearchWithTransition({ allItems }) {
 // -----------------------------------------------------------------------------
 // Q2: startTransition import from 'react' (non-hook)
 //
-// Kya karna hai:
-// Component ke bahar / callback me bina hook ke transition mark karo.
+// Task:
+// Mark a transition outside the component / in a callback without a hook.
 //
-// Seedha matlab:
-// useTransition sirf component me. startTransition() kahi bhi —
-// event handler, utility, setTimeout ke andar.
-// Same priority marking; isPending ke liye hook chahiye.
+// In simple words:
+// useTransition only inside a component. startTransition() anywhere —
+// event handler, utility, inside setTimeout.
+// Same priority marking; you need the hook for isPending.
 // -----------------------------------------------------------------------------
 let externalItems = ["apple", "banana", "cherry"];
 
@@ -101,14 +101,14 @@ export function ExternalTransitionDemo() {
 // -----------------------------------------------------------------------------
 // Q3: useDeferredValue — defer slow re-render
 //
-// Kya karna hai:
-// Fast input state rakho; deferred copy se heavy child feed karo.
+// Task:
+// Keep fast input state; feed the heavy child with a deferred copy.
 //
-// Seedha matlab:
+// In simple words:
 // const deferredQuery = useDeferredValue(query).
-// Jab query change hoti hai, deferred thodi peeche reh sakti hai —
-// purani value ke saath ek aur render (stale UI briefly OK).
-// Child ko deferred prop do — parent me startTransition ki zaroorat kam.
+// When query changes, deferred can lag slightly behind —
+// one more render with the old value (stale UI briefly OK).
+// Pass deferred prop to child — less need for startTransition in parent.
 // -----------------------------------------------------------------------------
 function SlowList({ query }) {
   const items = useMemo(() => {
@@ -132,17 +132,17 @@ export function DeferredSearch() {
 }
 
 // -----------------------------------------------------------------------------
-// Q4: Transition vs useDeferredValue — kab kya?
+// Q4: Transition vs useDeferredValue — when to use which?
 //
-// Kya karna hai:
-// Dono non-urgent ka kaam; API alag — choose by shape of problem.
+// Task:
+// Both do non-urgent work; different APIs — choose by shape of problem.
 //
-// Seedha matlab:
-// useTransition: tum khud setState wrap karte ho; isPending milta hai;
-// multiple state updates ek transition me.
-// useDeferredValue: ek value defer; child ko prop pass; "stale" visual easy.
-// Rule of thumb: state updates tum control → transition; prop/value lag → deferred.
-// Dono ek saath bhi (Q19).
+// In simple words:
+// useTransition: you wrap setState yourself; you get isPending;
+// multiple state updates in one transition.
+// useDeferredValue: defer one value; pass to child as prop; "stale" visual is easy.
+// Rule of thumb: you control state updates → transition; prop/value lag → deferred.
+// Both together too (Q19).
 // -----------------------------------------------------------------------------
 const transitionVsDeferred =
   "Transition = mark updates non-urgent + pending flag. Deferred = lag behind on a value.";
@@ -150,13 +150,13 @@ const transitionVsDeferred =
 // -----------------------------------------------------------------------------
 // Q5: Urgent vs non-urgent updates
 //
-// Kya karna hai:
+// Task:
 // Typing/click/scroll urgent; filter/chart/route change non-urgent.
 //
-// Seedha matlab:
-// Urgent = user ko turant feedback chahiye (controlled input value).
-// Non-urgent = thoda delay OK (10k list filter, tab content swap).
-// Galat split = typing bhi transition me → input sluggish feel.
+// In simple words:
+// Urgent = user needs instant feedback (controlled input value).
+// Non-urgent = a little delay OK (10k list filter, tab content swap).
+// Wrong split = typing also in transition → input feels sluggish.
 // -----------------------------------------------------------------------------
 export function UrgentNonUrgentSplit() {
   const [text, setText] = useState("");
@@ -181,12 +181,12 @@ export function UrgentNonUrgentSplit() {
 // -----------------------------------------------------------------------------
 // Q6: Search filter demo — full pattern
 //
-// Kya karna hai:
-// Input urgent; filter + sort transition me; pending + stale styling.
+// Task:
+// Input urgent; filter + sort in transition; pending + stale styling.
 //
-// Seedha matlab:
-// Classic interview demo. Expensive work transition ke andar.
-// Optional: results pe opacity jab pending.
+// In simple words:
+// Classic interview demo. Expensive work inside the transition.
+// Optional: results opacity when pending.
 // -----------------------------------------------------------------------------
 const CATALOG = Array.from({ length: 5000 }, (_, i) => `product-${i}`);
 
@@ -216,13 +216,13 @@ export function ProductSearch() {
 // -----------------------------------------------------------------------------
 // Q7: Tab switch with deferred content
 //
-// Kya karna hai:
-// Tab click urgent; heavy panel deferred value se render.
+// Task:
+// Tab click urgent; render heavy panel with deferred value.
 //
-// Seedha matlab:
-// tab state turant change — highlight snappy.
-// deferredTab = useDeferredValue(tab) se slow panel render.
-// Purana tab content briefly dikhe — acceptable for transitions.
+// In simple words:
+// tab state changes instantly — highlight stays snappy.
+// deferredTab = useDeferredValue(tab) for slow panel render.
+// Old tab content shows briefly — acceptable for transitions.
 // -----------------------------------------------------------------------------
 const TAB_CONTENT = {
   home: "Light home",
@@ -257,12 +257,12 @@ export function DeferredTabs() {
 // -----------------------------------------------------------------------------
 // Q8: Suspense + transition
 //
-// Kya karna hai:
-// Route/tab change transition me; Suspense fallback during suspend.
+// Task:
+// Route/tab change in transition; Suspense fallback during suspend.
 //
-// Seedha matlab:
-// Transition updates Suspense boundaries ko interruptible banate hain —
-// purana UI dikhta rehta jab naya chunk/data load ho.
+// In simple words:
+// Transition updates make Suspense boundaries interruptible —
+// old UI keeps showing while new chunk/data loads.
 // startTransition(() => setTab('slow')) + <Suspense fallback=...>.
 // Without transition, suspend = jarring replace.
 // -----------------------------------------------------------------------------
@@ -296,14 +296,14 @@ export function SuspenseTransitionTabs() {
 // -----------------------------------------------------------------------------
 // Q9: useTransition with router-ish navigate idea
 //
-// Kya karna hai:
+// Task:
 // Programmatic navigation non-urgent mark — pending spinner on link.
 //
-// Seedha matlab:
-// React Router me direct integration nahi; pattern:
+// In simple words:
+// No direct integration in React Router; pattern:
 // startTransition(() => navigate('/dashboard')).
-// isPending se nav bar loading. Urgent: modal close; non-urgent: page swap.
-// Same mental model SPA route changes ke liye.
+// isPending for nav bar loading. Urgent: modal close; non-urgent: page swap.
+// Same mental model for SPA route changes.
 // -----------------------------------------------------------------------------
 export function RouterishNavigate({ navigateFn }) {
   const [isPending, startTransition] = useTransition();
@@ -324,15 +324,15 @@ export function RouterishNavigate({ navigateFn }) {
 // -----------------------------------------------------------------------------
 // Q10: isPending UI patterns
 //
-// Kya karna hai:
+// Task:
 // Spinner, opacity, disabled button, aria-busy — consistent pending UX.
 //
-// Seedha matlab:
+// In simple words:
 // 1) Inline "Updating…" text (accessible aria-live).
-// 2) Results opacity 0.5 jab pending.
+// 2) Results opacity 0.5 when pending.
 // 3) Submit/nav button disabled + label change.
-// 4) Skeleton same layout — layout shift kam.
-// isPending false jab transition commit ho chuka (not same as data fetch).
+// 4) Skeleton same layout — less layout shift.
+// isPending false when transition has committed (not same as data fetch).
 // -----------------------------------------------------------------------------
 export function PendingPatterns() {
   const [isPending, startTransition] = useTransition();
@@ -354,15 +354,15 @@ export function PendingPatterns() {
 // -----------------------------------------------------------------------------
 // Q11: Concurrent features history (React 18+)
 //
-// Kya karna hai:
-// Timeline samjho — interview "since when" questions.
+// Task:
+// Understand the timeline — interview "since when" questions.
 //
-// Seedha matlab:
+// In simple words:
 // React 18 (2022): createRoot, automatic batching, transitions, Suspense improvements.
 // useTransition / useDeferredValue / startTransition public API.
 // React 19: Actions often auto-transition; still same concurrent renderer core.
-// Legacy createRoot nahi = no concurrent features fully.
-// Fiber (16+) ne foundation di; 18 ne concurrent rendering user-facing.
+// No legacy createRoot = no concurrent features fully.
+// Fiber (16+) laid the foundation; 18 made concurrent rendering user-facing.
 // -----------------------------------------------------------------------------
 const concurrentHistory = [
   "React 16 Fiber — foundation",
@@ -373,14 +373,14 @@ const concurrentHistory = [
 // -----------------------------------------------------------------------------
 // Q12: Tearing — conceptual note
 //
-// Kya karna hai:
-// External store + concurrent render = inconsistent UI briefly — samjho concept.
+// Task:
+// External store + concurrent render = inconsistent UI briefly — understand the concept.
 //
-// Seedha matlab:
-// Tearing = screen ka ek hissa purana data, doosra naya (same render cycle mismatch).
-// React state/context generally safe. Problem: mutable external store bina sync.
-// useSyncExternalStore (18) fix pattern third-party stores ke liye.
-// Transitions tearing ko zyada visible kar sakte agar store sync nahi.
+// In simple words:
+// Tearing = one part of screen has old data, another new (same render cycle mismatch).
+// React state/context generally safe. Problem: mutable external store without sync.
+// useSyncExternalStore (18) fix pattern for third-party stores.
+// Transitions can make tearing more visible if store is not synced.
 // -----------------------------------------------------------------------------
 const tearingNote =
   "Concurrent render can pause/resume; external mutable stores need useSyncExternalStore to avoid torn UI.";
@@ -388,14 +388,14 @@ const tearingNote =
 // -----------------------------------------------------------------------------
 // Q13: flushSync — when NOT concurrent
 //
-// Kya karna hai:
-// Kabhi turant DOM sync chahiye — flushSync urgent force karta hai.
+// Task:
+// Sometimes need instant DOM sync — flushSync forces urgent.
 //
-// Seedha matlab:
-// flushSync(() => setState()) — React abhi render + commit kare (sync).
-// Use rare: third-party lib ko DOM measure immediately, focus after insert.
+// In simple words:
+// flushSync(() => setState()) — React renders + commits now (sync).
+// Use rare: third-party lib needs to measure DOM immediately, focus after insert.
 // Overuse = concurrent benefits kill + perf hit.
-// Transition ke opposite — "yeh wait mat karo".
+// Opposite of transition — "don't wait for this".
 // -----------------------------------------------------------------------------
 export function MeasureAfterUpdate() {
   const [open, setOpen] = useState(false);
@@ -403,7 +403,7 @@ export function MeasureAfterUpdate() {
 
   function toggle() {
     flushSync(() => setOpen(true));
-    // DOM ab updated — measure/focus safe
+    // DOM is now updated — measure/focus safe
     ref.current?.focus();
   }
 
@@ -413,14 +413,14 @@ export function MeasureAfterUpdate() {
 // -----------------------------------------------------------------------------
 // Q14: startTransition in event handler vs setTimeout
 //
-// Kya karna hai:
-// Dono jagah kaam; event me preferred; setTimeout me bhi valid.
+// Task:
+// Works in both places; preferred in event; also valid in setTimeout.
 //
-// Seedha matlab:
-// Event handler: startTransition(() => setX) — React batching context me.
-// setTimeout: callback alag task — phir bhi startTransition wrap karo
-// taaki resulting setState transition priority me ho.
-// Trap: setTimeout bina transition = low priority nahi, bas later run.
+// In simple words:
+// Event handler: startTransition(() => setX) — in React batching context.
+// setTimeout: callback is separate task — still wrap with startTransition
+// so resulting setState has transition priority.
+// Trap: setTimeout without transition = not low priority, just runs later.
 // -----------------------------------------------------------------------------
 export function EventVsTimeout() {
   const [n, setN] = useState(0);
@@ -448,13 +448,13 @@ export function EventVsTimeout() {
 // -----------------------------------------------------------------------------
 // Q15: Nested transitions
 //
-// Kya karna hai:
-// Transition ke andar transition — outer pending behavior samjho.
+// Task:
+// Transition inside transition — understand outer pending behavior.
 //
-// Seedha matlab:
-// Nested startTransition usually outer transition me merge —
-// ek hi transition track (implementation detail, behavior: non-urgent).
-// Deep nesting socho mat — ek meaningful transition boundary kaafi.
+// In simple words:
+// Nested startTransition usually merges into outer transition —
+// one transition track (implementation detail, behavior: non-urgent).
+// Don't think deep nesting — one meaningful transition boundary is enough.
 // isPending true if any transition in tree pending (same hook instance).
 // -----------------------------------------------------------------------------
 export function NestedTransitions() {
@@ -479,14 +479,14 @@ export function NestedTransitions() {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: Performance myth — transitions speed nahi badhate
+// Q16: Performance myth — transitions don't increase speed
 //
-// Kya karna hai:
-// Interview trap: "transition se filter fast ho gaya" — galat.
+// Task:
+// Interview trap: "transition made filter fast" — wrong.
 //
-// Seedha matlab:
-// Same CPU work hota hai — bas scheduling alag: urgent pe interrupt.
-// 10k filter ab bhi 10k filter — virtualize / Web Worker alag topic.
+// In simple words:
+// Same CPU work happens — just different scheduling: interrupt for urgent.
+// 10k filter is still 10k filter — virtualize / Web Worker is separate topic.
 // Transition = responsiveness (input smooth), not shorter Big-O.
 // Measure: INP, typing latency — not total filter ms alone.
 // -----------------------------------------------------------------------------
@@ -496,15 +496,15 @@ const perfTruth =
 // -----------------------------------------------------------------------------
 // Q17: Interview traps (common wrong answers)
 //
-// Kya karna hai:
-// Galat claims yaad rakho taaki avoid karo.
+// Task:
+// Remember wrong claims so you avoid them.
 //
-// Seedha matlab:
-// Trap 1: "Har setState ko transition" — input sluggish.
+// In simple words:
+// Trap 1: "Every setState in transition" — input sluggish.
 // Trap 2: "useDeferredValue same as debounce" — no fixed delay; React scheduler.
-// Trap 3: "isPending = fetch loading" — sirf transition render pending.
-// Trap 4: "Concurrent = parallel threads" — mostly cooperative scheduling JS me.
-// Trap 5: "SSR me transitions matter same" — mostly client hydration/interaction.
+// Trap 3: "isPending = fetch loading" — only transition render pending.
+// Trap 4: "Concurrent = parallel threads" — mostly cooperative scheduling in JS.
+// Trap 5: "SSR transitions matter the same" — mostly client hydration/interaction.
 // -----------------------------------------------------------------------------
 export const interviewTraps = [
   "Don't wrap typing state in transition",
@@ -516,14 +516,14 @@ export const interviewTraps = [
 // -----------------------------------------------------------------------------
 // Q18: React 19 Actions — automatic transitions note
 //
-// Kya karna hai:
+// Task:
 // Form actions / useActionState updates often already transition priority.
 //
-// Seedha matlab:
-// React 19 me action dispatch ke updates transition me wrap hote hain —
-// form pending state + UI responsive rehta.
-// Purane onSubmit + manual setState me khud startTransition socho.
-// Files 29–31 dekho Actions detail. Manual transition ab bhi valid non-form UI.
+// In simple words:
+// In React 19, action dispatch updates wrap in transition —
+// form pending state + UI stays responsive.
+// For old onSubmit + manual setState, consider startTransition yourself.
+// See files 29–31 for Actions detail. Manual transition still valid for non-form UI.
 // -----------------------------------------------------------------------------
 async function saveAction(prev, formData) {
   await new Promise((r) => setTimeout(r, 300));
@@ -535,13 +535,13 @@ async function saveAction(prev, formData) {
 // -----------------------------------------------------------------------------
 // Q19: useDeferredValue + memo list combo
 //
-// Kya karna hai:
-// Memoized child + deferred prop — unnecessary re-render kam.
+// Task:
+// Memoized child + deferred prop — fewer unnecessary re-renders.
 //
-// Seedha matlab:
+// In simple words:
 // const MemoRows = memo(Rows).
-// <MemoRows query={deferredQuery} /> — jab deferred same, memo skip.
-// Input fast update; child tab jab deferred catch up.
+// <MemoRows query={deferredQuery} /> — when deferred same, memo skips.
+// Input updates fast; child updates when deferred catches up.
 // Pair with useMemo inside child for heavy derive.
 // -----------------------------------------------------------------------------
 const MemoRows = memo(function Rows({ query, rows }) {
@@ -566,14 +566,14 @@ export function DeferredMemoList({ rows }) {
 // -----------------------------------------------------------------------------
 // Q20: useTransition error handling
 //
-// Kya karna hai:
-// Transition ke andar throw/error — Error Boundary / recover pattern.
+// Task:
+// Throw/error inside transition — Error Boundary / recover pattern.
 //
-// Seedha matlab:
-// Render me error transition ke baad bhi Error Boundary pakad sakti hai.
-// Event/async error transition se nahi bound — try/catch khud.
+// In simple words:
+// Render error — Error Boundary can still catch after transition.
+// Event/async error not bound to transition — try/catch yourself.
 // Retry: error boundary reset + state rollback manually.
-// Suspense + error boundary alag layers (file 20, 21).
+// Suspense + error boundary are separate layers (file 20, 21).
 // -----------------------------------------------------------------------------
 function BuggyTransitionChild({ crash }) {
   if (crash) throw new Error("transition render failed");
@@ -603,26 +603,26 @@ export function TransitionErrorDemo() {
 // -----------------------------------------------------------------------------
 // Q21: Throttle / debounce vs transition
 //
-// Kya karna hai:
-// Teeno alag tools — kab kaunsa.
+// Task:
+// Three different tools — when to use which.
 //
-// Seedha matlab:
-// Debounce: fixed wait ke baad ek baar fire (API search 300ms).
+// In simple words:
+// Debounce: fire once after a fixed wait (API search 300ms).
 // Throttle: max N calls per window (scroll handler).
-// Transition: React render priority — no fixed timer; scheduler decide.
-// API calls ke liye debounce; render heavy UI ke liye transition/deferred.
+// Transition: React render priority — no fixed timer; scheduler decides.
+// Debounce for API calls; transition/deferred for heavy UI render.
 // Combine: debounce fetch + transition for local filter OK.
 // -----------------------------------------------------------------------------
 const compareSchedule =
   "Debounce/throttle = rate-limit events. Transition = prioritize which React updates render first.";
 
 // -----------------------------------------------------------------------------
-// Q22: Practical checklist — kab use karo
+// Q22: Practical checklist — when to use
 //
-// Kya karna hai:
-// Decision tree bolke sunao interview me.
+// Task:
+// Say the decision tree in an interview.
 //
-// Seedha matlab:
+// In simple words:
 // ✓ Heavy list/filter on typing → transition or deferred
 // ✓ Tab/route swap with slow child → transition + Suspense
 // ✓ Need pending UI flag → useTransition
@@ -639,15 +639,15 @@ export const transitionChecklist = {
 };
 
 // -----------------------------------------------------------------------------
-// Q23: Multiple setStates ek transition me
+// Q23: Multiple setStates in one transition
 //
-// Kya karna hai:
-// Ek startTransition me kai updates — ek pending, batched non-urgent.
+// Task:
+// Many updates in one startTransition — one pending, batched non-urgent.
 //
-// Seedha matlab:
-// startTransition(() => { setA(); setB(); setC(); }) — sab non-urgent batch.
-// Urgent input alag rakho transition ke bahar.
-// Functional updaters transition ke andar safe.
+// In simple words:
+// startTransition(() => { setA(); setB(); setC(); }) — all non-urgent batch.
+// Keep urgent input separate outside transition.
+// Functional updaters safe inside transition.
 // -----------------------------------------------------------------------------
 export function MultiStateTransition() {
   const [query, setQuery] = useState("");
@@ -674,14 +674,14 @@ export function MultiStateTransition() {
 // -----------------------------------------------------------------------------
 // Q24: Stale UI visual — deferred vs pending
 //
-// Kya karna hai:
-// query !== deferredQuery se stale; isPending alag signal.
+// Task:
+// stale from query !== deferredQuery; isPending is a separate signal.
 //
-// Seedha matlab:
-// Deferred: intentionally purani list dikhao jab naya render busy.
-// isPending: transition chal raha — spinner/opacity.
-// Dono ek saath: opacity + "Showing older results" banner.
-// UX honest raho — user samjhe data catching up hai.
+// In simple words:
+// Deferred: intentionally show old list when new render is busy.
+// isPending: transition running — spinner/opacity.
+// Both together: opacity + "Showing older results" banner.
+// Keep UX honest — user understands data is catching up.
 // -----------------------------------------------------------------------------
 export function StaleVisualDemo() {
   const [q, setQ] = useState("");
@@ -711,12 +711,12 @@ export function StaleVisualDemo() {
 // -----------------------------------------------------------------------------
 // Q25: Concurrent rendering + Strict Mode / dev double render
 //
-// Kya karna hai:
-// Dev me extra renders transitions ko confuse mat karo debugging me.
+// Task:
+// Don't let extra renders in dev confuse transitions while debugging.
 //
-// Seedha matlab:
-// Strict Mode dev me double invoke — isPending flicker ho sakta briefly.
-// Production behavior pe focus. Profiler se transition marked renders dekho.
+// In simple words:
+// Strict Mode double invoke in dev — isPending may flicker briefly.
+// Focus on production behavior. See transition marked renders in Profiler.
 // createRoot required — ReactDOM.render legacy concurrent transitions limited.
 // Teaching file: React 19 + createRoot assume.
 // -----------------------------------------------------------------------------

@@ -1,16 +1,16 @@
 // ============================================================================
 // 24 — Re-Render Performance
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: Re-render = React function dubara chali UI update sochne. Har
-// setState parent ke bacche bhi default dubara chalte — kabhi mehnga.
-// Fix hierarchy: (1) state neeche lao (2) children split (3) memo/callback
-// (4) virtualize long lists. Profile pehle, optimize baad.
+// SIMPLE: Re-render = React runs the function again to update UI. Every
+// setState in a parent re-runs children by default — sometimes expensive.
+// Fix hierarchy: (1) move state down (2) split children (3) memo/callback
+// (4) virtualize long lists. Profile first, optimize later.
 //
-// KYUN: Janky typing / laggy lists. Mid interview favorite.
+// WHY: Janky typing / laggy lists. Mid interview favorite.
 // INTERVIEW: why child re-renders; state colocation; React DevTools Profiler.
-// Vite/React 19 project me use — teaching file.
+// Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -19,11 +19,11 @@ import { memo, useCallback, useDeferredValue, useMemo, useState, useTransition }
 // -----------------------------------------------------------------------------
 // Q1: State colocation
 //
-// Kya karna hai:
-// Input state App se hata ke sirf SearchBox me.
+// Task:
+// Move input state out of App into SearchBox only.
 //
-// Seedha matlab:
-// Typing pe poora tree mat roye — state jahan use.
+// In simple words:
+// Do not re-render whole tree on typing — state where it is used.
 // -----------------------------------------------------------------------------
 function SearchBox() {
   const [q, setQ] = useState("");
@@ -47,11 +47,11 @@ const ExpensiveStatic = memo(function ExpensiveStatic() {
 // -----------------------------------------------------------------------------
 // Q2: Children as props trick
 //
-// Kya karna hai:
-// Parent state change pe pehle se create children identity same rehti.
+// Task:
+// When parent state changes, pre-created children keep same identity.
 //
-// Seedha matlab:
-// <Parent><Heavy /></Parent> — Parent re-render, Heavy props same → with
+// In simple words:
+// <Parent><Heavy /></Parent> — Parent re-renders, Heavy props same → with
 // structure can skip (pattern). Detail: composition.
 // -----------------------------------------------------------------------------
 function Parent({ children }) {
@@ -68,22 +68,22 @@ function Parent({ children }) {
 // -----------------------------------------------------------------------------
 // Q3: Split context (again)
 //
-// Kya karna hai:
-// Frequently changing value alag context — wide tree kam re-render.
+// Task:
+// Frequently changing value in separate context — fewer wide-tree re-renders.
 //
-// Seedha matlab:
-// Theme (rare) vs mouse position (hot) mat mix.
+// In simple words:
+// Do not mix theme (rare) with mouse position (hot).
 // -----------------------------------------------------------------------------
 // See 11_UseContext Q6 split state/dispatch
 
 // -----------------------------------------------------------------------------
 // Q4: Avoid creating heavy work in render
 //
-// Kya karna hai:
-// Sort/filter — useMemo jab costly + frequent parent renders.
+// Task:
+// Sort/filter — useMemo when costly + frequent parent renders.
 //
-// Seedha matlab:
-// 16 file. Yahan: pehle unnecessary renders hatao.
+// In simple words:
+// File 16. Here: remove unnecessary renders first.
 // -----------------------------------------------------------------------------
 function List({ items, query }) {
   // prefer: fewer parent renders; then memoize filter if needed
@@ -94,11 +94,11 @@ function List({ items, query }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Key that remounts too much
 //
-// Kya karna hai:
-// key={Math.random()} — har baar remount = slow + state loss.
+// Task:
+// key={Math.random()} — remount every time = slow + state loss.
 //
-// Seedha matlab:
-// Stable keys. Remount intentional ho tabhi key change.
+// In simple words:
+// Stable keys. Change key only when remount is intentional.
 // -----------------------------------------------------------------------------
 function BadKey({ items }) {
   return (
@@ -113,11 +113,11 @@ function BadKey({ items }) {
 // -----------------------------------------------------------------------------
 // Q6: [MID] Windowing / virtualization note
 //
-// Kya karna hai:
-// 10k rows — sirf viewport DOM (react-window etc).
+// Task:
+// 10k rows — only viewport DOM (react-window etc).
 //
-// Seedha matlab:
-// memo se 10k manage nahi. Virtualize.
+// In simple words:
+// memo does not manage 10k. Virtualize.
 // -----------------------------------------------------------------------------
 function VirtualNote() {
   return <p>Long lists → windowing library, not only memo.</p>;
@@ -126,11 +126,11 @@ function VirtualNote() {
 // -----------------------------------------------------------------------------
 // Q7: Measure with Profiler mindset
 //
-// Kya karna hai:
-// React DevTools Profiler — kaun render, kitna time.
+// Task:
+// React DevTools Profiler — who renders, how long.
 //
-// Seedha matlab:
-// Guess mat. Evidence se optimize.
+// In simple words:
+// Do not guess. Optimize from evidence.
 // -----------------------------------------------------------------------------
 function Hint() {
   return <p>Profile → find hot components → fix cause.</p>;
@@ -139,11 +139,11 @@ function Hint() {
 // -----------------------------------------------------------------------------
 // Q8: Cheap wins checklist
 //
-// Kya karna hai:
+// Task:
 // Colocate state; memo expensive pure; stable callbacks; fewer context updates.
 //
-// Seedha matlab:
-// Interview answer structure yahi order.
+// In simple words:
+// Interview answer structure in this order.
 // -----------------------------------------------------------------------------
 function Checklist() {
   return (
@@ -159,30 +159,29 @@ function Checklist() {
 // -----------------------------------------------------------------------------
 // Q9: React DevTools — "Highlight updates" ON
 //
-// Kya karna hai:
+// Task:
 // DevTools → Components → settings → highlight re-renders.
 //
-// Seedha matlab:
-// Kaun flash ho raha typing pe — visually pakdo, phir fix.
+// In simple words:
+// See what flashes on typing — catch it visually, then fix.
 // -----------------------------------------------------------------------------
 function DevToolsHint() {
-  return <p>Highlight updates se unnecessary re-renders dikhte hain.</p>;
+  return <p>Highlight updates shows unnecessary re-renders.</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] Context — har consumer re-render jab value change
+// Q10: [MID] Context — every consumer re-renders when value changes
 //
-// Kya karna hai:
-// Ek bada context object har render naya → sab consumers royein.
+// Task:
+// One big context object new every render → all consumers re-render.
 //
-// Seedha matlab:
-// Split context / memo value / selector pattern — 11 file cross-ref.
+// In simple words:
+// Split context / memo value / selector pattern — see file 11 cross-ref.
 // -----------------------------------------------------------------------------
 function ContextPerfNote() {
   return (
     <p>
-      Context value reference change = sab subscribers re-render. State/dispatch
-      alag karo.
+      Context value reference change = all subscribers re-render. Split state/dispatch.
     </p>
   );
 }
@@ -190,11 +189,11 @@ function ContextPerfNote() {
 // -----------------------------------------------------------------------------
 // Q11: Inline object/array props — memo break
 //
-// Kya karna hai:
-// Child memo hai par style={{ color: "red" }} har render naya object.
+// Task:
+// Child is memo but style={{ color: "red" }} is new object every render.
 //
-// Seedha matlab:
-// Reference equality fail — memo useless. Stable ref ya useMemo style.
+// In simple words:
+// Reference equality fails — memo useless. Stable ref or useMemo style.
 // -----------------------------------------------------------------------------
 const MemoChild = memo(function MemoChild({ config }) {
   console.log("MemoChild render");
@@ -211,13 +210,13 @@ function InlinePropTrap() {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: [MID] useCallback — stable handler jab memo child ko pass
+// Q12: [MID] useCallback — stable handler when passing to memo child
 //
-// Kya karna hai:
-// const onClick = useCallback(() => {}, [deps]) — MemoRow ko pass.
+// Task:
+// const onClick = useCallback(() => {}, [deps]) — pass to MemoRow.
 //
-// Seedha matlab:
-// Callback har render naya → memo child phir render. Proof pehle Profiler se.
+// In simple words:
+// New callback every render → memo child renders again. Prove with Profiler first.
 // -----------------------------------------------------------------------------
 function StableHandlerParent() {
   const [n, setN] = useState(0);
@@ -231,13 +230,13 @@ function StableHandlerParent() {
 }
 
 // -----------------------------------------------------------------------------
-// Q13: startTransition — non-urgent update alag priority
+// Q13: startTransition — non-urgent update at lower priority
 //
-// Kya karna hai:
-// startTransition(() => setFiltered(huge)) — typing responsive rahe.
+// Task:
+// startTransition(() => setFiltered(huge)) — typing stays responsive.
 //
-// Seedha matlab:
-// Heavy filter/sort urgent nahi — transition se interruptible.
+// In simple words:
+// Heavy filter/sort not urgent — transition makes it interruptible.
 // -----------------------------------------------------------------------------
 function TransitionFilter({ items }) {
   const [q, setQ] = useState("");
@@ -262,17 +261,17 @@ function TransitionFilter({ items }) {
 // -----------------------------------------------------------------------------
 // Q14: [MID] React Compiler — future auto memo note
 //
-// Kya karna hai:
-// Compiler stable props infer karega — manual memo kam pad sakta.
+// Task:
+// Compiler will infer stable props — less manual memo needed.
 //
-// Seedha matlab:
-// Ab bhi: colocate state pehle; Compiler bonus, excuse nahi premature memo.
+// In simple words:
+// Still: colocate state first; Compiler is bonus, not excuse for premature memo.
 // -----------------------------------------------------------------------------
 function CompilerNote() {
   return (
     <p>
-      React Compiler: auto memoization research — abhi bhi measure + colocate
-      state rule #1.
+      React Compiler: auto memoization research — still measure + colocate
+      state as rule #1.
     </p>
   );
 }
@@ -280,11 +279,11 @@ function CompilerNote() {
 // -----------------------------------------------------------------------------
 // Q15: Lifting state down — split heavy sibling
 //
-// Kya karna hai:
-// Counter state alag component me; list parent me bina counter ke.
+// Task:
+// Counter state in separate component; list in parent without counter.
 //
-// Seedha matlab:
-// Parent re-render se list bachao — state neeche lao.
+// In simple words:
+// Save list from parent re-render — move state down.
 // -----------------------------------------------------------------------------
 function CounterIsland() {
   const [n, setN] = useState(0);
@@ -300,13 +299,13 @@ function SplitLayout() {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] List item alag memo component
+// Q16: [MID] List item as separate memo component
 //
-// Kya karna hai:
-// Row memo + stable id props — sirf changed row render.
+// Task:
+// Row memo + stable id props — only changed row renders.
 //
-// Seedha matlab:
-// Parent list re-render; rows same props → skip.
+// In simple words:
+// Parent list re-renders; rows with same props → skip.
 // -----------------------------------------------------------------------------
 const Row = memo(function Row({ item }) {
   return <li>{item}</li>;
@@ -322,26 +321,26 @@ function MemoList({ items }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q17: [ADV] Profiler — commit duration read
+// Q17: [ADV] Profiler — read commit duration
 //
-// Kya karna hai:
-// Record interaction → dekho kaun component ms le raha.
+// Task:
+// Record interaction → see which component takes ms.
 //
-// Seedha matlab:
-// Flamegraph se guess nahi — evidence based optimize.
+// In simple words:
+// Evidence-based optimize, not flamegraph guesswork.
 // -----------------------------------------------------------------------------
 function ProfilerNote() {
-  return <p>Profiler: slow commit → us component ka cause fix (state/props).</p>;
+  return <p>Profiler: slow commit → fix that component's cause (state/props).</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q18: [ADV] useDeferredValue — search debounce alternative feel
 //
-// Kya karna hai:
-// deferredQuery = useDeferredValue(query) — list ko deferred se filter.
+// Task:
+// deferredQuery = useDeferredValue(query) — filter list with deferred value.
 //
-// Seedha matlab:
-// Input turant update; heavy list thodi der baad — smooth typing.
+// In simple words:
+// Input updates immediately; heavy list slightly later — smooth typing.
 // -----------------------------------------------------------------------------
 function DeferredSearch({ items }) {
   const [q, setQ] = useState("");
@@ -361,16 +360,16 @@ function DeferredSearch({ items }) {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] Activity / Offscreen (React 19+) — hide without unmount cost
 //
-// Kya karna hai:
-// Tab switch pe component hidden state — remount mat, defer updates.
+// Task:
+// Tab switch: component hidden state — no remount, defer updates.
 //
-// Seedha matlab:
-// Performance pattern emerging — tabs preserve state cheaply.
+// In simple words:
+// Emerging performance pattern — tabs preserve state cheaply.
 // -----------------------------------------------------------------------------
 function ActivityNote() {
   return (
     <p>
-      React 19 Activity: hidden UI ko low priority — tabs me re-render kam.
+      React 19 Activity: hidden UI at low priority — fewer re-renders in tabs.
     </p>
   );
 }
@@ -378,29 +377,29 @@ function ActivityNote() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Premature memo anti-pattern
 //
-// Kya karna hai:
-// Har component memo/useCallback — complexity badho, gain zero.
+// Task:
+// memo/useCallback on every component — complexity up, gain zero.
 //
-// Seedha matlab:
-// Profiler prove kare tab hi — default simple rakho.
+// In simple words:
+// Only after Profiler proves it — keep default simple.
 // -----------------------------------------------------------------------------
 function PrematureMemoNote() {
-  return <p>memo sab pe mat — pehle colocate state, phir profile, phir memo.</p>;
+  return <p>Do not memo everything — colocate state first, profile, then memo.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Virtualization recap — react-window
 //
-// Kya karna hai:
-// Fixed height list — sirf visible rows DOM me render.
+// Task:
+// Fixed height list — render only visible rows in DOM.
 //
-// Seedha matlab:
-// 10k items: memo se kaam nahi; windowing mandatory.
+// In simple words:
+// 10k items: memo is not enough; windowing is mandatory.
 // -----------------------------------------------------------------------------
 function VirtualListSketch() {
   return (
     <p>
-      react-window: itemCount huge ho to DOM nodes kam — scroll viewport based.
+      react-window: when itemCount is huge, fewer DOM nodes — scroll viewport based.
     </p>
   );
 }
@@ -408,11 +407,11 @@ function VirtualListSketch() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — slow render diagnose steps
 //
-// Kya karna hai:
+// Task:
 // Highlight → Profiler → state location → props stable → memo last → virtualize.
 //
-// Seedha matlab:
-// Ordered answer interview me strong — guess mat.
+// In simple words:
+// Ordered answer is strong in interview — do not guess.
 // -----------------------------------------------------------------------------
 function PerfInterview() {
   return (

@@ -1,19 +1,19 @@
 // ============================================================================
 // 03 — Props
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Props = parent se child ko parcel. Jaise thali me namak alag table se
-// maanga — child khud invent nahi karta, parent deta hai. Props READ-ONLY hain.
-// Child props change nahi karta; naya data chahiye to parent state badle (lifting).
+// SIMPLE: Props = a parcel from parent to child. Like asking for salt from another table —
+// the child does not invent it, the parent provides it. Props are READ-ONLY.
+// The child does not change props; for new data the parent updates state (lifting).
 //
 // Syntax: <User name="Ada" age={30} /> → function User({ name, age }) { ... }
-// Destructuring common hai. Default props: name = "Guest".
-// children = tags ke beech wala content (15 me deep).
+// Destructuring is common. Default props: name = "Guest".
+// children = content between tags (deep dive in Q15).
 //
-// KYUN: Data flow samajhna React ka core. Bina props ke components isolated toys.
+// WHY: Understanding data flow is core to React. Without props, components are isolated toys.
 // INTERVIEW: props immutable; one-way data flow; children prop.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
@@ -22,11 +22,11 @@ import { useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Simple string prop
 //
-// Kya karna hai:
-// <Hello name="Jay" /> — Hello me name dikhao.
+// Task:
+// <Hello name="Jay" /> — show name inside Hello.
 //
-// Seedha matlab:
-// Attribute = prop. Function arg jaisa.
+// In simple words:
+// Attribute = prop. Like a function argument.
 // -----------------------------------------------------------------------------
 function Hello({ name }) {
   return <h2>Hello, {name}</h2>;
@@ -36,11 +36,11 @@ function Hello({ name }) {
 // -----------------------------------------------------------------------------
 // Q2: Number / boolean props
 //
-// Kya karna hai:
-// age={25} (curly — number). isPro={true} ya sirf isPro.
+// Task:
+// age={25} (curly — number). isPro={true} or just isPro.
 //
-// Seedha matlab:
-// Quotes = string. { } = JS value. Boolean shortcut: <Badge vip /> → vip true.
+// In simple words:
+// Quotes = string. { } = JS value. Boolean shortcut: <Badge vip /> → vip is true.
 // -----------------------------------------------------------------------------
 function Profile({ age, isPro }) {
   return (
@@ -54,12 +54,12 @@ function Profile({ age, isPro }) {
 // -----------------------------------------------------------------------------
 // Q3: Object / array props
 //
-// Kya karna hai:
-// user={{ name: "Ada", city: "Pune" }} pass karo.
+// Task:
+// Pass user={{ name: "Ada", city: "Pune" }}.
 //
-// Seedha matlab:
-// Complex data object/array se jaata hai. Inline object har render naya ref —
-// memo ke sath careful (16/17).
+// In simple words:
+// Complex data goes as object/array. Inline object is new ref every render —
+// be careful with memo (16/17).
 // -----------------------------------------------------------------------------
 function UserCard({ user }) {
   return (
@@ -73,11 +73,11 @@ function UserCard({ user }) {
 // -----------------------------------------------------------------------------
 // Q4: Default parameter
 //
-// Kya karna hai:
-// name = "Guest" jab prop na aaye.
+// Task:
+// name = "Guest" when prop is missing.
 //
-// Seedha matlab:
-// JS default params — React me bhi kaam.
+// In simple words:
+// JS default params — work in React too.
 // -----------------------------------------------------------------------------
 function Welcome({ name = "Guest" }) {
   return <p>Welcome, {name}</p>;
@@ -86,11 +86,11 @@ function Welcome({ name = "Guest" }) {
 // -----------------------------------------------------------------------------
 // Q5: children prop
 //
-// Kya karna hai:
-// <Box>andar ka text</Box> — Box children render kare.
+// Task:
+// <Box>inner text</Box> — Box renders children.
 //
-// Seedha matlab:
-// children = opening/closing tag ke beech. Wrapper components ke liye gold.
+// In simple words:
+// children = content between opening/closing tags. Gold for wrapper components.
 // -----------------------------------------------------------------------------
 function Box({ children }) {
   return <div className="box">{children}</div>;
@@ -100,11 +100,11 @@ function Box({ children }) {
 // -----------------------------------------------------------------------------
 // Q6: Props spread
 //
-// Kya karna hai:
+// Task:
 // const props = { title: "Hi", open: true }; <Modal {...props} />
 //
-// Seedha matlab:
-// Spread saari keys pass. Handy lekin overuse = unclear API.
+// In simple words:
+// Spread passes all keys. Handy but overuse = unclear API.
 // -----------------------------------------------------------------------------
 function Modal({ title, open }) {
   if (!open) return null;
@@ -115,15 +115,15 @@ function Modal({ title, open }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Props are read-only
 //
-// Kya karna hai:
-// Child me props.name = "x" MAT karo. Parent se naya prop aaye.
+// Task:
+// Do NOT do props.name = "x" in child. Wait for new prop from parent.
 //
-// Seedha matlab:
-// Mutation = bugs + React assumptions tootna. One-way: parent → child.
-// Change chahiye? Callback prop upar bhejo (lifting — 14).
+// In simple words:
+// Mutation = bugs + breaks React assumptions. One-way: parent → child.
+// Need change? Send callback prop upward (lifting — 14).
 // -----------------------------------------------------------------------------
 function Bad({ label }) {
-  // label = "hack"; // ❌ mat karo
+  // label = "hack"; // ❌ do not do this
   return <span>{label}</span>;
 }
 
@@ -135,11 +135,11 @@ function GoodParent() {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Callback as prop
 //
-// Kya karna hai:
-// Child button pe onSave call kare — parent handler pass kare.
+// Task:
+// Child button calls onSave — parent passes handler.
 //
-// Seedha matlab:
-// Child event parent ko batata hai. Data upar, UI neeche — common pattern.
+// In simple words:
+// Child tells parent about events. Data up, UI down — common pattern.
 // -----------------------------------------------------------------------------
 function SaveButton({ onSave }) {
   return <button onClick={onSave}>Save</button>;
@@ -155,12 +155,12 @@ function Editor() {
 // -----------------------------------------------------------------------------
 // Q9: children — special prop (nested JSX)
 //
-// Kya karna hai:
-// Panel title + children alag slots — flexible wrapper.
+// Task:
+// Panel with title + children as separate slots — flexible wrapper.
 //
-// Seedha matlab:
-// children explicit prop hai — <Panel>...</Panel> se aata hai.
-// Multiple slots baad me (header/footer props ya compound components).
+// In simple words:
+// children is an explicit prop — comes from <Panel>...</Panel>.
+// Multiple slots later (header/footer props or compound components).
 // -----------------------------------------------------------------------------
 function PanelWrap({ title, children }) {
   return (
@@ -174,12 +174,12 @@ function PanelWrap({ title, children }) {
 // -----------------------------------------------------------------------------
 // Q10: Default props — destructuring default
 //
-// Kya karna hai:
-// size = "md", variant = "primary" jab parent na bheje.
+// Task:
+// size = "md", variant = "primary" when parent does not send them.
 //
-// Seedha matlab:
-// JS default params modern way. Purani: Component.defaultProps (deprecated feel).
-// undefined pe default lagta hai; null pe nahi.
+// In simple words:
+// JS default params = modern way. Old way: Component.defaultProps (deprecated feel).
+// Default applies on undefined; not on null.
 // -----------------------------------------------------------------------------
 function Button({ label, size = "md", variant = "primary" }) {
   return (
@@ -190,12 +190,12 @@ function Button({ label, size = "md", variant = "primary" }) {
 // -----------------------------------------------------------------------------
 // Q11: [MID] Prop drilling intro
 //
-// Kya karna hai:
-// App → Layout → Nav → Link tak theme pass — beech ke sirf forward.
+// Task:
+// Pass theme from App → Layout → Nav → Link — middle layers only forward.
 //
-// Seedha matlab:
-// Drilling = har level pe prop pass jab beech wale use nahi karte.
-// Thoda OK; bahut deep = Context (13) ya composition rethink.
+// In simple words:
+// Drilling = passing prop through every level when middle layers do not use it.
+// A little is OK; very deep = Context (13) or rethink composition.
 // -----------------------------------------------------------------------------
 function ThemeLink({ theme, href, children }) {
   return (
@@ -226,12 +226,12 @@ function AppShell({ theme }) {
 // -----------------------------------------------------------------------------
 // Q12: Spread props pass-through
 //
-// Kya karna hai:
-// Input wrapper — {...inputProps} native input pe forward.
+// Task:
+// Input wrapper — forward {...inputProps} to native input.
 //
-// Seedha matlab:
-// Parent se saari valid input props neeche. Wrapper apne props alag rakhe.
-// Pick/omit careful — security me unwanted props mat forward (DOM).
+// In simple words:
+// All valid input props from parent go down. Wrapper keeps its own props separate.
+// Pick/omit carefully — do not forward unwanted props to DOM (security).
 // -----------------------------------------------------------------------------
 function TextField({ label, ...inputProps }) {
   return (
@@ -246,11 +246,11 @@ function TextField({ label, ...inputProps }) {
 // -----------------------------------------------------------------------------
 // Q13: Boolean props shorthand
 //
-// Kya karna hai:
-// <Input disabled /> = disabled={true}. Explicit false alag.
+// Task:
+// <Input disabled /> = disabled={true}. Explicit false is different.
 //
-// Seedha matlab:
-// JSX me attribute bina value = true. false ke liye disabled={false} likho.
+// In simple words:
+// In JSX, attribute without value = true. For false write disabled={false}.
 // Interview: <Checkbox checked /> vs checked={isChecked}.
 // -----------------------------------------------------------------------------
 function SubmitBtn({ disabled, loading }) {
@@ -265,12 +265,12 @@ function SubmitBtn({ disabled, loading }) {
 // -----------------------------------------------------------------------------
 // Q14: Callback prop with argument up
 //
-// Kya karna hai:
-// ListItem click pe id parent ko bheje — onSelect(id).
+// Task:
+// ListItem click sends id to parent — onSelect(id).
 //
-// Seedha matlab:
-// Child data upar batata hai. Parent state update karega.
-// Arrow wrap: onClick={() => onSelect(id)} — id bind.
+// In simple words:
+// Child sends data upward. Parent will update state.
+// Arrow wrap: onClick={() => onSelect(id)} — bind id.
 // -----------------------------------------------------------------------------
 function ListItem({ id, label, onSelect }) {
   return (
@@ -308,12 +308,12 @@ function SelectList() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Render props light (function as child)
 //
-// Kya karna hai:
-// DataProvider children ko function de — {data => <UI />}.
+// Task:
+// DataProvider gives children a function — {data => <UI />}.
 //
-// Seedha matlab:
-// "Render prop" = parent data/logic, child decide UI kaise.
-// Hooks aane ke baad kam common; phir bhi libraries me dikhega.
+// In simple words:
+// "Render prop" = parent has data/logic, child decides UI.
+// Less common after hooks; still appears in libraries.
 // -----------------------------------------------------------------------------
 function DataProvider({ value, children }) {
   return children(value);
@@ -330,15 +330,15 @@ function RenderPropDemo() {
 // -----------------------------------------------------------------------------
 // Q16: Prop types mental model (no library required)
 //
-// Kya karna hai:
-// Socho API: name string, age number, onSave function — galat type = bug.
+// Task:
+// Think API: name string, age number, onSave function — wrong type = bug.
 //
-// Seedha matlab:
-// TypeScript / PropTypes runtime check — team choose kare.
+// In simple words:
+// TypeScript / PropTypes runtime check — team chooses.
 // Mental model: component = function with documented input shape.
 // -----------------------------------------------------------------------------
 function TypedUser({ name, age, onSave }) {
-  // TS me: interface { name: string; age: number; onSave: () => void }
+  // TS: interface { name: string; age: number; onSave: () => void }
   return (
     <div>
       <p>
@@ -354,22 +354,22 @@ function TypedUser({ name, age, onSave }) {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Mutating props — anti-pattern detail
 //
-// Kya karna hai:
-// props.items.push() ❌ — parent ka array mutate. Copy/filter parent me.
+// Task:
+// props.items.push() ❌ — mutates parent's array. Copy/filter in parent.
 //
-// Seedha matlab:
-// Props reference share ho sakta hai. Child mutate = parent bhi change — React confuse.
-// One-way flow tod deta hai. Immutable updates hamesha.
+// In simple words:
+// Props may share reference. Child mutate = parent changes too — React gets confused.
+// Breaks one-way flow. Always use immutable updates.
 // -----------------------------------------------------------------------------
 function ItemCount({ items }) {
-  // ❌ items.push("new") — parent state corrupt
+  // ❌ items.push("new") — corrupts parent state
   return <p>{items.length} items</p>;
 }
 
 function ItemCountParent() {
   const [items, setItems] = useState(["a", "b"]);
   function addItem() {
-    setItems([...items, "c"]); // parent me update ✅
+    setItems([...items, "c"]); // update in parent ✅
   }
   return (
     <div>
@@ -382,15 +382,15 @@ function ItemCountParent() {
 }
 
 // -----------------------------------------------------------------------------
-// Q18: key prop special — component ko nahi milti
+// Q18: key prop special — component does not receive it
 //
-// Kya karna hai:
-// <Row key={id} id={id} /> — Row me props.key undefined (React use karta hai).
+// Task:
+// <Row key={id} id={id} /> — props.key is undefined inside Row (React uses it).
 //
-// Seedha matlab:
-// key React ke liye hai — reconciliation. Component ke andar access mat karo.
-// Same data chahiye? id alag prop pass karo.
-// Interview trap: key={index} list reorder pe bugs.
+// In simple words:
+// key is for React — reconciliation. Do not access inside component.
+// Need same data? Pass id as a separate prop.
+// Interview trap: key={index} causes bugs on list reorder.
 // -----------------------------------------------------------------------------
 function Row({ id, label }) {
   return (
@@ -414,12 +414,12 @@ function RowList({ rows }) {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] Rest props omit pattern
 //
-// Kya karna hai:
-// const { className, ...rest } = props — sirf safe DOM props forward.
+// Task:
+// const { className, ...rest } = props — forward only safe DOM props.
 //
-// Seedha matlab:
-// Custom props (isLoading) DOM pe mat bhejo — React warning.
-// Destructure karke alag karo, phir ...rest spread.
+// In simple words:
+// Do not send custom props (isLoading) to DOM — React warning.
+// Destructure them out, then spread ...rest.
 // -----------------------------------------------------------------------------
 function FancyDiv({ isLoading, className, children, ...domProps }) {
   return (
@@ -432,12 +432,12 @@ function FancyDiv({ isLoading, className, children, ...domProps }) {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Optional chaining props
 //
-// Kya karna hai:
-// user?.name jab user null ho sakta hai — crash avoid.
+// Task:
+// user?.name when user can be null — avoid crash.
 //
-// Seedha matlab:
-// Props kabhi undefined — defensive render. Fallback UI ya skeleton.
-// Parent ko ideally consistent shape bhejna better.
+// In simple words:
+// Props can be undefined — defensive render. Fallback UI or skeleton.
+// Ideally parent sends consistent shape.
 // -----------------------------------------------------------------------------
 function ProfileOptional({ user }) {
   if (!user) return <p>No user</p>;
@@ -451,12 +451,12 @@ function ProfileOptional({ user }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Props vs state boundary
 //
-// Kya karna hai:
+// Task:
 // Prop = external input. Local edit? copy to state (08 controlled pattern).
 //
-// Seedha matlab:
-// Child props directly edit nahi kar sakta — local draft state banao.
-// Save pe callback se parent ko naya value bhejo.
+// In simple words:
+// Child cannot edit props directly — create local draft state.
+// On save, send new value to parent via callback.
 // -----------------------------------------------------------------------------
 function EditableLabel({ value, onChange }) {
   const [draft, setDraft] = useState(value);
@@ -473,15 +473,15 @@ function EditableLabel({ value, onChange }) {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview trap — spread unknown props
 //
-// Kya karna hai:
-// {...props} sab kuch DOM pe — custom props leak = warning / XSS surface.
+// Task:
+// {...props} everything to DOM — custom props leak = warning / XSS surface.
 //
-// Seedha matlab:
-// Explicit API > blind spread. Whitelist props ya TypeScript strict.
-// Real-world: UI library wrappers me common mistake.
+// In simple words:
+// Explicit API > blind spread. Whitelist props or use TypeScript strict.
+// Common mistake in real-world UI library wrappers.
 // -----------------------------------------------------------------------------
 function SafeLink({ href, children, className }) {
-  // ✅ sirf known props — no blind {...unknown}
+  // ✅ only known props — no blind {...unknown}
   return (
     <a href={href} className={className} rel="noopener noreferrer">
       {children}

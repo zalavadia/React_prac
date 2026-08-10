@@ -1,18 +1,18 @@
 // ============================================================================
 // 04 — useState
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: useState = dabbe me value + "dabba badalne wala button".
-// Jaise chai counter: cups = 0, har order pe cups++. Screen khud update.
-// const [count, setCount] = useState(0) — count padho, setCount se likho.
+// SIMPLE: useState = a box with a value + a "button to change the box".
+// Like a tea counter: cups = 0, each order cups++. The screen updates on its own.
+// const [count, setCount] = useState(0) — read count, write with setCount.
 //
-// setCount(5) direct. setCount(c => c + 1) jab purani value pe depend.
-// Object/array update: naya copy banao (spread), mutate mat karo.
+// setCount(5) direct. setCount(c => c + 1) when you depend on the old value.
+// Object/array update: make a new copy (spread), do not mutate.
 //
-// KYUN: Interactive UI ka dil. Bina state ke sirf static page.
+// WHY: The heart of interactive UI. Without state you only have a static page.
 // INTERVIEW: async batching; functional updater; don't mutate state.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Counter basics
 //
-// Kya karna hai:
-// count 0 se start, button pe +1.
+// Task:
+// Start count at 0, +1 on button click.
 //
-// Seedha matlab:
-// setCount se UI dubara paint. Direct count++ kaam nahi — React nahi sunega.
+// In simple words:
+// setCount repaints the UI. Direct count++ does not work — React will not notice.
 // -----------------------------------------------------------------------------
 function Counter() {
   const [count, setCount] = useState(0);
@@ -37,11 +37,11 @@ function Counter() {
 // -----------------------------------------------------------------------------
 // Q2: Toggle boolean
 //
-// Kya karna hai:
-// isOpen true/false flip — Show/Hide.
+// Task:
+// Flip isOpen true/false — Show/Hide.
 //
-// Seedha matlab:
-// Boolean state = lights switch. UI conditional (06) se jodna.
+// In simple words:
+// Boolean state = light switch. Connect to conditional UI (06).
 // -----------------------------------------------------------------------------
 function Toggle() {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,11 +58,11 @@ function Toggle() {
 // -----------------------------------------------------------------------------
 // Q3: String input state (preview)
 //
-// Kya karna hai:
-// name state, input pe setName — controlled feel (08 deep).
+// Task:
+// name state, setName on input — controlled feel (08 goes deeper).
 //
-// Seedha matlab:
-// Har keystroke pe state = source of truth.
+// In simple words:
+// Every keystroke updates state = source of truth.
 // -----------------------------------------------------------------------------
 function NameBox() {
   const [name, setName] = useState("");
@@ -77,12 +77,12 @@ function NameBox() {
 // -----------------------------------------------------------------------------
 // Q4: Functional updater
 //
-// Kya karna hai:
-// setCount(c => c + 1) teen baar ek click pe — sahi +3.
+// Task:
+// setCount(c => c + 1) three times in one click — correct +3.
 //
-// Seedha matlab:
-// count + 1 teen baar stale value use kar sakta hai.
-// Updater hamesha latest pe chalta hai.
+// In simple words:
+// count + 1 three times may use stale value.
+// Updater always runs on the latest value.
 // -----------------------------------------------------------------------------
 function TripleAdd() {
   const [count, setCount] = useState(0);
@@ -97,10 +97,10 @@ function TripleAdd() {
 // -----------------------------------------------------------------------------
 // Q5: Object state — immutable update
 //
-// Kya karna hai:
-// user = { name, age }. Sirf age badlo — spread se naya object.
+// Task:
+// user = { name, age }. Change only age — new object with spread.
 //
-// Seedha matlab:
+// In simple words:
 // user.age++ ❌. setUser({ ...user, age: user.age + 1 }) ✅
 // -----------------------------------------------------------------------------
 function UserAge() {
@@ -117,11 +117,11 @@ function UserAge() {
 // -----------------------------------------------------------------------------
 // Q6: Array state — add item
 //
-// Kya karna hai:
-// todos me naya item push bina mutate.
+// Task:
+// Add new item to todos without mutating.
 //
-// Seedha matlab:
-// setTodos([...todos, "new"]) ya filter/map se naya array.
+// In simple words:
+// setTodos([...todos, "new"]) or filter/map for new array.
 // -----------------------------------------------------------------------------
 function TodoAdd() {
   const [todos, setTodos] = useState(["milk"]);
@@ -140,15 +140,15 @@ function TodoAdd() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Lazy initial state
 //
-// Kya karna hai:
-// useState(() => heavyCompute()) — function form jab init mehengi ho.
+// Task:
+// useState(() => heavyCompute()) — function form when init is expensive.
 //
-// Seedha matlab:
-// useState(heavy()) har render pe chalega. useState(() => heavy()) ek baar.
+// In simple words:
+// useState(heavy()) runs every render. useState(() => heavy()) runs once.
 // -----------------------------------------------------------------------------
 function ExpensiveInit() {
   const [data] = useState(() => {
-    // socho: localStorage parse / big calc — ek baar
+    // imagine: localStorage parse / big calc — once
     return { ready: true };
   });
   return <pre>{JSON.stringify(data)}</pre>;
@@ -157,11 +157,11 @@ function ExpensiveInit() {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Multiple related states vs one object
 //
-// Kya karna hai:
-// form fields alag useState YA ek object — tradeoff.
+// Task:
+// Form fields: separate useState OR one object — tradeoff.
 //
-// Seedha matlab:
-// Related fields object me theek. Bahut independent → alag states.
+// In simple words:
+// Related fields in one object is fine. Very independent → separate states.
 // Complex logic → useReducer (12).
 // -----------------------------------------------------------------------------
 function FormBits() {
@@ -180,14 +180,14 @@ function FormBits() {
 }
 
 // -----------------------------------------------------------------------------
-// Q9: [MID] Batching — ek event me multiple setState
+// Q9: [MID] Batching — multiple setState in one event
 //
-// Kya karna hai:
-// Ek click pe setA + setB — React 18 me ek hi re-render (auto batch).
+// Task:
+// One click with setA + setB — React 18 batches into one re-render (auto batch).
 //
-// Seedha matlab:
-// Pehle sync handlers me batch hota tha; ab async/timeouts me bhi (18+).
-// Performance win — har set pe paint nahi.
+// In simple words:
+// Used to batch only in sync handlers; now also in async/timeouts (18+).
+// Performance win — not a paint on every set.
 // -----------------------------------------------------------------------------
 function BatchDemo() {
   const [a, setA] = useState(0);
@@ -207,18 +207,18 @@ function BatchDemo() {
 // -----------------------------------------------------------------------------
 // Q10: Stale state trap
 //
-// Kya karna hai:
-// setCount(count + 1) do baar fast — +1 hi hoga, +2 nahi.
+// Task:
+// setCount(count + 1) twice quickly — only +1, not +2.
 //
-// Seedha matlab:
-// count closure purani value pakad sakta hai. Functional updater use karo.
+// In simple words:
+// count closure may hold old value. Use functional updater.
 // Interview classic: "Why +1 twice gives +1?"
 // -----------------------------------------------------------------------------
 function StaleTrap() {
   const [count, setCount] = useState(0);
   function doubleBad() {
     setCount(count + 1);
-    setCount(count + 1); // dono same stale count use — +1 total
+    setCount(count + 1); // both use same stale count — +1 total
   }
   function doubleGood() {
     setCount((c) => c + 1);
@@ -240,12 +240,12 @@ function StaleTrap() {
 // -----------------------------------------------------------------------------
 // Q11: Lazy init recap — expensive only once
 //
-// Kya karna hai:
+// Task:
 // useState(readFromStorage) vs useState(() => readFromStorage()).
 //
-// Seedha matlab:
-// Direct call = har render pe function chalega (React ignore karega result lekin cost hai).
-// Lazy function = init render pe ek baar.
+// In simple words:
+// Direct call = function runs every render (React ignores result but cost remains).
+// Lazy function = runs once on init render.
 // -----------------------------------------------------------------------------
 function LazyStorage() {
   const [token] = useState(() => {
@@ -258,12 +258,12 @@ function LazyStorage() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] Derived state anti-pattern
 //
-// Kya karna hai:
-// props se aaya data ko useState me copy MAT karo sync ke liye.
+// Task:
+// Do NOT copy data from props into useState just to sync.
 //
-// Seedha matlab:
-// fullName = first + last — render me calculate karo, alag state nahi.
-// props → state copy = out of sync bugs jab parent update kare.
+// In simple words:
+// fullName = first + last — calculate in render, not extra state.
+// props → state copy = out of sync bugs when parent updates.
 // Exception: user edit draft (08) — intentional local copy.
 // -----------------------------------------------------------------------------
 function FullName({ first, last }) {
@@ -274,12 +274,12 @@ function FullName({ first, last }) {
 // -----------------------------------------------------------------------------
 // Q13: Reset state with key
 //
-// Kya karna hai:
-// Form reset — parent key={userId} badle to child fresh state.
+// Task:
+// Form reset — parent changes key={userId} so child gets fresh state.
 //
-// Seedha matlab:
-// key change = React naya component maan ke state zero se.
-// useEffect ke bina "reset on prop change" ka clean trick.
+// In simple words:
+// key change = React treats it as a new component, state starts from zero.
+// Clean trick to "reset on prop change" without useEffect.
 // -----------------------------------------------------------------------------
 function UserForm({ userId }) {
   const [note, setNote] = useState("");
@@ -307,12 +307,12 @@ function UserFormReset() {
 // -----------------------------------------------------------------------------
 // Q14: Updater chain — sequential updates
 //
-// Kya karna hai:
-// Teen functional updater ek saath — order guaranteed latest pe.
+// Task:
+// Three functional updaters at once — order guaranteed on latest value.
 //
-// Seedha matlab:
-// setS(s => ...); setS(s => ...); — queue me jate hain, chain chalti hai.
-// Direct setS(s+1) mix with functional — still prefer all functional if chained.
+// In simple words:
+// setS(s => ...); setS(s => ...); — queued, chain runs in order.
+// Direct setS(s+1) mixed with functional — still prefer all functional if chained.
 // -----------------------------------------------------------------------------
 function ChainAdd() {
   const [n, setN] = useState(0);
@@ -333,11 +333,11 @@ function ChainAdd() {
 // -----------------------------------------------------------------------------
 // Q15: Array update — remove / toggle immutable
 //
-// Kya karna hai:
-// filter se delete, map se toggle done flag.
+// Task:
+// Delete with filter, toggle done flag with map.
 //
-// Seedha matlab:
-// splice/mutate ❌. Naya array return = React change detect kare.
+// In simple words:
+// splice/mutate ❌. Return new array = React detects change.
 // -----------------------------------------------------------------------------
 function TodoToggle() {
   const [todos, setTodos] = useState([
@@ -371,12 +371,12 @@ function TodoToggle() {
 // -----------------------------------------------------------------------------
 // Q16: Object nested immutable update
 //
-// Kya karna hai:
-// user.address.city badlo — spread at each level.
+// Task:
+// Change user.address.city — spread at each level.
 //
-// Seedha matlab:
-// Shallow spread ek level. Nested = { ...user, address: { ...user.address, city: "Mumbai" } }.
-// Deep trees ke liye Immer ya normalized state (12).
+// In simple words:
+// Shallow spread covers one level. Nested = { ...user, address: { ...user.address, city: "Mumbai" } }.
+// For deep trees use Immer or normalized state (12).
 // -----------------------------------------------------------------------------
 function NestedUser() {
   const [user, setUser] = useState({
@@ -399,15 +399,15 @@ function NestedUser() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] When NOT useState
 //
-// Kya karna hai:
+// Task:
 // Derived values, ref for DOM, server data → fetch + state / cache (TanStack Query).
 //
-// Seedha matlab:
-// Har cheez state nahi: const total = price * qty — calculate in render.
+// In simple words:
+// Not everything is state: const total = price * qty — calculate in render.
 // Frequent DOM read? useRef (10). Complex transitions → useReducer (12).
 // -----------------------------------------------------------------------------
 function CartLine({ price, qty }) {
-  const total = price * qty; // derived — useState waste
+  const total = price * qty; // derived — useState is waste
   return (
     <p>
       ₹{price} × {qty} = ₹{total}
@@ -418,13 +418,13 @@ function CartLine({ price, qty }) {
 // -----------------------------------------------------------------------------
 // Q18: [MID] SSR hydration note
 //
-// Kya karna hai:
-// Server HTML + client useState initial match — warna hydration mismatch.
+// Task:
+// Server HTML + client useState initial must match — else hydration mismatch.
 //
-// Seedha matlab:
-// typeof window check se random initial mat do SSR pe.
-// Date.now()/Math.random() first render server vs client alag → warning.
-// Client-only state: useEffect me set after mount (09).
+// In simple words:
+// Do not use typeof window check for random initial on SSR.
+// Date.now()/Math.random() differs server vs client first render → warning.
+// Client-only state: set after mount in useEffect (09).
 // -----------------------------------------------------------------------------
 function HydrationSafe() {
   const [mounted, setMounted] = useState(false);
@@ -435,13 +435,13 @@ function HydrationSafe() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] React 19 useActionState contrast (brief)
 //
-// Kya karna hai:
-// Form pending/error state — pehle manual useState; 19 me useActionState option.
+// Task:
+// Form pending/error state — used to be manual useState; React 19 has useActionState.
 //
-// Seedha matlab:
+// In simple words:
 // Manual: const [pending, setPending] = useState(false) around submit.
-// React 19: action + useActionState form async ko simplify karta hai.
-// Core useState ab bhi har jagah valid — yeh extra tool.
+// React 19: action + useActionState simplifies form async.
+// Core useState still valid everywhere — this is an extra tool.
 // -----------------------------------------------------------------------------
 function ManualFormPending() {
   const [pending, setPending] = useState(false);
@@ -471,12 +471,12 @@ function ManualFormPending() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] State initializer with argument pattern
 //
-// Kya karna hai:
+// Task:
 // Factory: useState(() => createInitial(userId)) — lazy + dynamic init.
 //
-// Seedha matlab:
-// Init function zero-arg hota hai usually. Dynamic init ke liye closure ya key reset (Q13).
-// userId change pe state sync? key={userId} preferred over effect sync.
+// In simple words:
+// Init function is usually zero-arg. For dynamic init use closure or key reset (Q13).
+// State sync on userId change? key={userId} preferred over effect sync.
 // -----------------------------------------------------------------------------
 function ScoreBoard({ gameId }) {
   const [score, setScore] = useState(() => 0);
@@ -493,12 +493,12 @@ function ScoreBoard({ gameId }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Anti-pattern — too many useState calls
 //
-// Kya karna hai:
-// 15 alag useState related form me — object ya useReducer consider karo.
+// Task:
+// 15 separate useState in related form — consider object or useReducer.
 //
-// Seedha matlab:
-// Related updates ek saath? Object/reducer se atomic update.
-// Simple 2-3 fields? Alag useState clean hai — over-unify mat karo.
+// In simple words:
+// Related updates together? Object/reducer gives atomic update.
+// Simple 2-3 fields? Separate useState is clean — do not over-unify.
 // -----------------------------------------------------------------------------
 function SimpleForm() {
   const [form, setForm] = useState({ name: "", email: "" });
@@ -522,12 +522,12 @@ function SimpleForm() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — setState async feel
 //
-// Kya karna hai:
-// setCount(5); console.log(count) — abhi purana count dikhega.
+// Task:
+// setCount(5); console.log(count) — still shows old count.
 //
-// Seedha matlab:
-// setState request schedule karta hai — turant variable update nahi.
-// Naya value chahiye? functional updater ya useEffect on count (09).
+// In simple words:
+// setState schedules an update — variable does not change immediately.
+// Need new value? Use functional updater or useEffect on count (09).
 // -----------------------------------------------------------------------------
 function AsyncFeel() {
   const [count, setCount] = useState(0);

@@ -1,16 +1,16 @@
 // ============================================================================
 // 46 — Auth Patterns + React Hook Form + Zod
-// Level: MID  |  Sequence: pehle 11 (context), 08 (forms), phir yeh
+// Level: MID  |  Sequence: first 11 (context), 08 (forms), then this
 // ============================================================================
 //
-// LAYMAN: Auth = kaun logged in hai + routes protect. Token memory/localStorage/
-// httpOnly cookie — tradeoffs. RHF = forms bina har keystroke re-render;
-// Zod = schema validation TypeScript-friendly. zodResolver dono jodta hai.
+// SIMPLE: Auth = who is logged in + protect routes. Token memory/localStorage/
+// httpOnly cookie — tradeoffs. RHF = forms without re-render on every keystroke;
+// Zod = schema validation TypeScript-friendly. zodResolver connects both.
 //
-// KYUN: Real apps me login, protected pages, validated forms daily kaam.
+// WHY: Real apps need login, protected pages, validated forms every day.
 // INTERVIEW: token storage XSS; ProtectedRoute; RHF register vs Controller;
 // server errors → setError.
-// Vite/React 19 project me use — teaching file.
+// Use in Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -43,16 +43,16 @@ import { z } from "zod";
 // -----------------------------------------------------------------------------
 // Q1: Token in memory vs localStorage — tradeoffs
 //
-// Kya karna hai:
-// Dono storage strategies compare karo interview me.
+// Task:
+// Compare both storage strategies in interviews.
 //
-// Seedha matlab:
-// Memory (React state / module var): XSS se chori ho sakta hai JS read karke,
-// lekin refresh pe token lost — tab close = logout. Zyada secure feel SPA me
-// agar refresh token httpOnly cookie se aaye.
+// In simple words:
+// Memory (React state / module var): XSS can steal it if JS can read it,
+// but token is lost on refresh — tab close = logout. Feels more secure in SPA
+// if refresh token comes from httpOnly cookie.
 // localStorage: persist across refresh; XSS = game over (document.cookie/localStorage
-// readable by injected script). Never store refresh token in localStorage prod me
-// agar XSS risk hai.
+// readable by injected script). Never store refresh token in localStorage in prod
+// if XSS risk exists.
 // Best prod sketch: access token memory/short-lived; refresh httpOnly Secure cookie.
 // -----------------------------------------------------------------------------
 let memoryAccessToken = null;
@@ -79,12 +79,12 @@ const tokenTradeoffs =
 // -----------------------------------------------------------------------------
 // Q2: AuthContext provider
 //
-// Kya karna hai:
+// Task:
 // user, login, logout, loading — tree-wide auth state.
 //
-// Seedha matlab:
+// In simple words:
 // createContext + Provider. Value stable via useMemo where possible.
-// Children useAuth() se consume. Real app: bootstrap me /me fetch.
+// Children consume via useAuth(). Real app: fetch /me on bootstrap.
 // -----------------------------------------------------------------------------
 const AuthContext = createContext(null);
 
@@ -134,10 +134,10 @@ export function useAuth() {
 // -----------------------------------------------------------------------------
 // Q3: login / logout flow
 //
-// Kya karna hai:
+// Task:
 // Credentials POST → token + user → context update.
 //
-// Seedha matlab:
+// In simple words:
 // login({ email, password }) async → API → login(profile, token).
 // logout clears storage + context. UI conditional on user.
 // -----------------------------------------------------------------------------
@@ -173,12 +173,12 @@ export function LoginLogoutButtons() {
 // -----------------------------------------------------------------------------
 // Q4: ProtectedRoute component
 //
-// Kya karna hai:
-// Auth nahi → redirect login; warna children/outlet render.
+// Task:
+// No auth → redirect to login; otherwise render children/outlet.
 //
-// Seedha matlab:
+// In simple words:
 // if (!user) return <Navigate to="/login" replace state={{ from: location }} />.
-// bootstrapping pe spinner — flash redirect avoid.
+// Show spinner while bootstrapping — avoid flash redirect.
 // -----------------------------------------------------------------------------
 export function ProtectedRoute({ children }) {
   const { isAuthenticated, bootstrapping } = useAuth();
@@ -194,12 +194,12 @@ export function ProtectedRoute({ children }) {
 // -----------------------------------------------------------------------------
 // Q5: Attach Authorization header (API client sketch)
 //
-// Kya karna hai:
-// Har fetch me Bearer token auto attach.
+// Task:
+// Auto attach Bearer token on every fetch.
 //
-// Seedha matlab:
-// Wrapper api.get/post — token memory ya localStorage se padh ke header set.
-// 401 aaye → refresh flow ya logout. Centralize — har component me mat likho.
+// In simple words:
+// Wrapper api.get/post — read token from memory or localStorage and set header.
+// On 401 → refresh flow or logout. Centralize — don't write in every component.
 // -----------------------------------------------------------------------------
 export async function apiFetch(path, options = {}) {
   const token = getMemoryToken() ?? readTokenLocal();
@@ -218,14 +218,14 @@ export async function apiFetch(path, options = {}) {
 // -----------------------------------------------------------------------------
 // Q6: Refresh token sketch
 //
-// Kya karna hai:
-// Access expire → refresh endpoint → naya access; fail → logout.
+// Task:
+// Access expires → refresh endpoint → new access; fail → logout.
 //
-// Seedha matlab:
-// Refresh token httpOnly cookie me (server set) — JS read nahi kar sakta.
+// In simple words:
+// Refresh token in httpOnly cookie (server set) — JS cannot read it.
 // POST /auth/refresh credentials:include → new access token JSON.
-// Queue: parallel 401 pe ek refresh, baaki requests wait.
-// Memory me naya access store; refresh rotate ho to cookie auto update server side.
+// Queue: on parallel 401, one refresh, other requests wait.
+// Store new access in memory; if refresh rotates, cookie auto updates server side.
 // -----------------------------------------------------------------------------
 let refreshPromise = null;
 
@@ -250,13 +250,13 @@ export async function refreshAccessToken() {
 // -----------------------------------------------------------------------------
 // Q7: Route guards — role / feature flags
 //
-// Kya karna hai:
-// Authenticated + role check alag layer.
+// Task:
+// Authenticated + role check as separate layer.
 //
-// Seedha matlab:
+// In simple words:
 // ProtectedRoute = logged in. RoleRoute = user.role === 'admin'.
 // Feature guard = subscription active. Compose nested routes.
-// Unauthorized role → 403 page, login pe mat bhejo (already authed).
+// Unauthorized role → 403 page, don't send to login (already authed).
 // -----------------------------------------------------------------------------
 export function RoleRoute({ role, children }) {
   const { user, isAuthenticated } = useAuth();
@@ -268,12 +268,12 @@ export function RoleRoute({ role, children }) {
 // -----------------------------------------------------------------------------
 // Q8: Role-based UI (admin panel toggle)
 //
-// Kya karna hai:
-// Same page pe admin-only buttons conditionally.
+// Task:
+// Show admin-only buttons conditionally on same page.
 //
-// Seedha matlab:
+// In simple words:
 // user?.role === 'admin' && <AdminTools />.
-// UI hide ≠ security — API bhi authorize kare. Client guard UX ke liye.
+// Hiding UI ≠ security — API must authorize too. Client guard is for UX.
 // -----------------------------------------------------------------------------
 export function AdminPanel() {
   const { user } = useAuth();
@@ -289,13 +289,13 @@ export function AdminPanel() {
 // -----------------------------------------------------------------------------
 // Q9: Redirect after login — location.state.from
 //
-// Kya karna hai:
-// Protected redirect se aaye to wapas intended URL pe bhejo.
+// Task:
+// If came from protected redirect, send back to intended URL.
 //
-// Seedha matlab:
+// In simple words:
 // Login page: const from = location.state?.from?.pathname || '/dashboard'.
 // navigate(from, { replace: true }) after success.
-// Open redirect se bachne ke liye internal paths validate karo.
+// Validate internal paths to avoid open redirect.
 // -----------------------------------------------------------------------------
 export function LoginRedirectPage() {
   const navigate = useNavigate();
@@ -319,14 +319,14 @@ export function LoginRedirectPage() {
 // -----------------------------------------------------------------------------
 // Q10: Secure httpOnly cookies — comment note
 //
-// Kya karna hai:
-// Prod token strategy explain karo bina full backend.
+// Task:
+// Explain prod token strategy without full backend.
 //
-// Seedha matlab:
+// In simple words:
 // Set-Cookie: refresh=...; HttpOnly; Secure; SameSite=Strict.
-// Browser auto sends cookie — JS document.cookie se read NAHI.
-// XSS se refresh chori mushkil (access short-lived memory me).
-// CSRF: SameSite + anti-CSRF token POST pe. SPA + separate API domain = careful CORS.
+// Browser auto sends cookie — JS CANNOT read via document.cookie.
+// Hard to steal refresh via XSS (access short-lived in memory).
+// CSRF: SameSite + anti-CSRF token on POST. SPA + separate API domain = careful CORS.
 // -----------------------------------------------------------------------------
 const httpOnlyNote =
   "HttpOnly cookies hide refresh token from JS — preferred over localStorage for long-lived secrets.";
@@ -334,14 +334,14 @@ const httpOnlyNote =
 // -----------------------------------------------------------------------------
 // Q11: XSS token theft note
 //
-// Kya karna hai:
-// Kyun localStorage risky — interview security angle.
+// Task:
+// Why localStorage is risky — interview security angle.
 //
-// Seedha matlab:
+// In simple words:
 // Attacker injected script: localStorage.getItem('access_token') → exfiltrate.
 // Any innerHTML/dangerouslySetInnerHTML/eval/third-party script risk.
 // Mitigate: CSP, sanitize, httpOnly refresh, short access TTL, rotate.
-// Auth token kabhi URL query me mat rakho (logs/referrer leak).
+// Never put auth token in URL query (logs/referrer leak).
 // -----------------------------------------------------------------------------
 const xssNote =
   "XSS + localStorage token = full account takeover until expiry; prefer HttpOnly refresh + CSP.";
@@ -353,12 +353,12 @@ const xssNote =
 // -----------------------------------------------------------------------------
 // Q12: useForm basics
 //
-// Kya karna hai:
-// Form instance banao — register, handleSubmit, formState.
+// Task:
+// Create form instance — register, handleSubmit, formState.
 //
-// Seedha matlab:
+// In simple words:
 // const { register, handleSubmit, formState } = useForm({ defaultValues }).
-// Uncontrolled-by-default — refs se DOM read; kam re-renders vs pure controlled.
+// Uncontrolled-by-default — read DOM via refs; fewer re-renders vs pure controlled.
 // mode: 'onBlur' | 'onChange' validation timing.
 // -----------------------------------------------------------------------------
 export function SimpleRhfForm() {
@@ -387,12 +387,12 @@ export function SimpleRhfForm() {
 // -----------------------------------------------------------------------------
 // Q13: register — wiring native inputs
 //
-// Kya karna hai:
+// Task:
 // spread register('fieldName', rules) on input/select/textarea.
 //
-// Seedha matlab:
+// In simple words:
 // register returns { name, ref, onChange, onBlur }. name attribute auto.
-// Validation rules inline ya resolver se. defaultValues match field names.
+// Validation rules inline or via resolver. defaultValues match field names.
 // Checkbox: register('agree') — value boolean via RHF v7 patterns.
 // -----------------------------------------------------------------------------
 export function RegisterDemo() {
@@ -413,13 +413,13 @@ export function RegisterDemo() {
 // -----------------------------------------------------------------------------
 // Q14: handleSubmit — valid data callback
 //
-// Kya karna hai:
-// Invalid pe callback nahi; valid pe async OK.
+// Task:
+// No callback on invalid; async OK on valid.
 //
-// Seedha matlab:
+// In simple words:
 // handleSubmit(onValid, onInvalid). preventDefault automatic.
-// Async submit errors khud catch — isSubmitting reset RHF karta hai.
-// e.preventDefault manually mat — handleSubmit wrap karo.
+// Catch async submit errors yourself — RHF resets isSubmitting.
+// Don't call e.preventDefault manually — wrap with handleSubmit.
 // -----------------------------------------------------------------------------
 export function HandleSubmitDemo() {
   const { register, handleSubmit } = useForm();
@@ -442,13 +442,13 @@ export function HandleSubmitDemo() {
 // -----------------------------------------------------------------------------
 // Q15: formState — errors, isSubmitting, isDirty, touchedFields
 //
-// Kya karna hai:
+// Task:
 // Destructure formState for UI feedback.
 //
-// Seedha matlab:
+// In simple words:
 // errors.field?.message — show under input.
 // isSubmitting — disable button during async submit.
-// isDirty — unsaved changes warning. touchedFields — blur ke baad errors dikhao.
+// isDirty — unsaved changes warning. touchedFields — show errors after blur.
 // Proxy: formState subscribe — destructuring recommended fields explicitly.
 // -----------------------------------------------------------------------------
 export function FormStateDemo() {
@@ -472,10 +472,10 @@ export function FormStateDemo() {
 // -----------------------------------------------------------------------------
 // Q16: Controller — controlled / third-party UI (MUI, react-select)
 //
-// Kya karna hai:
-// Non-native input ko RHF se connect karo.
+// Task:
+// Connect non-native input to RHF.
 //
-// Seedha matlab:
+// In simple words:
 // <Controller name="color" control={control} render={({ field }) => (
 //   <Select {...field} options={...} />
 // )} />.
@@ -508,13 +508,13 @@ export function ControllerDemo() {
 // -----------------------------------------------------------------------------
 // Q17: reset — clear or preload form
 //
-// Kya karna hai:
-// Successful submit ke baad ya edit cancel pe reset().
+// Task:
+// Call reset() after successful submit or edit cancel.
 //
-// Seedha matlab:
-// reset() — defaultValues pe wapas. reset({ email: 'x@y.com' }) — new defaults.
+// In simple words:
+// reset() — back to defaultValues. reset({ email: 'x@y.com' }) — new defaults.
 // keepDirtyValues option. Edit form: fetch user → reset(fetched).
-// key={user.id} remount alternative heavy forms me.
+// key={user.id} remount alternative for heavy forms.
 // -----------------------------------------------------------------------------
 export function ResetDemo() {
   const { register, handleSubmit, reset } = useForm({
@@ -544,10 +544,10 @@ async function fakeSave() {
 // -----------------------------------------------------------------------------
 // Q18: setError — manual / server field errors
 //
-// Kya karna hai:
-// API 400 pe specific field pe error set karo.
+// Task:
+// Set error on specific field when API returns 400.
 //
-// Seedha matlab:
+// In simple words:
 // setError('email', { type: 'server', message: 'Already taken' }).
 // root/server level: setError('root', { message: 'Login failed' }).
 // clearErrors('email') before retry. shouldFocus: true option.
@@ -580,11 +580,11 @@ async function fakeCheckEmail(email) {
 // -----------------------------------------------------------------------------
 // Q19: watch — reactive field values
 //
-// Kya karna hai:
-// Ek field doosri pe depend — live preview / conditional fields.
+// Task:
+// One field depends on another — live preview / conditional fields.
 //
-// Seedha matlab:
-// const role = watch('role'). watch() — poora form (careful perf).
+// In simple words:
+// const role = watch('role'). watch() — entire form (careful perf).
 // useWatch({ name: 'role' }) finer subscription. subscription less re-render than watch all.
 // password confirm: watch('password') compare in validate function.
 // -----------------------------------------------------------------------------
@@ -606,10 +606,10 @@ export function WatchDemo() {
 // -----------------------------------------------------------------------------
 // Q20: useFieldArray — dynamic list fields
 //
-// Kya karna hai:
+// Task:
 // Append/remove rows (phones, line items).
 //
-// Seedha matlab:
+// In simple words:
 // const { fields, append, remove } = useFieldArray({ control, name: 'phones' }).
 // map fields with key={field.id} — NOT index. register(`phones.${index}.number`).
 // defaultValues: { phones: [{ number: '' }] }.
@@ -642,28 +642,28 @@ export function FieldArrayDemo() {
 // -----------------------------------------------------------------------------
 // Q21: Zod — z.object schema
 //
-// Kya karna hai:
-// Fields + messages define; parse/safeParse.
+// Task:
+// Define fields + messages; parse/safeParse.
 //
-// Seedha matlab:
+// In simple words:
 // z.object({ email: z.string().email(), age: z.coerce.number().min(18) }).
 // safeParse returns { success, data | error }. error.flatten() field errors.
 // Reusable schemas share client/server (tRPC, API validation).
 // -----------------------------------------------------------------------------
 export const loginSchema = z.object({
-  email: z.string().email("Valid email chahiye"),
+  email: z.string().email("Please enter a valid email"),
   password: z.string().min(8, "Min 8 characters"),
 });
 
 // -----------------------------------------------------------------------------
 // Q22: refine / superRefine — cross-field rules
 //
-// Kya karna hai:
+// Task:
 // Password === confirm; custom business rules.
 //
-// Seedha matlab:
+// In simple words:
 // .refine(data => data.password === data.confirm, { message, path: ['confirm'] }).
-// superRefine — multiple issues, ctx.addIssue. Complex validation ke liye.
+// superRefine — multiple issues, ctx.addIssue. For complex validation.
 // -----------------------------------------------------------------------------
 export const signupSchema = z
   .object({
@@ -671,20 +671,20 @@ export const signupSchema = z
     confirm: z.string(),
   })
   .refine((d) => d.password === d.confirm, {
-    message: "Passwords match nahi",
+    message: "Passwords do not match",
     path: ["confirm"],
   });
 
 // -----------------------------------------------------------------------------
 // Q23: z.infer — TypeScript type from schema
 //
-// Kya karna hai:
-// Schema se form data type nikalo (comments me TS).
+// Task:
+// Get form data type from schema (TS in comments).
 //
-// Seedha matlab:
+// In simple words:
 // type LoginInput = z.infer<typeof loginSchema>;
 // // { email: string; password: string }
-// JSX file me JSDoc: @typedef {z.infer<typeof loginSchema>} LoginInput
+// JSDoc in JSX file: @typedef {z.infer<typeof loginSchema>} LoginInput
 // Single source of truth — schema change → type follows in TS projects.
 // -----------------------------------------------------------------------------
 /** @typedef {z.infer<typeof loginSchema>} LoginInput */
@@ -692,11 +692,11 @@ export const signupSchema = z
 // -----------------------------------------------------------------------------
 // Q24: zodResolver — RHF + Zod bridge
 //
-// Kya karna hai:
+// Task:
 // useForm({ resolver: zodResolver(schema) }) — errors auto map.
 //
-// Seedha matlab:
-// Client validation Zod se; RHF errors object populate.
+// In simple words:
+// Client validation from Zod; RHF errors object populate.
 // mode 'onChange' + zod = live Zod messages.
 // Multiple schemas: discriminatedUnion for form variants.
 // -----------------------------------------------------------------------------
@@ -724,10 +724,10 @@ export function ZodResolverDemo() {
 // -----------------------------------------------------------------------------
 // Q25: Combined login — RHF + Zod + Auth submit
 //
-// Kya karna hai:
+// Task:
 // Full login form → API → AuthContext login → navigate.
 //
-// Seedha matlab:
+// In simple words:
 // handleSubmit async → fakeLoginApi → login(user, token) → navigate(from).
 // isSubmitting disable button. root error invalid credentials.
 // -----------------------------------------------------------------------------
@@ -772,13 +772,13 @@ export function LoginFormFull() {
 // -----------------------------------------------------------------------------
 // Q26: Server errors mapped to fields (400 validation payload)
 //
-// Kya karna hai:
+// Task:
 // API fieldErrors object → loop setError.
 //
-// Seedha matlab:
+// In simple words:
 // Response { errors: { email: 'Taken', username: 'Too short' } }.
 // Object.entries(map).forEach(([field, message]) => setError(field, { type: 'server', message })).
-// Non-field errors → root. Zod client pehle; server authoritative duplicate email etc.
+// Non-field errors → root. Zod on client first; server authoritative for duplicate email etc.
 // -----------------------------------------------------------------------------
 export function mapServerErrors(setError, payload) {
   if (payload.errors) {

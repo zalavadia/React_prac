@@ -1,17 +1,17 @@
 // ============================================================================
 // 19 — Portals
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Portal = React tree me child yahan, DOM me kahin aur (body pe
-// modal). Jaise kitchen order counter pe, dish table pe serve.
-// createPortal(jsx, domNode) — events ab bhi React tree se bubble (logical).
+// SIMPLE: Portal = child lives in React tree here, but DOM renders somewhere else (body
+// for modal). Like kitchen order at counter, dish served at table.
+// createPortal(jsx, domNode) — events still bubble through React tree (logical).
 //
-// Use: modals, tooltips, toasts — overflow:hidden parent se bachna.
+// Use: modals, tooltips, toasts — escape overflow:hidden parent.
 //
-// KYUN: CSS stacking/overflow issues fix without breaking component tree.
+// WHY: CSS stacking/overflow issues fix without breaking component tree.
 // INTERVIEW: why portals; event bubbling through portals.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { createPortal } from "react-dom";
 // -----------------------------------------------------------------------------
 // Q1: Modal via portal to document.body
 //
-// Kya karna hai:
+// Task:
 // createPortal(<dialog/>, document.body)
 //
-// Seedha matlab:
-// Modal DOM root pe — z-index/overflow safe.
+// In simple words:
+// Modal on DOM root — z-index/overflow safe.
 // -----------------------------------------------------------------------------
 function Modal({ children, onClose }) {
   return createPortal(
@@ -41,11 +41,11 @@ function Modal({ children, onClose }) {
 // -----------------------------------------------------------------------------
 // Q2: Conditional portal
 //
-// Kya karna hai:
-// open tabhi portal mount.
+// Task:
+// Portal mounts only when open.
 //
-// Seedha matlab:
-// Band modal = portal unmount. Cleanup natural.
+// In simple words:
+// Closed modal = portal unmount. Cleanup natural.
 // -----------------------------------------------------------------------------
 function App() {
   const [open, setOpen] = useState(false);
@@ -64,11 +64,11 @@ function App() {
 // -----------------------------------------------------------------------------
 // Q3: Toast container
 //
-// Kya karna hai:
+// Task:
 // Fixed corner portal for toasts.
 //
-// Seedha matlab:
-// App kahin se toast — DOM ek jagah.
+// In simple words:
+// App triggers toast from anywhere — DOM in one place.
 // -----------------------------------------------------------------------------
 function Toast({ message }) {
   return createPortal(
@@ -80,11 +80,11 @@ function Toast({ message }) {
 // -----------------------------------------------------------------------------
 // Q4: Target node by id
 //
-// Kya karna hai:
+// Task:
 // document.getElementById("modal-root")
 //
-// Seedha matlab:
-// index.html me <div id="modal-root"> alag root common pattern.
+// In simple words:
+// index.html has <div id="modal-root"> — common separate root pattern.
 // -----------------------------------------------------------------------------
 function PortalToRoot({ children }) {
   const node = document.getElementById("modal-root") || document.body;
@@ -94,11 +94,11 @@ function PortalToRoot({ children }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Events bubble in React tree
 //
-// Kya karna hai:
-// Parent onClick portal child click pe fire ho sakta (React 17+ delegation).
+// Task:
+// Parent onClick may fire on portal child click (React 17+ delegation).
 //
-// Seedha matlab:
-// DOM alag, React parentage same. stopPropagation samajh ke use.
+// In simple words:
+// DOM different, React parentage same. Use stopPropagation knowingly.
 // -----------------------------------------------------------------------------
 function ParentClick() {
   return (
@@ -113,11 +113,11 @@ function ParentClick() {
 // -----------------------------------------------------------------------------
 // Q6: Focus trap note (a11y)
 //
-// Kya karna hai:
-// Portal modal pe focus trap / Escape close — a11y zaroori.
+// Task:
+// Portal modal needs focus trap / Escape close — a11y required.
 //
-// Seedha matlab:
-// Portal sirf DOM move; accessibility alag kaam.
+// In simple words:
+// Portal only moves DOM; accessibility is separate work.
 // -----------------------------------------------------------------------------
 function A11yModal({ onClose, children }) {
   useEffect(() => {
@@ -138,11 +138,11 @@ function A11yModal({ onClose, children }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] SSR: document check
 //
-// Kya karna hai:
-// typeof document === "undefined" pe null.
+// Task:
+// typeof document === "undefined" → null.
 //
-// Seedha matlab:
-// Server pe body nahi. Client mount ke baad portal.
+// In simple words:
+// No body on server. Portal after client mount.
 // -----------------------------------------------------------------------------
 function SafePortal({ children }) {
   const [ready, setReady] = useState(false);
@@ -154,10 +154,10 @@ function SafePortal({ children }) {
 // -----------------------------------------------------------------------------
 // Q8: Tooltip portal
 //
-// Kya karna hai:
-// Overflow hidden card se tooltip bahar.
+// Task:
+// Tooltip outside overflow hidden card.
 //
-// Seedha matlab:
+// In simple words:
 // Same reason as modal — escape clipping.
 // -----------------------------------------------------------------------------
 function Tip({ text }) {
@@ -165,13 +165,13 @@ function Tip({ text }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q9: Nested portal — modal ke andar tooltip
+// Q9: Nested portal — tooltip inside modal
 //
-// Kya karna hai:
-// Outer modal body pe; inner tooltip bhi body pe alag portal.
+// Task:
+// Outer modal on body; inner tooltip also on body as separate portal.
 //
-// Seedha matlab:
-// Dono DOM alag jagah, React tree parent-child. Nested portals valid.
+// In simple words:
+// Both DOM elsewhere, React tree parent-child. Nested portals valid.
 // -----------------------------------------------------------------------------
 function NestedPortalModal({ open, onClose }) {
   if (!open) return null;
@@ -190,11 +190,11 @@ function NestedPortalModal({ open, onClose }) {
 // -----------------------------------------------------------------------------
 // Q10: [MID] DOM stopPropagation vs React bubble
 //
-// Kya karna hai:
-// e.stopPropagation() DOM pe; React synthetic parent onClick alag rule.
+// Task:
+// e.stopPropagation() on DOM; React synthetic parent onClick different rule.
 //
-// Seedha matlab:
-// Portal DOM bahar hai par React tree me andar — dono layers samjho.
+// In simple words:
+// Portal DOM is outside but inside React tree — understand both layers.
 // -----------------------------------------------------------------------------
 function BubbleDemo() {
   return (
@@ -207,13 +207,13 @@ function BubbleDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Body scroll lock jab modal open
+// Q11: Body scroll lock when modal open
 //
-// Kya karna hai:
-// open pe document.body.style.overflow = "hidden"; close pe restore.
+// Task:
+// open: document.body.style.overflow = "hidden"; close: restore.
 //
-// Seedha matlab:
-// Portal scroll trap nahi karta — scroll lock khud karo.
+// In simple words:
+// Portal doesn't trap scroll — lock scroll yourself.
 // -----------------------------------------------------------------------------
 function ScrollLockModal({ open, onClose, children }) {
   useEffect(() => {
@@ -236,13 +236,13 @@ function ScrollLockModal({ open, onClose, children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: [MID] Focus trap — tab loop modal ke andar
+// Q12: [MID] Focus trap — tab loop inside modal
 //
-// Kya karna hai:
-// Modal open pe pehla focusable element focus; Tab last se first pe loop.
+// Task:
+// Modal open: focus first focusable element; Tab loops last to first.
 //
-// Seedha matlab:
-// Keyboard users bahar na bhatak jayein — a11y must.
+// In simple words:
+// Keyboard users shouldn't wander outside — a11y must.
 // -----------------------------------------------------------------------------
 function FocusTrapModal({ onClose, children }) {
   const modalRef = useRef(null);
@@ -278,13 +278,13 @@ function FocusTrapModal({ onClose, children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q13: Close pe focus wapas trigger button pe
+// Q13: Return focus to trigger button on close
 //
-// Kya karna hai:
-// open se pehle document.activeElement save; close pe .focus() restore.
+// Task:
+// Save document.activeElement before open; .focus() restore on close.
 //
-// Seedha matlab:
-// Screen reader / keyboard flow natural rahe.
+// In simple words:
+// Screen reader / keyboard flow stays natural.
 // -----------------------------------------------------------------------------
 function ReturnFocusModal({ open, onClose, triggerRef }) {
   const prevFocus = useRef(null);
@@ -306,13 +306,13 @@ function ReturnFocusModal({ open, onClose, triggerRef }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q14: [MID] aria-hidden background jab modal open
+// Q14: [MID] aria-hidden background when modal open
 //
-// Kya karna hai:
-// #root pe aria-hidden="true" jab modal; cleanup pe hatao.
+// Task:
+// #root aria-hidden="true" when modal; remove on cleanup.
 //
-// Seedha matlab:
-// Assistive tech sirf modal sunegi — background "mute".
+// In simple words:
+// Assistive tech only hears modal — background "muted".
 // -----------------------------------------------------------------------------
 function AriaHiddenModal({ open, onClose, children }) {
   useEffect(() => {
@@ -334,11 +334,11 @@ function AriaHiddenModal({ open, onClose, children }) {
 // -----------------------------------------------------------------------------
 // Q15: Multiple modals — z-index stacking
 //
-// Kya karna hai:
-// Har modal ka apna z-index level; confirm dialog modal ke upar.
+// Task:
+// Each modal its own z-index level; confirm dialog above modal.
 //
-// Seedha matlab:
-// Portal same body pe — order + z-index se stack manage.
+// In simple words:
+// Same body portal — manage stack with order + z-index.
 // -----------------------------------------------------------------------------
 function StackedModals() {
   const [confirm, setConfirm] = useState(false);
@@ -361,13 +361,13 @@ function StackedModals() {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] Portal target ref se (dynamic container)
+// Q16: [MID] Portal target from ref (dynamic container)
 //
-// Kya karna hai:
-// useRef + useEffect se container node ready; tab createPortal.
+// Task:
+// useRef + useEffect until container node ready; then createPortal.
 //
-// Seedha matlab:
-// getElementById fixed nahi — component apna mount point bana sakta.
+// In simple words:
+// Not fixed getElementById — component can create its own mount point.
 // -----------------------------------------------------------------------------
 function DynamicPortalTarget({ children }) {
   const ref = useRef(null);
@@ -382,13 +382,13 @@ function DynamicPortalTarget({ children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q17: Tooltip portal — overflow clip se bachna
+// Q17: Tooltip portal — escape overflow clip
 //
-// Kya karna hai:
-// Card overflow:hidden; tooltip createPortal se body pe fixed position.
+// Task:
+// Card overflow:hidden; tooltip createPortal to body with fixed position.
 //
-// Seedha matlab:
-// Position calculate karo (getBoundingClientRect); render portal me.
+// In simple words:
+// Calculate position (getBoundingClientRect); render in portal.
 // -----------------------------------------------------------------------------
 function TooltipPortal({ anchorRef, text, show }) {
   const [pos, setPos] = useState({ top: 0, left: 0 });
@@ -407,31 +407,31 @@ function TooltipPortal({ anchorRef, text, show }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q18: [ADV] React 17+ event delegation root pe
+// Q18: [ADV] React 17+ event delegation on root
 //
-// Kya karna hai:
-// document pe nahi — React root pe delegate; portal events tree me bubble.
+// Task:
+// Not on document — React root delegates; portal events bubble in tree.
 //
-// Seedha matlab:
-// Interview: portal DOM alag, React hierarchy same — isliye parent onClick fire.
+// In simple words:
+// Interview: portal DOM different, React hierarchy same — parent onClick fires.
 // -----------------------------------------------------------------------------
 function DelegationNote() {
   return (
     <p>
-      React 17+: events root container se attach — portal child ka click React
-      parent tak bubble ho sakta hai.
+      React 17+: events attach from root container — portal child click can
+      bubble to React parent.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q19: [ADV] SSR hydration — portal server pe null
+// Q19: [ADV] SSR hydration — portal null on server
 //
-// Kya karna hai:
-// Server HTML me portal content nahi; client mount ke baad inject.
+// Task:
+// Server HTML has no portal content; inject after client mount.
 //
-// Seedha matlab:
-// Hydration mismatch avoid — client-only portal pattern (Q7 jaisa).
+// In simple words:
+// Avoid hydration mismatch — client-only portal pattern (like Q7).
 // -----------------------------------------------------------------------------
 function HydrationSafePortal({ children }) {
   const [mounted, setMounted] = useState(false);
@@ -443,11 +443,11 @@ function HydrationSafePortal({ children }) {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Nested portal unmount order
 //
-// Kya karna hai:
-// Parent modal unmount → andar ke nested portals bhi cleanup.
+// Task:
+// Parent modal unmount → nested portals inside also cleanup.
 //
-// Seedha matlab:
-// React unmount tree order follow — nested portal DOM nodes bhi hatao.
+// In simple words:
+// React follows unmount tree order — nested portal DOM nodes removed too.
 // -----------------------------------------------------------------------------
 function UnmountOrderDemo() {
   const [open, setOpen] = useState(true);
@@ -462,37 +462,37 @@ function UnmountOrderDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q21: [ADV] Portal vs position:fixed — kab kya?
+// Q21: [ADV] Portal vs position:fixed — when which?
 //
-// Kya karna hai:
-// Fixed + high z-index kabhi kaafi; portal jab ancestor transform/overflow clip.
+// Task:
+// Fixed + high z-index sometimes enough; portal when ancestor transform/overflow clip.
 //
-// Seedha matlab:
-// Interview: stacking context / overflow:hidden parent → portal zaroori.
+// In simple words:
+// Interview: stacking context / overflow:hidden parent → portal needed.
 // -----------------------------------------------------------------------------
 function PortalVsFixed() {
   return (
     <p>
-      position:fixed kaafi jab parent clip na kare; portal jab modal DOM hierarchy
-      se bahar chahiye.
+      position:fixed enough when parent doesn't clip; portal when modal must leave
+      DOM hierarchy.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q22: [ADV] Interview — portal checklist bolke sunao
+// Q22: [ADV] Interview — portal checklist to recite
 //
-// Kya karna hai:
+// Task:
 // createPortal, events, SSR guard, focus trap, scroll lock, aria-modal.
 //
-// Seedha matlab:
-// Mid interview answer: DOM escape + React tree preserve + a11y alag kaam.
+// In simple words:
+// Mid interview answer: DOM escape + React tree preserve + a11y separate work.
 // -----------------------------------------------------------------------------
 function PortalChecklist() {
   return (
     <ol>
       <li>createPortal(jsx, domNode)</li>
-      <li>Events React tree me bubble</li>
+      <li>Events bubble in React tree</li>
       <li>SSR: client-only mount</li>
       <li>Focus trap + return focus + Escape</li>
       <li>Scroll lock + aria-hidden background</li>

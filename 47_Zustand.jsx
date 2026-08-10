@@ -1,16 +1,17 @@
 // ============================================================================
 // 47 — Zustand (State Management)
-// Level: MID  |  Sequence: pehle 11 (context), 12 (reducer), phir yeh
+// Level: MID  |  Sequence: first 11 (context), 12 (reducer), then this
 // ============================================================================
 //
-// LAYMAN: Zustand = chhota global store. create() se banana; component me
-// useStore(selector) se slice subscribe. Redux se kam boilerplate; Context se
-// better perf jab fine-grained selectors ho. Client-only — React 19 me bhi.
+// SIMPLE: Zustand = small global store. Create with create(); in components
+// subscribe to a slice with useStore(selector). Less boilerplate than Redux;
+// better performance than Context when you use fine-grained selectors.
+// Client-only — even in React 19.
 //
-// KYUN: Cart, UI prefs, auth snapshot — prop drilling / giant context avoid.
-// INTERVIEW: selector stale traps; store component ke andar mat banao;
+// WHY: Cart, UI prefs, auth snapshot — avoid prop drilling / giant context.
+// INTERVIEW: selector stale traps; do not create store inside a component;
 // vs Redux vs Context; persist + SSR hydrate caution.
-// Vite/React 19 project me use — teaching file (npm i zustand).
+// Use in Vite/React 19 project — teaching file (npm i zustand).
 //
 // ============================================================================
 
@@ -21,12 +22,12 @@ import { shallow } from "zustand/shallow";
 // -----------------------------------------------------------------------------
 // Q1: create store — minimal counter
 //
-// Kya karna hai:
+// Task:
 // create((set) => ({ count, inc })) pattern.
 //
-// Seedha matlab:
-// Store = hook + vanilla API. set(partial) ya set(fn) immer-style merge nahi —
-// shallow merge top-level keys. get() current state read actions me.
+// In simple words:
+// Store = hook + vanilla API. set(partial) or set(fn) is not immer-style merge —
+// it shallow merges top-level keys. get() reads current state inside actions.
 // Component: const count = useCounterStore(s => s.count).
 // -----------------------------------------------------------------------------
 export const useCounterStore = create((set) => ({
@@ -44,16 +45,16 @@ export function CounterView() {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: useStore selectors — sirf jo chahiye subscribe
+// Q2: useStore selectors — subscribe only to what you need
 //
-// Kya karna hai:
-// (s) => s.user.name — name change pe hi render (roughly).
+// Task:
+// (s) => s.user.name — render only when name changes (roughly).
 //
-// Seedha matlab:
-// Poora store useStore() bina selector = har change pe re-render.
-// Selector return value Object.is se compare — primitive best.
-// Derived: (s) => s.items.length — length change pe render.
-// Multiple fields: shallow compare (Q14) ya alag hooks.
+// In simple words:
+// Full store useStore() without selector = re-render on every change.
+// Selector return value compared with Object.is — primitives work best.
+// Derived: (s) => s.items.length — render when length changes.
+// Multiple fields: shallow compare (Q14) or separate hooks.
 // -----------------------------------------------------------------------------
 export const useCartStore = create((set) => ({
   items: [],
@@ -69,14 +70,14 @@ export function CartBadge() {
 // -----------------------------------------------------------------------------
 // Q3: Avoid stale whole-store subscribe
 //
-// Kya karna hai:
-// const store = useStore() anti-pattern — har update pe render.
+// Task:
+// const store = useStore() anti-pattern — re-render on every update.
 //
-// Seedha matlab:
+// In simple words:
 // ❌ const { a, b } = useMyStore() — default selector = identity = full state.
 // ✅ const a = useMyStore(s => s.a).
 // Debug: React DevTools + console.log render count.
-// Split components: CountDisplay vs Buttons alag selectors.
+// Split components: CountDisplay vs Buttons with separate selectors.
 // -----------------------------------------------------------------------------
 export function BadWholeStore() {
   // ❌ re-renders on ANY key change
@@ -92,13 +93,13 @@ export function GoodSelector() {
 // -----------------------------------------------------------------------------
 // Q4: set / get inside actions
 //
-// Kya karna hai:
-// create((set, get) => ({ ... })) — get() se current state read.
+// Task:
+// create((set, get) => ({ ... })) — get() reads current state.
 //
-// Seedha matlab:
+// In simple words:
 // set({ partial }) merges shallow. set(fn) fn receives previous state.
-// get().count — action me latest without closure stale (usually).
-// replace: true rare — poora state replace (persist rehydrate).
+// get().count — latest in action without closure stale (usually).
+// replace: true rare — replace entire state (persist rehydrate).
 // Outside React: useCounterStore.getState().inc().
 // -----------------------------------------------------------------------------
 export const useTodoStore = create((set, get) => ({
@@ -115,13 +116,13 @@ export const useTodoStore = create((set, get) => ({
 // -----------------------------------------------------------------------------
 // Q5: Async actions in store
 //
-// Kya karna hai:
-// fetch inside action; loading/error state store me.
+// Task:
+// fetch inside action; loading/error state in store.
 //
-// Seedha matlab:
+// In simple words:
 // async loadUsers() { set({ loading: true }); try { ... set({ users }) } finally { set({ loading: false }) } }.
-// Component sirf selectors — no useEffect fetch duplicate.
-// Race: request id / abortController store me cancel previous.
+// Components use only selectors — no duplicate useEffect fetch.
+// Race: request id / abortController in store to cancel previous.
 // Don't forget error branch — set({ error: message }).
 // -----------------------------------------------------------------------------
 export const useUsersStore = create((set) => ({
@@ -160,16 +161,16 @@ export function UserList() {
 // -----------------------------------------------------------------------------
 // Q6: Immer middleware — optional sketch
 //
-// Kya karna hai:
+// Task:
 // Nested mutate-style updates without spread hell.
 //
-// Seedha matlab:
+// In simple words:
 // npm i immer. create(immer((set) => ({ ... }))).
 // set(state => { state.user.name = 'x' }) — immer draft mutate.
 // Teaching file: comment-only full import:
 // import { immer } from 'zustand/middleware/immer'
 // create(immer((set) => ({ nested: { x: 1 }, bump: () => set(s => { s.nested.x++ }) })))
-// Optional — small flat state me spread kaafi.
+// Optional — spread is enough for small flat state.
 // -----------------------------------------------------------------------------
 const immerSketch =
   "create(immer(set => ({ ... }))) allows draft mutations; good for deep nested state.";
@@ -177,13 +178,13 @@ const immerSketch =
 // -----------------------------------------------------------------------------
 // Q7: persist middleware — localStorage survive refresh
 //
-// Kya karna hai:
+// Task:
 // Theme/cart persist; partialize sensitive fields out.
 //
-// Seedha matlab:
+// In simple words:
 // import { persist } from 'zustand/middleware'
 // create(persist((set)=>({ theme, setTheme }), { name: 'ui-storage', partialize: s => ({ theme: s.theme }) }))
-// onRehydrateStorage callback — SSR mismatch handle (Q21).
+// onRehydrateStorage callback — handle SSR mismatch (Q21).
 // version + migrate for schema changes.
 // -----------------------------------------------------------------------------
 export const useUiStore = create(
@@ -205,13 +206,13 @@ export const useUiStore = create(
 // -----------------------------------------------------------------------------
 // Q8: Combine slices pattern — scale big stores
 //
-// Kya karna hai:
+// Task:
 // createBearSlice + createFishSlice → create(persist(...combine)).
 //
-// Seedha matlab:
+// In simple words:
 // const createBearSlice = (set, get) => ({ bears: 0, eatFish: () => ... })
 // export const useBoundStore = create((...a) => ({ ...createBearSlice(...a), ...createFishSlice(...a) }))
-// Slices team-wise split. TypeScript: SliceBear & SliceFish intersection.
+// Slices split by team. TypeScript: SliceBear & SliceFish intersection.
 // -----------------------------------------------------------------------------
 const createBearSlice = (set, get) => ({
   bears: 0,
@@ -231,10 +232,10 @@ export const useBoundStore = create((set, get, api) => ({
 // -----------------------------------------------------------------------------
 // Q9: TypeScript / JSDoc typing sketch
 //
-// Kya karna hai:
-// JSX file me types comments se document karo.
+// Task:
+// Document types with comments in the JSX file.
 //
-// Seedha matlab:
+// In simple words:
 // TS: type Store = { count: number; inc: () => void }
 // create<Store>()((set) => ({ ... }))
 // JSDoc: @typedef {{ count: number, inc: function(): void }} CounterStore
@@ -248,13 +249,13 @@ export const useBoundStore = create((set, get, api) => ({
 // -----------------------------------------------------------------------------
 // Q10: Zustand vs Context + useReducer
 //
-// Kya karna hai:
-// Kab context enough; kab Zustand.
+// Task:
+// When context is enough; when Zustand.
 //
-// Seedha matlab:
+// In simple words:
 // Context: theme, locale, rare updates — simple, built-in.
 // Context pain: frequent updates + many consumers = wide re-renders.
-// useReducer + context = Zustand jaisa dispatch pattern but same perf issue.
+// useReducer + context = Zustand-like dispatch pattern but same perf issue.
 // Zustand: fine selectors, less Provider nesting, devtools/persist ecosystem.
 // Small app / low churn → context OK. Growing client state → Zustand.
 // -----------------------------------------------------------------------------
@@ -264,15 +265,15 @@ const vsContext =
 // -----------------------------------------------------------------------------
 // Q11: Zustand vs Redux
 //
-// Kya karna hai:
+// Task:
 // Interview compare — not always Redux better.
 //
-// Seedha matlab:
+// In simple words:
 // Redux: strict flux, middleware ecosystem, large teams, RTK Query, time-travel.
 // Zustand: minimal API, less boilerplate, mutable-friendly actions, quick start.
-// Both client global state. Redux Toolkit ne gap kam kiya.
+// Both client global state. Redux Toolkit narrowed the gap.
 // Enterprise existing Redux → stay. Greenfield mid SPA → Zustand popular.
-// Server state (React Query) alag — dono ke saath pair karo.
+// Server state (React Query) is separate — pair with either one.
 // -----------------------------------------------------------------------------
 const vsRedux =
   "Redux = conventions + devtools depth at scale; Zustand = speed/simplicity for moderate global client state.";
@@ -280,10 +281,10 @@ const vsRedux =
 // -----------------------------------------------------------------------------
 // Q12: When NOT to use Zustand
 //
-// Kya karna hai:
-// Over-engineering avoid — decision list.
+// Task:
+// Avoid over-engineering — decision list.
 //
-// Seedha matlab:
+// In simple words:
 // ✗ Local UI state (modal open) — useState.
 // ✗ Server cache — TanStack Query / SWR.
 // ✗ Form fields — RHF local (file 46).
@@ -301,10 +302,10 @@ export const whenNotZustand = [
 // -----------------------------------------------------------------------------
 // Q13: subscribeWithSelector — vanilla subscribe fine-grained
 //
-// Kya karna hai:
-// React ke bahar listener jab specific key change.
+// Task:
+// Listener outside React when a specific key changes.
 //
-// Seedha matlab:
+// In simple words:
 // create(subscribeWithSelector((set)=>({ ... }))).
 // useStore.subscribe(s => s.count, (count, prev) => { analytics(count) }).
 // Non-React widgets, router guards, logging. Unsubscribe return fn call.
@@ -322,14 +323,14 @@ export const useMetricsStore = create(
 // -----------------------------------------------------------------------------
 // Q14: shallow compare — multiple fields one selector
 //
-// Kya karna hai:
-// useStore(s => ({ a: s.a, b: s.b }), shallow) — dono same ho to skip render.
+// Task:
+// useStore(s => ({ a: s.a, b: s.b }), shallow) — skip render when both are the same.
 //
-// Seedha matlab:
-// Object return bina shallow = new object every call = always re-render.
+// In simple words:
+// Object return without shallow = new object every call = always re-render.
 // import { shallow } from 'zustand/shallow'.
 // Alternative: useShallow hook (zustand v4.4+) same idea.
-// Prefer separate selectors jab ho sake — simpler mental model.
+// Prefer separate selectors when possible — simpler mental model.
 // -----------------------------------------------------------------------------
 export const useSettingsStore = create((set) => ({
   fontSize: 14,
@@ -353,13 +354,13 @@ export function SettingsPreview() {
 // -----------------------------------------------------------------------------
 // Q15: Reset store — tests / logout clear all
 //
-// Kya karna hai:
-// Initial state snapshot; reset() action ya getState/setState trick.
+// Task:
+// Initial state snapshot; reset() action or getState/setState trick.
 //
-// Seedha matlab:
+// In simple words:
 // Pattern: const initial = { ... }; create((set, get) => ({ ...initial, reset: () => set(initial) })).
 // Logout: reset cart + user slice. Tests: beforeEach(() => store.getState().reset()).
-// persist ke saath: clearStorage() from persist API bhi.
+// With persist: also clearStorage() from persist API.
 // -----------------------------------------------------------------------------
 const initialSession = { user: null, token: null };
 
@@ -372,16 +373,16 @@ export const useSessionStore = create((set) => ({
 // -----------------------------------------------------------------------------
 // Q16: Testing store outside React
 //
-// Kya karna hai:
+// Task:
 // getState / setState direct — unit test actions.
 //
-// Seedha matlab:
+// In simple words:
 // useCounterStore.setState({ count: 5 });
 // useCounterStore.getState().inc();
 // expect(useCounterStore.getState().count).toBe(6);
 // No render needed — pure action tests fast.
 // Component tests: render with real store; reset in beforeEach.
-// Mock store: inject via props/context wrapper if isolation chahiye (advanced).
+// Mock store: inject via props/context wrapper if you need isolation (advanced).
 // -----------------------------------------------------------------------------
 export function testCounterActions() {
   useCounterStore.setState({ count: 0 });
@@ -392,10 +393,10 @@ export function testCounterActions() {
 // -----------------------------------------------------------------------------
 // Q17: Computed getters — derived state in store
 //
-// Kya karna hai:
-// totalPrice selector ya get().items.reduce in action.
+// Task:
+// totalPrice selector or get().items.reduce in action.
 //
-// Seedha matlab:
+// In simple words:
 // Don't store derived if easily computed — selector (s) => s.items.reduce(...).
 // Expensive derive: memo in selector with reselect pattern or cache in action after mutation.
 // ❌ total: () => get().items.length as store field function — unstable selector.
@@ -419,16 +420,16 @@ export function CartTotal() {
 // -----------------------------------------------------------------------------
 // Q18: Logger middleware sketch
 //
-// Kya karna hai:
-// Dev me har set pe prev/next log.
+// Task:
+// In dev, log prev/next on every set.
 //
-// Seedha matlab:
+// In simple words:
 // const log = (config) => (set, get, api) => config(
 //   (...args) => { console.log('prev', get()); set(...args); console.log('next', get()); },
 //   get, api
 // );
-// create(log((set)=>({ ... }))). Official devtools middleware bhi.
-// Production me strip — NODE_ENV check.
+// create(log((set)=>({ ... }))). Official devtools middleware too.
+// Strip in production — NODE_ENV check.
 // -----------------------------------------------------------------------------
 const loggerSketch =
   "Wrap set in middleware to log prev/next state; use zustand devtools in dev.";
@@ -436,13 +437,13 @@ const loggerSketch =
 // -----------------------------------------------------------------------------
 // Q19: React 19 note — Zustand still client-only
 //
-// Kya karna hai:
-// RSC / Server Components me store use mat karo.
+// Task:
+// Do not use store in RSC / Server Components.
 //
-// Seedha matlab:
-// 'use client' boundary me components jo useStore call karein.
-// Server pe create() run mat — hydration mismatch + no window.
-// React 19 Actions / useActionState server mutations alag — store sync client side after.
+// In simple words:
+// Put components that call useStore inside a 'use client' boundary.
+// Do not run create() on the server — hydration mismatch + no window.
+// React 19 Actions / useActionState server mutations are separate — sync store on client side after.
 // Store = client global UI/session snapshot, not server data source of truth.
 // -----------------------------------------------------------------------------
 const react19Note =
@@ -451,10 +452,10 @@ const react19Note =
 // -----------------------------------------------------------------------------
 // Q20: SSR + persist hydrate caution
 //
-// Kya karna hai:
-// localStorage SSR pe nahi — flash wrong theme avoid.
+// Task:
+// localStorage is not on SSR — avoid flashing wrong theme.
 //
-// Seedha matlab:
+// In simple words:
 // First client render = default state; after rehydrate jump — mismatch warning.
 // Fix: skip persist render until hydrated flag; or cookie for SSR-readable theme.
 // persist.onFinishHydration(() => set({ hydrated: true })).
@@ -472,13 +473,13 @@ export const useHydratedUiStore = create((set) => ({
 // -----------------------------------------------------------------------------
 // Q21: Common bug — re-creating store inside component
 //
-// Kya karna hai:
-// create() sirf module level — ek baar.
+// Task:
+// create() only at module level — once.
 //
-// Seedha matlab:
+// In simple words:
 // ❌ function Comp() { const useStore = create(...) — N stores, state lost, memory leak.
 // ✅ module scope export const useStore = create(...).
-// Factory per test OK: createStore() helper module me, not in render.
+// Factory per test OK: createStore() helper in module, not in render.
 // Context+create rare pattern for scoped store — advanced, default avoid.
 // -----------------------------------------------------------------------------
 // BAD pattern (never):
@@ -490,14 +491,14 @@ export const useHydratedUiStore = create((set) => ({
 // -----------------------------------------------------------------------------
 // Q22: Multiple stores vs single bound store
 //
-// Kya karna hai:
-// Domain split — cart, auth, ui alag ya slices ek me.
+// Task:
+// Domain split — cart, auth, ui separate or slices in one store.
 //
-// Seedha matlab:
+// In simple words:
 // Multiple stores: clear boundaries, tree-shake imports, smaller tests.
 // Single bound: one devtools view, cross-slice actions easy (logout clears all).
 // Team preference — consistency > dogma. Avoid 20 micro-stores confusion.
-// Related data (user + permissions) ek store/slice me rakho.
+// Keep related data (user + permissions) in one store/slice.
 // -----------------------------------------------------------------------------
 const multiStoreTip =
   "Split by domain (auth, cart, ui); combine slices when actions cross-cut often.";
@@ -505,13 +506,13 @@ const multiStoreTip =
 // -----------------------------------------------------------------------------
 // Q23: useStore outside component — getState / subscribe
 //
-// Kya karna hai:
-// Router loader, axios interceptor me token read.
+// Task:
+// Read token in router loader, axios interceptor.
 //
-// Seedha matlab:
+// In simple words:
 // useSessionStore.getState().token — no hook rules.
 // Subscribe logout event: useSessionStore.subscribe(s => s.token, tok => { if (!tok) redirect }).
-// Keep side effects out of store actions jab possible — or explicit init module.
+// Keep side effects out of store actions when possible — or explicit init module.
 // -----------------------------------------------------------------------------
 export function attachAuthHeader(config) {
   const token = useSessionStore.getState().token;
@@ -524,10 +525,10 @@ export function attachAuthHeader(config) {
 // -----------------------------------------------------------------------------
 // Q24: Performance checklist + interview recap
 //
-// Kya karna hai:
-// Bolke sunao: selectors, shallow, colocate, server state separation.
+// Task:
+// Say out loud: selectors, shallow, colocate, server state separation.
 //
-// Seedha matlab:
+// In simple words:
 // 1) Narrow selectors 2) shallow for object picks 3) don't select functions inline new
 // 4) async + race handling 5) persist partial 6) reset tests 7) client boundary
 // 8) pair with React Query for API 9) devtools profile renders 10) module-level create

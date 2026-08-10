@@ -1,23 +1,23 @@
 // ============================================================================
 // 31 — React 19 useFormStatus (react-dom)
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Parent form submit ho raha hai — child button ko pata chalna chahiye
-// "pending hai kya?" bina prop drilling ke.
+// SIMPLE: The parent form is submitting — the child button should know
+// whether it is "pending" without prop drilling.
 //
-// useFormStatus() = react-dom se; NEAREST parent <form> ki status.
-// pending, data, method, action — yeh fields milti hain.
+// useFormStatus() comes from react-dom; it reads the NEAREST parent <form> status.
+// You get pending, data, method, and action fields.
 //
-// BAHUT IMPORTANT rule:
-// Yeh hook USI component me mat call karo jo <form> khud render karta —
-// CHILD component me call karo jo form ke ANDAR ho.
+// VERY IMPORTANT rule:
+// Do NOT call this hook in the same component that renders the <form> —
+// call it in a CHILD component that is INSIDE the form.
 //
-// Socho: form = restaurant; useFormStatus = waiter jo kitchen light dekh kar
-// "order preparing" bolta — waiter kitchen ke bahar khada child staff hai.
+// Think of it this way: form = restaurant; useFormStatus = waiter who sees the kitchen light and
+// says "order preparing" — the waiter is child staff standing outside the kitchen.
 //
-// KYUN: Submit button UX bina state lift kiye.
-// INTERVIEW: kyun form wale component me kaam nahi; react vs react-dom import.
+// WHY: Submit button UX without lifting state.
+// INTERVIEW: why it does not work in the form component itself; react vs react-dom import.
 //
 // ============================================================================
 
@@ -28,8 +28,8 @@ import { useActionState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Child SubmitButton with pending
 //
-// Seedha matlab:
-// SubmitButton alag component — form ke andar.
+// In simple words:
+// SubmitButton is a separate component — inside the form.
 // pending true → disable + "Saving..."
 // -----------------------------------------------------------------------------
 function SubmitButton() {
@@ -56,13 +56,13 @@ export function ArticleForm() {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: [MID] Galat jagah call — common bug
+// Q2: [MID] Wrong place call — common bug
 //
-// Seedha matlab:
-// Agar useFormStatus ko ArticleForm ke andar seedha likho (form ke saath),
-// pending aksar hamesha false / useless — kyunki status PARENT form ki hoti,
-// khud ke form ki nahi is render tree rule se.
-// Fix: button (ya koi child) alag function component.
+// In simple words:
+// If you write useFormStatus directly inside ArticleForm (along with the form),
+// pending is often always false / useless — because status is for the PARENT form,
+// not your own form per this render tree rule.
+// Fix: button (or any child) as a separate function component.
 // -----------------------------------------------------------------------------
 export function WrongPlaceDemo_DoNotCopy() {
   // ❌ Don't: const { pending } = useFormStatus(); here with <form> below
@@ -76,11 +76,11 @@ export function WrongPlaceDemo_DoNotCopy() {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: pending + data — kya submit ho raha
+// Q3: pending + data — what is being submitted
 //
-// Seedha matlab:
-// data = FormData jab submit in-flight.
-// Pending UI me "Saving: {title}" dikha sakte.
+// In simple words:
+// data = FormData while submit is in-flight.
+// In pending UI you can show "Saving: {title}".
 // -----------------------------------------------------------------------------
 function StatusLine() {
   const { pending, data } = useFormStatus();
@@ -102,10 +102,10 @@ export function FormWithStatusLine() {
 // -----------------------------------------------------------------------------
 // Q4: method & action fields
 //
-// Seedha matlab:
+// In simple words:
 // method — get/post style info.
-// action — function ya URL jo form use kar raha.
-// Debugging / conditional UI ke liye.
+// action — function or URL the form is using.
+// For debugging / conditional UI.
 // -----------------------------------------------------------------------------
 function DebugStatus() {
   const status = useFormStatus();
@@ -138,11 +138,11 @@ export function FormDebug() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] useFormStatus vs useActionState isPending
 //
-// Seedha matlab:
-// useActionState.isPending — us hook ke action ke liye.
+// In simple words:
+// useActionState.isPending — for that hook's action.
 // useFormStatus.pending — nearest form submission.
-// Button sirf pending dikhani hai, state manage nahi — useFormStatus enough.
-// State + errors chahiye — useActionState (file 30) + status child combo.
+// Button only needs to show pending, not manage state — useFormStatus is enough.
+// Need state + errors — useActionState (file 30) + status child combo.
 // -----------------------------------------------------------------------------
 const whenToUse = {
   useFormStatus: "child UI reflecting form pending/data",
@@ -152,10 +152,10 @@ const whenToUse = {
 // -----------------------------------------------------------------------------
 // Q6: Nested forms? Don't.
 //
-// Seedha matlab:
-// HTML me nested <form> invalid.
-// useFormStatus nearest parent form dekhta — nesting se confusion.
-// Ek form, children components.
+// In simple words:
+// Nested <form> is invalid in HTML.
+// useFormStatus looks at nearest parent form — nesting causes confusion.
+// One form, children components.
 // -----------------------------------------------------------------------------
 export function OneFormManyChildren() {
   return (
@@ -172,8 +172,8 @@ export function OneFormManyChildren() {
 // -----------------------------------------------------------------------------
 // Q7: Disable whole fieldset while pending
 //
-// Seedha matlab:
-// Fieldset disabled={pending} — saari controls band.
+// In simple words:
+// Fieldset disabled={pending} — all controls off.
 // Accessibility-friendly busy state.
 // -----------------------------------------------------------------------------
 function BusyFields({ children }) {
@@ -194,11 +194,11 @@ export function FormBusyFieldset() {
 }
 
 // -----------------------------------------------------------------------------
-// Q8: Import from 'react-dom' — yaad rakho
+// Q8: Import from 'react-dom' — remember
 //
-// Seedha matlab:
-// useFormStatus react se NAHI, react-dom se.
-// Interview trap: galat package.
+// In simple words:
+// useFormStatus is NOT from react, it is from react-dom.
+// Interview trap: wrong package.
 // -----------------------------------------------------------------------------
 // import { useFormStatus } from "react-dom"; // ✅
 // import { useFormStatus } from "react"; // ❌
@@ -206,14 +206,14 @@ export function FormBusyFieldset() {
 // -----------------------------------------------------------------------------
 // Q9: formAction button — pending status
 //
-// Kya karna hai:
-// Button pe formAction={otherFn} — useFormStatus us submission ko track kare.
+// Task:
+// Button with formAction={otherFn} — useFormStatus tracks that submission.
 //
-// Seedha matlab:
-// Nearest form ki active submission — kaun sa action chal raha.
-// Publish dabao to pending true for that submit path.
+// In simple words:
+// Nearest form's active submission — which action is running.
+// Press Publish and pending is true for that submit path.
 // React 18: manually track which button clicked via state.
-// Child component me status read — parent me mat.
+// Read status in child component — not in parent.
 // -----------------------------------------------------------------------------
 async function publishAction(formData) {
   await new Promise((r) => setTimeout(r, 600));
@@ -242,19 +242,19 @@ export function FormWithFormActionButton() {
 // -----------------------------------------------------------------------------
 // Q10: [MID] useFormStatus outside form — trap
 //
-// Kya karna hai:
-// Form ke bahar useFormStatus() — no parent form → pending false / default.
+// Task:
+// useFormStatus() outside form — no parent form → pending false / default.
 //
-// Seedha matlab:
-// Hook ko form descendant hona chahiye (DOM tree me andar).
-// Portal me form ke andar button ho to generally OK (same form association check docs).
-// React 18: N/A — hook nahi tha; loading prop pass karte the.
+// In simple words:
+// Hook must be a form descendant (inside in DOM tree).
+// If button is inside form via Portal it is generally OK (check form association in docs).
+// React 18: N/A — hook did not exist; passed loading prop.
 // Fix: move component inside <form> or pass pending prop explicitly.
 // -----------------------------------------------------------------------------
 export function OutsideFormTrap() {
   return (
     <div>
-      <p>Status component yahan form ke bahar hota to pending kaam nahi karta</p>
+      <p>If the status component were outside the form here, pending would not work</p>
       <form action={saveAction}>
         <input name="title" />
         <SubmitButton />
@@ -266,10 +266,10 @@ export function OutsideFormTrap() {
 // -----------------------------------------------------------------------------
 // Q11: Spinner component reusable pattern
 //
-// Kya karna hai:
-// <SubmitSpinner /> — har form me drop-in pending indicator.
+// Task:
+// <SubmitSpinner /> — drop-in pending indicator in every form.
 //
-// Seedha matlab:
+// In simple words:
 // Design system button wrapper with useFormStatus inside.
 // React 18: <Button loading={loading} /> prop from parent state.
 // Must render INSIDE form — document in Storybook stories correctly.
@@ -294,11 +294,11 @@ export function FormWithSpinner() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] data FormData — types during pending
 //
-// Kya karna hai:
-// pending true pe data?.get('field') — optional chaining.
+// Task:
+// When pending true use data?.get('field') — optional chaining.
 //
-// Seedha matlab:
-// data null jab not pending — UI me check karo.
+// In simple words:
+// data is null when not pending — check in UI.
 // Show "Saving draft: {title}" during flight.
 // React 18: e.currentTarget FormData in submit handler once.
 // Edge: file inputs in data — File object available during pending.
@@ -329,13 +329,13 @@ export function FormSavingPreview() {
 // -----------------------------------------------------------------------------
 // Q13: Multiple forms on page — isolated status
 //
-// Kya karna hai:
-// Do alag forms — har SubmitButton apne nearest form ki status dekhe.
+// Task:
+// Two separate forms — each SubmitButton reads its nearest form status.
 //
-// Seedha matlab:
+// In simple words:
 // Form A pending ≠ Form B pending — automatic isolation.
 // React 18: separate loading state per form manually.
-// Trap: ek shared SubmitButton do forms ke beech — ambiguous parent.
+// Trap: one shared SubmitButton between two forms — ambiguous parent.
 // -----------------------------------------------------------------------------
 export function TwoFormsIsolated() {
   return (
@@ -355,13 +355,13 @@ export function TwoFormsIsolated() {
 // -----------------------------------------------------------------------------
 // Q14: [MID] useFormStatus + useActionState together
 //
-// Kya karna hai:
+// Task:
 // Parent: useActionState for state/errors; child: useFormStatus for button UX.
 //
-// Seedha matlab:
-// Complementary — state machine parent; pending UI child without props.
+// In simple words:
+// Complementary — state machine in parent; pending UI in child without props.
 // React 18: lift isLoading to parent, pass to button.
-// Dono pending usually sync for same form — redundant but clean separation.
+// Both pending flags usually stay in sync for same form — redundant but clean separation.
 // Interview: "status hook for presentation; action state for data".
 // -----------------------------------------------------------------------------
 async function combinedSave(prev, formData) {
@@ -395,14 +395,14 @@ export function CombinedForm() {
 // -----------------------------------------------------------------------------
 // Q15: fieldset disabled={pending} — a11y
 //
-// Kya karna hai:
-// pending pe poora fieldset disable — double entry roko.
+// Task:
+// On pending disable whole fieldset — prevent double entry.
 //
-// Seedha matlab:
-// Screen readers ko busy state pata chale visually + functionally.
-// React 18: disabled={loading} har input pe manually tedious.
-// Child wrapper BusyFields pattern (Q7) reuse karo.
-// Note: disabled fields FormData me sometimes skip — check browser behavior for your fields.
+// In simple words:
+// Screen readers should know busy state visually + functionally.
+// React 18: disabled={loading} on every input manually is tedious.
+// Reuse child wrapper BusyFields pattern (Q7).
+// Note: disabled fields sometimes skip in FormData — check browser behavior for your fields.
 // -----------------------------------------------------------------------------
 function A11yBusyWrapper({ children }) {
   const { pending } = useFormStatus();
@@ -428,14 +428,14 @@ export function A11yBusyForm() {
 // -----------------------------------------------------------------------------
 // Q16: [MID] React 18 pattern contrast — prop drilling loading
 //
-// Kya karna hai:
-// Purana: const [loading,setLoading]=useState; <Btn loading={loading} />.
+// Task:
+// Old: const [loading,setLoading]=useState; <Btn loading={loading} />.
 //
-// Seedha matlab:
-// Kaam karta tha — bas boilerplate + prop layers.
+// In simple words:
+// It worked — just boilerplate + prop layers.
 // React 19 useFormStatus: colocate pending UI with button component.
 // Migration: extract SubmitButton child, remove loading prop chain.
-// When NOT: form hi nahi — non-form buttons ke liye useActionState.isPending.
+// When NOT: no form — for non-form buttons use useActionState.isPending.
 // -----------------------------------------------------------------------------
 function LegacyStyleButton({ loading }) {
   return (
@@ -464,14 +464,14 @@ export function LegacyStyleForm() {
 // -----------------------------------------------------------------------------
 // Q17: method field — get vs post mental model
 //
-// Kya karna hai:
-// useFormStatus().method — form method attribute reflect.
+// Task:
+// useFormStatus().method — reflects form method attribute.
 //
-// Seedha matlab:
-// action={fn} React apps me usually programmatic — method mostly 'post' feel.
+// In simple words:
+// action={fn} in React apps is usually programmatic — method mostly feels like 'post'.
 // Debugging: log method + action type in dev tools component.
 // React 18: same HTML form attributes.
-// Progressive enhancement native action URL pe method matter karta.
+// For progressive enhancement native action URL, method matters.
 // -----------------------------------------------------------------------------
 function MethodDebug() {
   const { method, pending } = useFormStatus();
@@ -495,11 +495,11 @@ export function FormMethodDebug() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] Custom element / design system integration
 //
-// Kya karna hai:
-// <DSButton type="submit"> ke andar useFormStatus — must be in form subtree.
+// Task:
+// <DSButton type="submit"> with useFormStatus inside — must be in form subtree.
 //
-// Seedha matlab:
-// Shadow DOM boundaries check karo — rare breaks.
+// In simple words:
+// Check Shadow DOM boundaries — rare breaks.
 // React 18: loading prop API on design system.
 // React 19: internal useFormStatus in DS SubmitButton implementation.
 // Export DS component docs: "must be child of form".
@@ -516,13 +516,13 @@ export function DesignSystemNote() {
 // -----------------------------------------------------------------------------
 // Q19: [MID] Server Action form — useFormStatus still works
 //
-// Kya karna hai:
-// action={serverAction} client form — pending client pe track hota hai.
+// Task:
+// action={serverAction} on client form — pending tracked on client.
 //
-// Seedha matlab:
-// Network server tak jaati — pending true until response.
+// In simple words:
+// Network goes to server — pending true until response.
 // React 18 + server: manual fetch pending.
-// Slow server action: fieldset disable critical — double POST avoid.
+// Slow server action: fieldset disable is critical — avoid double POST.
 // Error display: useActionState state.error + useFormStatus pending combo.
 // -----------------------------------------------------------------------------
 const serverFormStatus =
@@ -531,14 +531,14 @@ const serverFormStatus =
 // -----------------------------------------------------------------------------
 // Q20: Pending false immediately — sync action flash
 //
-// Kya karna hai:
-// Bahut fast sync action — pending UI blink barely visible.
+// Task:
+// Very fast sync action — pending UI blink barely visible.
 //
-// Seedha matlab:
-// Normal for trivial actions — don't over-engineer spinner.
-// React 18 same — setLoading(true/false) sync code me invisible.
+// In simple words:
+// Normal for trivial actions — do not over-engineer spinner.
+// React 18 same — setLoading(true/false) invisible in sync code.
 // UX: minimum 300ms spinner optional pattern (debate — artificial delay usually bad).
-// Interview: pending meaningful for async I/O bound actions.
+// Interview: pending is meaningful for async I/O bound actions.
 // -----------------------------------------------------------------------------
 async function instantAction(formData) {
   return formData.get("x");
@@ -561,12 +561,12 @@ export function InstantForm() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] When NOT useFormStatus
 //
-// Kya karna hai:
-// Non-form async, useActionState.isPending enough alone, no form element.
+// Task:
+// Non-form async, useActionState.isPending alone is enough, no form element.
 //
-// Seedha matlab:
+// In simple words:
 // Click handler mutation without form — useActionState or useTransition.
-// Parent needs pending of specific non-form action — status hook won't help.
+// Parent needs pending of specific non-form action — status hook will not help.
 // React 18: local useState always.
 // Multiple coordinated pending flags — broader state machine.
 // -----------------------------------------------------------------------------
@@ -579,14 +579,14 @@ const whenNotFormStatus = [
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview traps checklist
 //
-// Kya karna hai:
-// 4 traps yaad: wrong import, wrong place, outside form, nested forms.
+// Task:
+// Remember 4 traps: wrong import, wrong place, outside form, nested forms.
 //
-// Seedha matlab:
+// In simple words:
 // 1) react not react-dom 2) same component as form 3) not descendant 4) nested form invalid
 // React 18 contrast: prop drilling loading state was the alternative.
 // Fix always: extract child function component inside form.
-// Bonus: useFormStatus form component me call → pending stuck false classic bug.
+// Bonus: calling useFormStatus in form component → pending stuck false classic bug.
 // -----------------------------------------------------------------------------
 export const useFormStatusTraps = [
   "import from react instead of react-dom",

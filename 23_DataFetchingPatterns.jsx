@@ -1,16 +1,16 @@
 // ============================================================================
 // 23 — Data Fetching Patterns
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: Server se data lana — loading, success, error teen states.
+// SIMPLE: Fetch data from server — loading, success, error are three states.
 // Pattern 1: useEffect + fetch + useState (classic).
 // Pattern 2: custom useFetch. Pattern 3: libs (React Query/SWR) — cache, retry.
-// Race, cleanup, stale — pehle cover (09). Yahan UI patterns jodna.
+// Race, cleanup, stale — covered earlier (09). Here we tie UI patterns together.
 //
-// KYUN: Har real app fetch karti. Interview me race + loading UI poochte.
+// WHY: Every real app fetches. Interviews ask about race + loading UI.
 // INTERVIEW: where to fetch; caching; waterfalls; parallel requests.
-// Vite/React 19 project me use — teaching file.
+// Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -19,11 +19,11 @@ import { useEffect, useRef, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Classic status triad
 //
-// Kya karna hai:
+// Task:
 // idle/loading/success/error UI.
 //
-// Seedha matlab:
-// Ek status string ya flags — user ko feedback.
+// In simple words:
+// One status string or flags — give user feedback.
 // -----------------------------------------------------------------------------
 function UsersClassic() {
   const [status, setStatus] = useState("idle");
@@ -57,11 +57,11 @@ function UsersClassic() {
 // -----------------------------------------------------------------------------
 // Q2: Parallel fetches
 //
-// Kya karna hai:
+// Task:
 // Promise.all([fetchA, fetchB])
 //
-// Seedha matlab:
-// Waterfall mat banao jab independent. Parallel = tez.
+// In simple words:
+// Do not waterfall when independent. Parallel = faster.
 // -----------------------------------------------------------------------------
 function Parallel() {
   const [bundle, setBundle] = useState(null);
@@ -77,11 +77,11 @@ function Parallel() {
 // -----------------------------------------------------------------------------
 // Q3: Dependent fetch (waterfall unavoidable)
 //
-// Kya karna hai:
-// Pehle user, phir user.id se posts.
+// Task:
+// First user, then posts by user.id.
 //
-// Seedha matlab:
-// Kabhi serial zaroori. UI me staged loading OK.
+// In simple words:
+// Sometimes serial is required. Staged loading in UI is OK.
 // -----------------------------------------------------------------------------
 function Dependent() {
   const [posts, setPosts] = useState([]);
@@ -104,11 +104,11 @@ function Dependent() {
 // -----------------------------------------------------------------------------
 // Q4: AbortController cancel
 //
-// Kya karna hai:
-// cleanup me abort — unmount / dep change.
+// Task:
+// abort in cleanup — on unmount / dep change.
 //
-// Seedha matlab:
-// Race + wasted network dono kam.
+// In simple words:
+// Reduces race conditions and wasted network.
 // -----------------------------------------------------------------------------
 function AbortFetch({ id }) {
   const [data, setData] = useState(null);
@@ -128,11 +128,11 @@ function AbortFetch({ id }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Stale-while-revalidate sketch
 //
-// Kya karna hai:
-// Purana data dikhao, peeche refresh, phir update.
+// Task:
+// Show old data, refresh in background, then update.
 //
-// Seedha matlab:
-// SWR/RQ idea. UX snappy. Cache key.
+// In simple words:
+// SWR/RQ idea. Snappy UX. Cache key.
 // -----------------------------------------------------------------------------
 const cache = new Map();
 function useSWRLite(key, fetcher) {
@@ -153,11 +153,11 @@ function useSWRLite(key, fetcher) {
 // -----------------------------------------------------------------------------
 // Q6: Optimistic UI sketch
 //
-// Kya karna hai:
-// Like button — pehle UI +1, fail pe rollback.
+// Task:
+// Like button — UI +1 first, rollback on fail.
 //
-// Seedha matlab:
-// Fast feel. Error handling zaroori.
+// In simple words:
+// Fast feel. Error handling is required.
 // -----------------------------------------------------------------------------
 function Like({ initial }) {
   const [likes, setLikes] = useState(initial);
@@ -176,11 +176,11 @@ function Like({ initial }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Don't fetch in render
 //
-// Kya karna hai:
-// Component body me fetch() mat — infinite / duplicate.
+// Task:
+// Do not fetch() in component body — infinite / duplicate.
 //
-// Seedha matlab:
-// Effect, event, loader, or lib. Render pure.
+// In simple words:
+// Effect, event, loader, or lib. Render stays pure.
 // -----------------------------------------------------------------------------
 function Bad() {
   // fetch("/api"); // ❌ render phase
@@ -190,11 +190,11 @@ function Bad() {
 // -----------------------------------------------------------------------------
 // Q8: Loading skeletons vs spinner
 //
-// Kya karna hai:
-// List shape reserve — skeleton.
+// Task:
+// Reserve list shape — skeleton.
 //
-// Seedha matlab:
-// Perceived performance. Layout shift kam.
+// In simple words:
+// Better perceived performance. Less layout shift.
 // -----------------------------------------------------------------------------
 function UserList({ loading, users }) {
   if (loading) {
@@ -217,11 +217,11 @@ function UserList({ loading, users }) {
 // -----------------------------------------------------------------------------
 // Q9: Fetch on button — user-triggered load
 //
-// Kya karna hai:
-// Mount pe auto nahi; button click pe load() — intentional fetch.
+// Task:
+// Not auto on mount; load() on button click — intentional fetch.
 //
-// Seedha matlab:
-// Search/submit jaisa — empty deps effect ki jagah event driven.
+// In simple words:
+// Like search/submit — event driven instead of empty-deps effect.
 // -----------------------------------------------------------------------------
 function FetchOnClick() {
   const [data, setData] = useState(null);
@@ -243,13 +243,13 @@ function FetchOnClick() {
 }
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] Race condition — purana response ignore
+// Q10: [MID] Race condition — ignore stale response
 //
-// Kya karna hai:
-// id change fast — pehli slow response baad me aaye to setState mat.
+// Task:
+// id changes fast — do not setState if first slow response arrives late.
 //
-// Seedha matlab:
-// Request id / ignore flag — stale data screen pe mat dikhao.
+// In simple words:
+// Request id / ignore flag — do not show stale data on screen.
 // -----------------------------------------------------------------------------
 function RaceSafe({ id }) {
   const [item, setItem] = useState(null);
@@ -268,13 +268,13 @@ function RaceSafe({ id }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Dedupe — same key concurrent request ek hi
+// Q11: Dedupe — same key concurrent request only once
 //
-// Kya karna hai:
-// inflight Map — do component same fetch kare to ek promise share.
+// Task:
+// inflight Map — two components same fetch share one promise.
 //
-// Seedha matlab:
-// Double mount / StrictMode — network waste kam.
+// In simple words:
+// Double mount / StrictMode — less network waste.
 // -----------------------------------------------------------------------------
 const inflight = new Map();
 function fetchDeduped(url) {
@@ -289,17 +289,17 @@ function fetchDeduped(url) {
 // -----------------------------------------------------------------------------
 // Q12: [MID] React Query contrast — cache + staleTime
 //
-// Kya karna hai:
-// useQuery key se cache; refetch on window focus default.
+// Task:
+// useQuery caches by key; refetch on window focus by default.
 //
-// Seedha matlab:
-// Manual useState+effect vs lib — interview me tradeoffs bolo.
+// In simple words:
+// Manual useState+effect vs lib — explain tradeoffs in interview.
 // -----------------------------------------------------------------------------
 function RQContrastNote() {
   return (
     <p>
       React Query: queryKey cache, staleTime, retry, dedupe built-in. Manual =
-      sab khud.
+      build it all yourself.
     </p>
   );
 }
@@ -307,11 +307,11 @@ function RQContrastNote() {
 // -----------------------------------------------------------------------------
 // Q13: Cache invalidation sketch
 //
-// Kya karna hai:
-// POST success ke baad cache.delete(key) ya queryClient.invalidate.
+// Task:
+// After POST success: cache.delete(key) or queryClient.invalidate.
 //
-// Seedha matlab:
-// Mutate ke baad purana data mat dikhao — refresh trigger.
+// In simple words:
+// After mutate, do not show old data — trigger refresh.
 // -----------------------------------------------------------------------------
 function invalidate(key) {
   cache.delete(key);
@@ -320,11 +320,11 @@ function invalidate(key) {
 // -----------------------------------------------------------------------------
 // Q14: [MID] Suspense fetch — use() + resource pattern
 //
-// Kya karna hai:
-// Cache me pending promise; component use(resource.read()) suspend.
+// Task:
+// Pending promise in cache; component use(resource.read()) suspends.
 //
-// Seedha matlab:
-// React 19 data Suspense — throw promise while pending (lib ya custom).
+// In simple words:
+// React 19 data Suspense — throw promise while pending (lib or custom).
 // -----------------------------------------------------------------------------
 function createResource(promise) {
   let status = "pending";
@@ -351,11 +351,11 @@ function createResource(promise) {
 // -----------------------------------------------------------------------------
 // Q15: Polling — setInterval + cleanup
 //
-// Kya karna hai:
-// useEffect me interval; return clearInterval — unmount safe.
+// Task:
+// interval in useEffect; return clearInterval — safe on unmount.
 //
-// Seedha matlab:
-// Live dashboard — polling band jab component gayab.
+// In simple words:
+// Live dashboard — stop polling when component is gone.
 // -----------------------------------------------------------------------------
 function PollStatus() {
   const [status, setStatus] = useState("...");
@@ -373,11 +373,11 @@ function PollStatus() {
 // -----------------------------------------------------------------------------
 // Q16: [MID] Retry with backoff sketch
 //
-// Kya karna hai:
-// Fail pe 1s, 2s, 4s wait — max 3 try phir error UI.
+// Task:
+// On fail: wait 1s, 2s, 4s — max 3 tries then error UI.
 //
-// Seedha matlab:
-// Flaky network — user ko turant give up mat dikhao.
+// In simple words:
+// Flaky network — do not give up immediately for the user.
 // -----------------------------------------------------------------------------
 async function fetchWithRetry(url, tries = 3) {
   for (let i = 0; i < tries; i++) {
@@ -393,19 +393,19 @@ async function fetchWithRetry(url, tries = 3) {
 }
 
 // -----------------------------------------------------------------------------
-// Q17: [ADV] Waterfall vs parallel — diagram bolke
+// Q17: [ADV] Waterfall vs parallel — explain with diagram
 //
-// Kya karna hai:
+// Task:
 // Serial: A→B→C time sum. Parallel: max(A,B,C).
 //
-// Seedha matlab:
-// Independent calls Promise.all; dependent unavoidable serial.
+// In simple words:
+// Independent calls: Promise.all; dependent: unavoidable serial.
 // -----------------------------------------------------------------------------
 function WaterfallNote() {
   return (
     <p>
-      Waterfall: user wait then posts wait. Parallel: dono ek saath — jab
-      independent ho tab.
+      Waterfall: user wait then posts wait. Parallel: both at once — when
+      independent.
     </p>
   );
 }
@@ -413,16 +413,16 @@ function WaterfallNote() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] SWR revalidate on focus
 //
-// Kya karna hai:
-// Tab wapas aao → background refetch; purana data dikhte reh.
+// Task:
+// Tab back → background refetch; keep showing old data.
 //
-// Seedha matlab:
+// In simple words:
 // stale-while-revalidate UX — SWR/RQ default behavior idea.
 // -----------------------------------------------------------------------------
 function SWRFocusNote() {
   return (
     <p>
-      SWR: cache dikhao, window focus pe revalidate — data fresh bina blank
+      SWR: show cache, revalidate on window focus — fresh data without blank
       screen.
     </p>
   );
@@ -431,17 +431,17 @@ function SWRFocusNote() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] Server state vs UI state split
 //
-// Kya karna hai:
+// Task:
 // API data → query cache; modal open → useState local.
 //
-// Seedha matlab:
-// Sab ek object me mat — server state lib, UI state component me.
+// In simple words:
+// Do not put everything in one object — server state in lib, UI state in component.
 // -----------------------------------------------------------------------------
 function StateSplitNote() {
   return (
     <p>
-      Server state (remote, cacheable) alag; UI state (tabs, inputs) local —
-      mix mat karo ek giant store me unnecessarily.
+      Server state (remote, cacheable) separate; UI state (tabs, inputs) local —
+      do not mix unnecessarily in one giant store.
     </p>
   );
 }
@@ -449,24 +449,24 @@ function StateSplitNote() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Prefetch route data on hover
 //
-// Kya karna hai:
-// Link hover → queryClient.prefetchQuery ya fetch warm cache.
+// Task:
+// Link hover → queryClient.prefetchQuery or fetch to warm cache.
 //
-// Seedha matlab:
-// Navigation feel instant — data pehle se ready.
+// In simple words:
+// Navigation feels instant — data ready before click.
 // -----------------------------------------------------------------------------
 function PrefetchDataNote() {
-  return <p>Hover intent pe prefetch — click tak data cache me.</p>;
+  return <p>Prefetch on hover intent — data in cache by click time.</p>;
 }
 
 // -----------------------------------------------------------------------------
-// Q21: [ADV] Fetch kahan — effect vs event vs loader
+// Q21: [ADV] Where to fetch — effect vs event vs loader
 //
-// Kya karna hai:
+// Task:
 // Mount data → effect/loader; user action → event; render → ❌
 //
-// Seedha matlab:
-// Interview golden rule: render pure, side effects controlled jagah.
+// In simple words:
+// Interview golden rule: render pure, side effects in controlled places.
 // -----------------------------------------------------------------------------
 function WhereFetchNote() {
   return (
@@ -479,20 +479,20 @@ function WhereFetchNote() {
 }
 
 // -----------------------------------------------------------------------------
-// Q22: [ADV] Interview — fetch patterns ek minute me
+// Q22: [ADV] Interview — fetch patterns in one minute
 //
-// Kya karna hai:
+// Task:
 // Triad UI, race cleanup, parallel, SWR mental model, RQ note, Suspense use().
 //
-// Seedha matlab:
-// Mid interview checklist — yahi file ka summary.
+// In simple words:
+// Mid interview checklist — summary of this file.
 // -----------------------------------------------------------------------------
 function FetchInterview() {
   return (
     <ol>
       <li>loading/success/error triad</li>
       <li>AbortController + ignore flag (race)</li>
-      <li>Promise.all parallel; serial jab dependent</li>
+      <li>Promise.all parallel; serial when dependent</li>
       <li>SWR: stale show + background refresh</li>
       <li>React Query: cache keys, invalidation</li>
       <li>Suspense: use() / resource throw promise</li>

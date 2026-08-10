@@ -1,20 +1,20 @@
 // ============================================================================
 // 36 — React 19 Context as Provider
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Pehle hamesha:
+// SIMPLE: Before, you always wrote:
 //   <ThemeContext.Provider value={...}>...</ThemeContext.Provider>
 //
-// React 19: Context object KHUD provider ki tarah:
+// React 19: The Context object itself acts as the provider:
 //   <ThemeContext value={...}>...</ThemeContext>
 //
-// .Provider ab bhi supported (compat). Naya style chhota + clean.
+// .Provider is still supported (compat). The new style is shorter and cleaner.
 //
-// Socho Context = dabba brand; pehle alag "Provider sticker" chipkana padta;
-// ab dabba khud shelf pe baith sakta hai.
+// Think of Context as a branded box; before you had to stick on a separate "Provider" label;
+// now the box can sit on the shelf by itself.
 //
-// KYUN: Small DX change; interviews me "seen React 19 notes?" signal.
+// WHY: Small DX change; signals in interviews that you have seen React 19 notes.
 // INTERVIEW: value identity re-render; split contexts; use(context).
 //
 // ============================================================================
@@ -25,11 +25,11 @@ const ThemeContext = createContext("light");
 const AuthContext = createContext({ user: null });
 
 // -----------------------------------------------------------------------------
-// Q1: Naya syntax — <ThemeContext value={...}>
+// Q1: New syntax — <ThemeContext value={...}>
 //
-// Seedha matlab:
-// Provider wrapper alag naam se nahi — Context hi JSX tag.
-// value prop same idea.
+// In simple words:
+// No separate Provider wrapper name — the Context itself is the JSX tag.
+// Same idea for the value prop.
 // -----------------------------------------------------------------------------
 function Themed() {
   const theme = useContext(ThemeContext);
@@ -45,11 +45,11 @@ export function AppNewProviderStyle() {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: Purana .Provider — ab bhi OK
+// Q2: Old .Provider — still OK
 //
-// Seedha matlab:
-// Libraries / old code .Provider use karenge.
-// Dono samajhna migration ke liye.
+// In simple words:
+// Libraries / old code will use .Provider.
+// Understand both for migration.
 // -----------------------------------------------------------------------------
 export function AppLegacyProvider() {
   return (
@@ -60,13 +60,13 @@ export function AppLegacyProvider() {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: [MID] value={{}} har render — performance trap
+// Q3: [MID] value={{}} every render — performance trap
 //
-// Seedha matlab:
-// Inline object value={{ user }} har render naya reference —
+// In simple words:
+// Inline object value={{ user }} creates a new reference every render —
 // consumers re-render.
-// Fix: useState/useMemo value stable, ya context split, ya store bahar.
-// (React Compiler baad me help kar sakta — file 39 — blind trust mat.)
+// Fix: stable value with useState/useMemo, or split context, or store outside.
+// (React Compiler may help later — file 39 — do not blindly trust it.)
 // -----------------------------------------------------------------------------
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -82,9 +82,9 @@ export function AuthProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q4: Nested providers — nearest wins
 //
-// Seedha matlab:
-// Andar wala Context value bahar wale ko override.
-// Theme dark bahar, light andar section.
+// In simple words:
+// The inner Context value overrides the outer one.
+// Theme dark outside, light inside the section.
 // -----------------------------------------------------------------------------
 export function NestedTheme() {
   return (
@@ -100,9 +100,9 @@ export function NestedTheme() {
 // -----------------------------------------------------------------------------
 // Q5: use(Context) with new provider style
 //
-// Seedha matlab:
+// In simple words:
 // File 33: use(ThemeContext) conditional allowed.
-// Provider syntax change se read API same.
+// Read API stays the same despite provider syntax change.
 // -----------------------------------------------------------------------------
 function OptionalTheme({ forced }) {
   if (forced) return <span>{forced}</span>;
@@ -120,11 +120,11 @@ export function UseWithProvider() {
 }
 
 // -----------------------------------------------------------------------------
-// Q6: [MID] Default value tab jab Provider missing
+// Q6: [MID] Default value when Provider is missing
 //
-// Seedha matlab:
-// createContext(default) — agar koi Provider/Context wrapper nahi,
-// default milta. Bug ya intentional optional theme.
+// In simple words:
+// createContext(default) — if there is no Provider/Context wrapper,
+// you get the default. Bug or intentional optional theme.
 // -----------------------------------------------------------------------------
 export function NoProvider() {
   // ThemeContext default "light"
@@ -134,9 +134,9 @@ export function NoProvider() {
 // -----------------------------------------------------------------------------
 // Q7: Split context — state vs dispatch
 //
-// Seedha matlab:
-// Mid pattern: Frequency of change alag → alag contexts.
-// Taaki button sirf dispatch subscribe kare, state change pe na re-render.
+// In simple words:
+// Mid pattern: different change frequency → different contexts.
+// So the button only subscribes to dispatch, not re-render on state change.
 // -----------------------------------------------------------------------------
 const CountStateContext = createContext(0);
 const CountDispatchContext = createContext(() => {});
@@ -172,9 +172,9 @@ export function SplitCountApp() {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Interview one-liner
 //
-// Seedha matlab:
-// "React 19 me <MyContext value> = Provider; .Provider legacy-ok.
-// Re-renders value identity se; split contexts jab heavy."
+// In simple words:
+// "In React 19 <MyContext value> = Provider; .Provider legacy-ok.
+// Re-renders follow value identity; split contexts when heavy."
 // -----------------------------------------------------------------------------
 const line =
   "<Context value={...}> in React 19; watch referential equality of value.";
@@ -182,11 +182,11 @@ const line =
 // -----------------------------------------------------------------------------
 // Q9: useMemo for stable context value
 //
-// Kya karna hai:
-// const value = useMemo(() => ({ user, setUser }), [user]) — re-render kam.
+// Task:
+// const value = useMemo(() => ({ user, setUser }), [user]) — fewer re-renders.
 //
-// Seedha matlab:
-// Q3 trap fix — inline object har render new reference.
+// In simple words:
+// Q3 trap fix — inline object is a new reference every render.
 // React 18 same performance pattern with .Provider.
 // React 19 syntax change only — performance rules unchanged.
 // Compiler may help but explicit useMemo still valid.
@@ -201,13 +201,13 @@ export function AuthProviderMemo({ children }) {
 // -----------------------------------------------------------------------------
 // Q10: [MID] Provider value primitive — stable
 //
-// Kya karna hai:
+// Task:
 // <ThemeContext value="dark"> — string primitive stable automatically.
 //
-// Seedha matlab:
-// No referential issue — consumers re-render jab value string change.
+// In simple words:
+// No referential issue — consumers re-render when the string value changes.
 // React 18 .Provider value="dark" same.
-// Objects/functions need memoization; primitives safe inline.
+// Objects/functions need memoization; primitives are safe inline.
 // Interview: "inline object bad; inline string OK".
 // -----------------------------------------------------------------------------
 export function PrimitiveThemeProvider({ children }) {
@@ -217,10 +217,10 @@ export function PrimitiveThemeProvider({ children }) {
 // -----------------------------------------------------------------------------
 // Q11: Context + use() conditional read recap
 //
-// Kya karna hai:
+// Task:
 // OptionalTheme Q5 — use(ThemeContext) when prop missing.
 //
-// Seedha matlab:
+// In simple words:
 // Provider syntax 19; read API use() flexible (file 33).
 // React 18 useContext unconditional only.
 // Migration: provider syntax optional first; use() when needed.
@@ -237,11 +237,11 @@ export function ConditionalReadRecap() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] Multiple contexts — avoid mega context
 //
-// Kya karna hai:
-// Ek context me 20 fields mat dalo — split by change frequency.
+// Task:
+// Do not put 20 fields in one context — split by change frequency.
 //
-// Seedha matlab:
-// Q7 split state/dispatch pattern scale karo.
+// In simple words:
+// Scale the Q7 split state/dispatch pattern.
 // React 18 same advice — not 19 specific.
 // Mega context → any field change → all consumers re-render.
 // Zustand/Redux when global complex — context for moderate tree sharing.
@@ -252,10 +252,10 @@ const avoidMegaContext =
 // -----------------------------------------------------------------------------
 // Q13: Default context + optional provider
 //
-// Kya karna hai:
-// createContext('light') — App section bina provider ke default theme.
+// Task:
+// createContext('light') — App section gets default theme without provider.
 //
-// Seedha matlab:
+// In simple words:
 // Intentional default vs missing provider bug — document which.
 // React 18 .Provider optional same default behavior.
 // Testing: render without provider assert default read.
@@ -273,10 +273,10 @@ export function DefaultThemeSection() {
 // -----------------------------------------------------------------------------
 // Q14: [ADV] Context as Provider — library compatibility
 //
-// Kya karna hai:
-// Old lib docs .Provider — tum <Ctx value> use kar sakte ho same context object pe.
+// Task:
+// Old lib docs say .Provider — you can use <Ctx value> on the same context object.
 //
-// Seedha matlab:
+// In simple words:
 // Same createContext return supports both JSX forms in 19.
 // Mixed codebase during migration normal.
 // Publish libs supporting both until major bump.
@@ -293,10 +293,10 @@ export function LibCompatNote() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] React 18 → 19 provider syntax migration
 //
-// Kya karna hai:
+// Task:
 // Codemod: .Provider → direct Context tag; value prop same.
 //
-// Seedha matlab:
+// In simple words:
 // Zero behavior change if value identity same.
 // Read hooks unchanged useContext/use.
 // Snapshot tests same HTML structure.
@@ -309,11 +309,11 @@ const providerSyntaxMigration =
 // -----------------------------------------------------------------------------
 // Q16: Consumer pattern legacy
 //
-// Kya karna hai:
-// ThemeContext.Consumer render props — purana; useContext/use prefer.
+// Task:
+// ThemeContext.Consumer render props — old; prefer useContext/use.
 //
-// Seedha matlab:
-// React 18/19 dono me kaam karta but verbose.
+// In simple words:
+// Works in React 18/19 but verbose.
 // New code: useContext or use(Context).
 // Provider syntax update doesn't affect Consumer API — still legacy.
 // Remove Consumers during refactors.
@@ -331,11 +331,11 @@ export function LegacyConsumerDemo() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Context + Server Components boundary
 //
-// Kya karna hai:
-// Server Component se Client child ko context pass — Client provider wrap karo.
+// Task:
+// Pass context from Server Component to Client child — wrap with a Client provider.
 //
-// Seedha matlab:
-// Context consumer/client provider 'use client' side often.
+// In simple words:
+// Context consumer/client provider often on the 'use client' side.
 // Server can't use useContext dynamically same as client interactive tree.
 // Pattern: ClientProviders wrapper at layout root.
 // React 18 CSR-only: no boundary issue.
@@ -353,14 +353,14 @@ export function RscContextNote() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] When NOT Context
 //
-// Kya karna hai:
+// Task:
 // Frequent global updates, large app state, time-travel debug — Redux/Zustand.
 //
-// Seedha matlab:
-// Context great moderate prop-drill fix — not full data layer always.
+// In simple words:
+// Context is great for moderate prop-drill fixes — not always a full data layer.
 // React 18 same guidance.
 // Form local state, URL state (router), query cache — often better homes.
-// Context hell = too many providers nested — flatten or external store.
+// Context hell = too many providers nested — flatten or use an external store.
 // -----------------------------------------------------------------------------
 const whenNotContext = [
   "high-frequency global updates",
@@ -372,10 +372,10 @@ const whenNotContext = [
 // -----------------------------------------------------------------------------
 // Q19: [MID] Testing context providers
 //
-// Kya karna hai:
+// Task:
 // Test wrapper: <ThemeContext value="dark">{ui}</ThemeContext> — 19 syntax clean.
 //
-// Seedha matlab:
+// In simple words:
 // RTL render with provider wrapper helper.
 // React 18 .Provider in tests identical value injection.
 // Default context test without wrapper for optional behavior.
@@ -388,11 +388,11 @@ export function TestWrapper({ children }) {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Compiler + context value
 //
-// Kya karna hai:
-// Compiler auto-memo partial — value={{}} trap manually fix still.
+// Task:
+// Compiler auto-memo is partial — still manually fix the value={{}} trap.
 //
-// Seedha matlab:
-// Don't assume compiler fixes unstable object values always.
+// In simple words:
+// Do not assume the compiler always fixes unstable object values.
 // React 18 manual memo on value; 19 same + compiler assist possible.
 // Measure re-renders React DevTools profiler.
 // Split contexts beats heroic memo sometimes.
@@ -404,10 +404,10 @@ export function CompilerContextNote() {
 // -----------------------------------------------------------------------------
 // Q21: [MID] Auth context common bug — new function in value
 //
-// Kya karna hai:
+// Task:
 // value={{ login: () => {...}, user }} — login new ref every render.
 //
-// Seedha matlab:
+// In simple words:
 // All consumers re-render even if user unchanged.
 // Fix: useCallback login + useMemo value object.
 // React 18 identical bug with .Provider.
@@ -426,10 +426,10 @@ export function AuthProviderBuggy({ children }) {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — Context React 19 summary
 //
-// Kya karna hai:
+// Task:
 // <Ctx value> replaces .Provider; use/useContext read; value identity perf trap same.
 //
-// Seedha matlab:
+// In simple words:
 // Not a state management revolution — DX + docs alignment.
 // Split contexts, memoized values, primitives safe inline.
 // use() conditional read paired with 19 provider syntax.

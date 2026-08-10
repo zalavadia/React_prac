@@ -101,7 +101,13 @@ function extractHeaderMeta(src) {
     else break;
   }
   const text = body.join("\n").trim();
-  const kya = (body.find((l) => l.startsWith("LAYMAN:")) || body[0] || "")
+  const kya = (
+    body.find((l) => l.startsWith("SIMPLE:")) ||
+    body.find((l) => l.startsWith("LAYMAN:")) ||
+    body[0] ||
+    ""
+  )
+    .replace(/^SIMPLE:\s*/, "")
     .replace(/^LAYMAN:\s*/, "")
     .slice(0, 140);
   return { intro: text, detail: text, kya };
@@ -166,8 +172,8 @@ function parseQuestions(src) {
     questions.push({
       title: "Example / Solution",
       explain: code
-        ? "Working solution — padho; Vite project me try karo."
-        : "Conceptual — teaching file me comments dekho.",
+        ? "Working solution — read it, then try it in a Vite project."
+        : "Conceptual — see the comments in the teaching file.",
       code: code || "// see teaching file comments",
     });
 

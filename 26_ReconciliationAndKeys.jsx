@@ -1,19 +1,19 @@
 // ============================================================================
 // 26 — Reconciliation And Keys
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: Reconciliation = React purane virtual tree ko naye se milata hai —
-// kaun same, kaun naya, kaun delete. Diff clever, perfect nahi.
-// Same position + same type → update. Alag type → replace.
-// key batata list me "yeh wahi item hai" even if order badla.
+// SIMPLE: Reconciliation = React matches old virtual tree to new —
+// what is same, new, or deleted. Diff is clever, not perfect.
+// Same position + same type → update. Different type → replace.
+// key tells React in a list "this is the same item" even if order changed.
 //
-// Galat keys = galat state reuse (input me dusra naam chipak). Index key
-// reorder/delete pe classic bug. key change = remount intentional.
+// Wrong keys = wrong state reuse (wrong name stuck in input). Index key
+// classic bug on reorder/delete. key change = intentional remount.
 //
-// KYUN: Deep "React kaise sochta" interview. Bugs samajh aate.
+// WHY: Deep "how React thinks" interview. Bugs make sense.
 // INTERVIEW: diffing heuristic; keys role; remount via key.
-// Vite/React 19 project me use — teaching file.
+// Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -22,11 +22,11 @@ import { Fragment, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Type change remounts
 //
-// Kya karna hai:
-// Conditional <div> vs <span> same jagah — state reset.
+// Task:
+// Conditional <div> vs <span> same spot — state resets.
 //
-// Seedha matlab:
-// Alag type = React destroy + create. State fly hoti.
+// In simple words:
+// Different type = React destroy + create. State is lost.
 // -----------------------------------------------------------------------------
 function TypeSwap() {
   const [asDiv, setAsDiv] = useState(true);
@@ -50,10 +50,10 @@ function CounterWrap({ tag: Tag }) {
 // -----------------------------------------------------------------------------
 // Q2: Same type preserves state
 //
-// Kya karna hai:
-// Dono branches <div><Counter/></div> — counter zinda.
+// Task:
+// Both branches <div><Counter/></div> — counter survives.
 //
-// Seedha matlab:
+// In simple words:
 // Heuristic: type match → update props, keep instance.
 // -----------------------------------------------------------------------------
 function SameType({ mode }) {
@@ -76,11 +76,11 @@ function Counter({ label }) {
 // -----------------------------------------------------------------------------
 // Q3: Force remount with key
 //
-// Kya karna hai:
-// <Counter key={userId} /> user change pe fresh state.
+// Task:
+// <Counter key={userId} /> fresh state on user change.
 //
-// Seedha matlab:
-// key identity. Change key = nayi component identity.
+// In simple words:
+// key is identity. Change key = new component identity.
 // -----------------------------------------------------------------------------
 function UserCounter({ userId }) {
   return <Counter key={userId} label={String(userId)} />;
@@ -89,11 +89,11 @@ function UserCounter({ userId }) {
 // -----------------------------------------------------------------------------
 // Q4: Index key reorder bug demo idea
 //
-// Kya karna hai:
+// Task:
 // List inputs with key={index}; reverse list — values jump.
 //
-// Seedha matlab:
-// React position pe match. Item move ≠ state move with index keys.
+// In simple words:
+// React matches by position. Item move ≠ state move with index keys.
 // -----------------------------------------------------------------------------
 function IndexBug() {
   const [items, setItems] = useState(["Ada", "Lin"]);
@@ -111,11 +111,11 @@ function IndexBug() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Stable id keys correct reorder
 //
-// Kya karna hai:
-// key={id}; reverse — each input apna value rakhe.
+// Task:
+// key={id}; reverse — each input keeps its value.
 //
-// Seedha matlab:
-// Reconciliation item track karti keys se.
+// In simple words:
+// Reconciliation tracks items via keys.
 // -----------------------------------------------------------------------------
 function IdKeys() {
   const [items, setItems] = useState([
@@ -135,11 +135,11 @@ function IdKeys() {
 // -----------------------------------------------------------------------------
 // Q6: List insert middle
 //
-// Kya karna hai:
-// Keys se React jaane kaun shift, kaun naya.
+// Task:
+// Keys tell React what shifted vs what is new.
 //
-// Seedha matlab:
-// Bina keys warning + inefficient/wrong updates.
+// In simple words:
+// Without keys: warning + inefficient/wrong updates.
 // -----------------------------------------------------------------------------
 function Insert() {
   const [rows, setRows] = useState([{ id: 1, t: "one" }]);
@@ -161,11 +161,11 @@ function Insert() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Don't use array index when list is dynamic
 //
-// Kya karna hai:
+// Task:
 // Static docs list OK-ish; todos/filters → ids.
 //
-// Seedha matlab:
-// Rule of thumb interview me bolo.
+// In simple words:
+// Rule of thumb to say in interview.
 // -----------------------------------------------------------------------------
 function Rule() {
   return <p>Dynamic lists → stable unique keys, not index.</p>;
@@ -174,11 +174,11 @@ function Rule() {
 // -----------------------------------------------------------------------------
 // Q8: Reconciliation is not deep magic optimize always
 //
-// Kya karna hai:
-// React enough smart; pehle structure + keys sahi.
+// Task:
+// React is smart enough; first get structure + keys right.
 //
-// Seedha matlab:
-// Manual DOM diff mat socho. Declare UI for state.
+// In simple words:
+// Do not think manual DOM diff. Declare UI for state.
 // -----------------------------------------------------------------------------
 function Mindset() {
   return <p>Describe UI for state; keys help React match list items.</p>;
@@ -187,11 +187,11 @@ function Mindset() {
 // -----------------------------------------------------------------------------
 // Q9: Fiber mental model — light version
 //
-// Kya karna hai:
-// Har component = fiber node; work unit reconcile karta tree walk.
+// Task:
+// Each component = fiber node; work unit reconciles on tree walk.
 //
-// Seedha matlab:
-// Deep mat jao — bas: React tree traverse karke diff apply karta hai.
+// In simple words:
+// Do not go too deep — React traverses tree and applies diff.
 // -----------------------------------------------------------------------------
 function FiberNote() {
   return (
@@ -202,13 +202,13 @@ function FiberNote() {
 }
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] Same component — alag position pe move
+// Q10: [MID] Same component — move to different position
 //
-// Kya karna hai:
-// Counter pehle div me, baad span me — same type parent change? position matter.
+// Task:
+// Counter first in div, later in span — same type parent change? position matters.
 //
-// Seedha matlab:
-// Tree position + type decide reuse; sirf component name same kaafi nahi hamesha.
+// In simple words:
+// Tree position + type decide reuse; same component name alone is not always enough.
 // -----------------------------------------------------------------------------
 function MoveCounter({ onTop }) {
   return onTop ? (
@@ -225,13 +225,13 @@ function MoveCounter({ onTop }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Fragment list me key — <> nahi, <Fragment key>
+// Q11: Fragment list key — not <>, use <Fragment key>
 //
-// Kya karna hai:
-// map me Fragment key={id} wrap — shorthand <> key nahi de sakta.
+// Task:
+// In map wrap Fragment key={id} — shorthand <> cannot take key.
 //
-// Seedha matlab:
-// Grouped siblings list me bhi stable key chahiye.
+// In simple words:
+// Grouped siblings in list still need stable key.
 // -----------------------------------------------------------------------------
 function FragmentList({ pairs }) {
   return (
@@ -247,26 +247,26 @@ function FragmentList({ pairs }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: [MID] key component pe vs DOM element pe
+// Q12: [MID] key on component vs DOM element
 //
-// Kya karna hai:
-// <Row key={id} /> — Row instance track; inner DOM React manage.
+// Task:
+// <Row key={id} /> — tracks Row instance; inner DOM React manages.
 //
-// Seedha matlab:
-// key list direct child pe — wrapper component pe lagao, andar mat chhupao wrong.
+// In simple words:
+// key on list direct child — put on wrapper component, not hidden inside wrong.
 // -----------------------------------------------------------------------------
 function KeyOnComponent({ items }) {
   return items.map((it) => <Counter key={it.id} label={it.name} />);
 }
 
 // -----------------------------------------------------------------------------
-// Q13: Props update — remount nahi, re-render haan
+// Q13: Props update — no remount, yes re-render
 //
-// Kya karna hai:
-// Same Counter, label prop change — state (n) preserve.
+// Task:
+// Same Counter, label prop change — state (n) preserved.
 //
-// Seedha matlab:
-// Reconciliation update = props patch; state tab tak jab tak type+key same.
+// In simple words:
+// Reconciliation update = props patch; state while type+key same.
 // -----------------------------------------------------------------------------
 function PropUpdateDemo() {
   const [label, setLabel] = useState("A");
@@ -279,13 +279,13 @@ function PropUpdateDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q14: [MID] Conditional same slot — key se force fresh
+// Q14: [MID] Conditional same slot — key to force fresh
 //
-// Kya karna hai:
+// Task:
 // {edit ? <Form key="edit" /> : <Form key="view" />} — mode switch reset.
 //
-// Seedha matlab:
-// Same component type same jagah — bina key state bleed; key se intentional remount.
+// In simple words:
+// Same component type same spot — without key state bleeds; key for intentional remount.
 // -----------------------------------------------------------------------------
 function EditViewSwitch({ editing }) {
   return editing ? (
@@ -298,11 +298,11 @@ function EditViewSwitch({ editing }) {
 // -----------------------------------------------------------------------------
 // Q15: Children array — explicit keys
 //
-// Kya karna hai:
-// [a, b, c] map ya array literal — har child stable key.
+// Task:
+// [a, b, c] map or array literal — stable key per child.
 //
-// Seedha matlab:
-// Dynamic children bina keys — warning + wrong reuse.
+// In simple words:
+// Dynamic children without keys — warning + wrong reuse.
 // -----------------------------------------------------------------------------
 function ChildArray({ parts }) {
   return (
@@ -315,13 +315,13 @@ function ChildArray({ parts }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] key={undefined} / missing — index fallback nahi, warning
+// Q16: [MID] key={undefined} / missing — not index fallback, warning
 //
-// Kya karna hai:
-// List me key hamesha unique stable do — React warn karega missing pe.
+// Task:
+// Always give unique stable key in list — React warns on missing.
 //
-// Seedha matlab:
-// Dev console check — keys discipline production bugs rokti.
+// In simple words:
+// Check dev console — key discipline prevents production bugs.
 // -----------------------------------------------------------------------------
 function KeyWarningNote() {
   return <p>Missing keys: dev warning, reconcile inefficient/wrong state reuse.</p>;
@@ -330,16 +330,16 @@ function KeyWarningNote() {
 // -----------------------------------------------------------------------------
 // Q17: [ADV] O(n) heuristic — same level siblings only
 //
-// Kya karna hai:
-// React cross-level move detect nahi perfect — structure stable rakho.
+// Task:
+// React does not perfectly detect cross-level move — keep structure stable.
 //
-// Seedha matlab:
-// Interview: diff linear same depth — isliye keys + stable structure matter.
+// In simple words:
+// Interview: diff is linear same depth — why keys + stable structure matter.
 // -----------------------------------------------------------------------------
 function HeuristicNote() {
   return (
     <p>
-      Reconciliation O(n) same-level pass — deep tree me type/key galat = expensive
+      Reconciliation O(n) same-level pass — wrong type/key in deep tree = expensive
       wrong updates.
     </p>
   );
@@ -348,46 +348,46 @@ function HeuristicNote() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] memo bail-out — same props skip reconcile subtree?
 //
-// Kya karna hai:
+// Task:
 // memo child — props shallow same → React skip render attempt.
 //
-// Seedha matlab:
-// Reconciliation se alag — memo render phase shortcut; keys alag concept.
+// In simple words:
+// Separate from reconciliation — memo is render phase shortcut; keys are different.
 // -----------------------------------------------------------------------------
 function MemoReconcileNote() {
   return (
     <p>
-      React.memo: props same ho to re-render skip — reconciliation se pehle bail-out.
+      React.memo: skip re-render when props same — bail-out before reconciliation.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q19: [ADV] Portal — reconcile logical tree, DOM alag
+// Q19: [ADV] Portal — reconcile logical tree, DOM separate
 //
-// Kya karna hai:
-// Portal child parent ke saath reconcile; DOM body pe paint.
+// Task:
+// Portal child reconciles with parent; paints on body DOM.
 //
-// Seedha matlab:
-// Fiber tree me parent link same — keys/rules yahan bhi apply.
+// In simple words:
+// Same parent link in fiber tree — keys/rules apply here too.
 // -----------------------------------------------------------------------------
 function PortalReconcileNote() {
-  return <p>Portal: reconcile React tree me; DOM placement alag — keys normal kaam.</p>;
+  return <p>Portal: reconcile in React tree; DOM placement separate — keys work normally.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Suspense boundary — suspended subtree replace
 //
-// Kya karna hai:
-// Suspend pe fallback dikhe; resume pe prior state often preserve.
+// Task:
+// On suspend show fallback; on resume prior state often preserved.
 //
-// Seedha matlab:
-// Remount vs resume Suspense specific — key change pe full remount.
+// In simple words:
+// Remount vs resume is Suspense-specific — key change means full remount.
 // -----------------------------------------------------------------------------
 function SuspenseKeyNote() {
   return (
     <p>
-      Suspense + key change = fresh subtree. Bina key suspend/resume state often
+      Suspense + key change = fresh subtree. Without key change suspend/resume state often
       intact.
     </p>
   );
@@ -396,24 +396,24 @@ function SuspenseKeyNote() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Identity vs position — interview story
 //
-// Kya karna hai:
-// key = identity; index = position guess — reorder pe index fail.
+// Task:
+// key = identity; index = position guess — index fails on reorder.
 //
-// Seedha matlab:
-// "React item track karta key se, position se nahi" — one-liner.
+// In simple words:
+// "React tracks items by key, not by position" — one-liner.
 // -----------------------------------------------------------------------------
 function IdentityNote() {
-  return <p>Keys identify items across renders; index identifies slot — reorder pe farq.</p>;
+  return <p>Keys identify items across renders; index identifies slot — difference on reorder.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Intentional remount — key patterns summary
 //
-// Kya karna hai:
+// Task:
 // userId change, form reset, mode switch — key={id} remount toolbox.
 //
-// Seedha matlab:
-// Bug fix (stable id) vs feature (reset via key) — dono valid use cases.
+// In simple words:
+// Bug fix (stable id) vs feature (reset via key) — both valid use cases.
 // -----------------------------------------------------------------------------
 function KeyInterview() {
   return (

@@ -1,18 +1,18 @@
 // ============================================================================
 // 05 — Events Handling
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Event = user ne kuch kiya — click, type, submit. React sunta hai
-// onClick, onChange, onSubmit (camelCase). Handler = function jo reaction de.
+// SIMPLE: Event = user did something — click, type, submit. React listens with
+// onClick, onChange, onSubmit (camelCase). Handler = function that reacts.
 //
-// HTML: onclick="...". React: onClick={handler} — function pass, call mat karo
-// jab tak args na chahiye: onClick={() => doX(id)}.
-// event.preventDefault() forms pe page refresh rokta hai.
+// HTML: onclick="...". React: onClick={handler} — pass function, do not call
+// unless you need args: onClick={() => doX(id)}.
+// event.preventDefault() on forms stops page refresh.
 //
-// KYUN: UI tab zinda jab events pe state badle.
+// WHY: UI comes alive when events change state.
 // INTERVIEW: synthetic events; pass vs call; preventDefault.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: onClick basic
 //
-// Kya karna hai:
-// Button click pe alert / console.
+// Task:
+// alert / console on button click.
 //
-// Seedha matlab:
-// onClick={fn} — reference. onClick={fn()} turant call — galat (usually).
+// In simple words:
+// onClick={fn} — reference. onClick={fn()} calls immediately — wrong (usually).
 // -----------------------------------------------------------------------------
 function ClickMe() {
   function handleClick() {
@@ -37,11 +37,11 @@ function ClickMe() {
 // -----------------------------------------------------------------------------
 // Q2: Inline arrow with arg
 //
-// Kya karna hai:
-// List item id pass karke delete.
+// Task:
+// Delete list item by passing id.
 //
-// Seedha matlab:
-// Extra arg chahiye to () => handler(id). Warna event object milta hai.
+// In simple words:
+// Need extra arg? Use () => handler(id). Otherwise you get the event object.
 // -----------------------------------------------------------------------------
 function Item({ id, onDelete }) {
   return <button onClick={() => onDelete(id)}>Delete {id}</button>;
@@ -50,11 +50,11 @@ function Item({ id, onDelete }) {
 // -----------------------------------------------------------------------------
 // Q3: onChange input
 //
-// Kya karna hai:
-// e.target.value se state update.
+// Task:
+// Update state from e.target.value.
 //
-// Seedha matlab:
-// Har change pe naya value. Controlled input ka heart.
+// In simple words:
+// New value on every change. Heart of controlled input.
 // -----------------------------------------------------------------------------
 function TypeBox() {
   const [text, setText] = useState("");
@@ -70,11 +70,11 @@ function TypeBox() {
 // -----------------------------------------------------------------------------
 // Q4: Form onSubmit + preventDefault
 //
-// Kya karna hai:
-// Form submit pe page reload mat hone do; data log karo.
+// Task:
+// On form submit, prevent page reload; log data.
 //
-// Seedha matlab:
-// Browser default = full reload. SPA me preventDefault zaroori.
+// In simple words:
+// Browser default = full reload. preventDefault is required in SPAs.
 // -----------------------------------------------------------------------------
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -93,11 +93,11 @@ function LoginForm() {
 // -----------------------------------------------------------------------------
 // Q5: onMouseEnter / leave
 //
-// Kya karna hai:
-// Hover pe highlight state.
+// Task:
+// Highlight state on hover.
 //
-// Seedha matlab:
-// Mouse events bhi same pattern — handler + setState.
+// In simple words:
+// Mouse events follow same pattern — handler + setState.
 // -----------------------------------------------------------------------------
 function HoverCard() {
   const [hot, setHot] = useState(false);
@@ -115,11 +115,11 @@ function HoverCard() {
 // -----------------------------------------------------------------------------
 // Q6: Stop propagation (bubbling)
 //
-// Kya karna hai:
-// Inner click pe outer click fire na ho — e.stopPropagation().
+// Task:
+// Inner click should not fire outer click — e.stopPropagation().
 //
-// Seedha matlab:
-// Events bubble parent tak. Kabhi andar wala alag behave kare.
+// In simple words:
+// Events bubble up to parent. Sometimes inner should behave differently.
 // -----------------------------------------------------------------------------
 function NestedClicks() {
   return (
@@ -139,11 +139,11 @@ function NestedClicks() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Disabled + loading click guard
 //
-// Kya karna hai:
-// Saving true jab button disabled / ignore extra clicks.
+// Task:
+// When saving is true, disable button / ignore extra clicks.
 //
-// Seedha matlab:
-// Double submit rokna — UX + safety. disabled={saving}.
+// In simple words:
+// Stop double submit — UX + safety. disabled={saving}.
 // -----------------------------------------------------------------------------
 function SaveOnce() {
   const [saving, setSaving] = useState(false);
@@ -163,10 +163,10 @@ function SaveOnce() {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Keyboard onKeyDown
 //
-// Kya karna hai:
-// Enter pe search trigger.
+// Task:
+// Trigger search on Enter.
 //
-// Seedha matlab:
+// In simple words:
 // Accessibility + power users. e.key === "Enter".
 // -----------------------------------------------------------------------------
 function SearchBox({ onSearch }) {
@@ -185,12 +185,12 @@ function SearchBox({ onSearch }) {
 // -----------------------------------------------------------------------------
 // Q9: [MID] Synthetic events
 //
-// Kya karna hai:
-// React event object native jaisa dikhta hai — wrapper hai cross-browser ke liye.
+// Task:
+// React event object looks native — it is a wrapper for cross-browser support.
 //
-// Seedha matlab:
-// e.preventDefault(), e.target same API feel. React 17+ listener root pe attach.
-// Native e.nativeEvent se underlying event (rare need).
+// In simple words:
+// e.preventDefault(), e.target same API feel. React 17+ attaches listeners at root.
+// Native e.nativeEvent for underlying event (rare need).
 // -----------------------------------------------------------------------------
 function SyntheticDemo() {
   function handleClick(e) {
@@ -207,11 +207,11 @@ function SyntheticDemo() {
 // -----------------------------------------------------------------------------
 // Q10: Event pooling legacy note
 //
-// Kya karna hai:
-// React 16 aur pehle: async me e.persist() chahiye tha — ab nahi.
+// Task:
+// React 16 and earlier: async needed e.persist() — not anymore.
 //
-// Seedha matlab:
-// Purane tutorials me "pooling" dikhega — React 17+ me removed.
+// In simple words:
+// Old tutorials mention "pooling" — removed in React 17+.
 // Interview: "Can I use event async?" — Modern React: yes, no persist needed.
 // -----------------------------------------------------------------------------
 function AsyncEventOk() {
@@ -226,12 +226,12 @@ function AsyncEventOk() {
 // -----------------------------------------------------------------------------
 // Q11: preventDefault vs stopPropagation
 //
-// Kya karna hai:
-// Link click: preventDefault = navigate roko. stopPropagation = bubble roko.
+// Task:
+// Link click: preventDefault = stop navigate. stopPropagation = stop bubble.
 //
-// Seedha matlab:
-// Dono alag kaam. Form submit → preventDefault. Modal inner click → stopPropagation.
-// Kabhi dono chahiye; confuse mat karo.
+// In simple words:
+// They do different jobs. Form submit → preventDefault. Modal inner click → stopPropagation.
+// Sometimes you need both; do not confuse them.
 // -----------------------------------------------------------------------------
 function PreventVsStop() {
   return (
@@ -239,8 +239,8 @@ function PreventVsStop() {
       <a
         href="#"
         onClick={(e) => {
-          e.preventDefault(); // hash change / nav roko
-          e.stopPropagation(); // card handler fire na ho
+          e.preventDefault(); // stop hash change / nav
+          e.stopPropagation(); // card handler should not fire
           console.log("link only");
         }}
       >
@@ -253,12 +253,12 @@ function PreventVsStop() {
 // -----------------------------------------------------------------------------
 // Q12: onClick vs onMouseDown
 //
-// Kya karna hai:
-// MouseDown pehle fire — drag/select se pehle action chahiye to mousedown.
+// Task:
+// MouseDown fires first — use mousedown when you need action before drag/select.
 //
-// Seedha matlab:
-// Click = mousedown + mouseup same element. UI feel alag ho sakta hai.
-// Example: color picker instant — onMouseDown. Normal buttons — onClick.
+// In simple words:
+// Click = mousedown + mouseup on same element. UI feel can differ.
+// Example: instant color picker — onMouseDown. Normal buttons — onClick.
 // -----------------------------------------------------------------------------
 function DownVsClick() {
   const [msg, setMsg] = useState("");
@@ -279,11 +279,11 @@ function DownVsClick() {
 // -----------------------------------------------------------------------------
 // Q13: Keyboard — Escape close pattern
 //
-// Kya karna hai:
-// onKeyDown me e.key === "Escape" → modal band.
+// Task:
+// onKeyDown with e.key === "Escape" → close modal.
 //
-// Seedha matlab:
-// Accessibility: keyboard users bhi same UX. Tab focus alag topic (a11y).
+// In simple words:
+// Accessibility: keyboard users get same UX. Tab focus is a separate topic (a11y).
 // e.key preferred over keyCode (deprecated).
 // -----------------------------------------------------------------------------
 function EscapeModal({ open, onClose }) {
@@ -319,10 +319,10 @@ function EscapeDemo() {
 // -----------------------------------------------------------------------------
 // Q14: Form submit — button type matters
 //
-// Kya karna hai:
-// <button type="submit"> form submit. type="button" se accidental submit nahi.
+// Task:
+// <button type="submit"> submits form. type="button" avoids accidental submit.
 //
-// Seedha matlab:
+// In simple words:
 // Default button type inside form = submit (HTML). Extra buttons → type="button".
 // Interview trap: "Why page reloads?" — submit without preventDefault.
 // -----------------------------------------------------------------------------
@@ -346,12 +346,12 @@ function MultiButtonForm() {
 // -----------------------------------------------------------------------------
 // Q15: Passing multiple args to handler
 //
-// Kya karna hai:
-// onClick={() => moveItem(id, direction)} — curry ya inline arrow.
+// Task:
+// onClick={() => moveItem(id, direction)} — curry or inline arrow.
 //
-// Seedha matlab:
-// Handler signature fix ho to bind/curry: const onMove = (id) => (dir) => ...
-// Inline arrow sabse readable beginners ke liye.
+// In simple words:
+// Fixed handler signature? bind/curry: const onMove = (id) => (dir) => ...
+// Inline arrow is most readable for beginners.
 // -----------------------------------------------------------------------------
 function MoveRow({ id, label, onMove }) {
   return (
@@ -392,12 +392,12 @@ function MoveList() {
 // -----------------------------------------------------------------------------
 // Q16: [MID] Stale closure in event handler
 //
-// Kya karna hai:
-// setTimeout me purana count — functional setState ya ref fix (10).
+// Task:
+// setTimeout with old count — fix with functional setState or ref (10).
 //
-// Seedha matlab:
-// Handler banate waqt closure capture hota hai. Async delay = stale value risk.
-// Fix: setCount(c => c + 1) ya countRef.current.
+// In simple words:
+// Handler captures closure when created. Async delay = stale value risk.
+// Fix: setCount(c => c + 1) or countRef.current.
 // -----------------------------------------------------------------------------
 function StaleHandler() {
   const [count, setCount] = useState(0);
@@ -427,12 +427,12 @@ function StaleHandler() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Event delegation mental model
 //
-// Kya karna hai:
-// React 17+ root pe listeners — har button pe alag native listener nahi lagta feel.
+// Task:
+// React 17+ listeners on root — not a separate native listener on every button.
 //
-// Seedha matlab:
-// Delegation = kam memory, dynamic list friendly. React internally optimize karta hai.
-// Tumhein usually kuch extra nahi karna — samajh interview ke liye.
+// In simple words:
+// Delegation = less memory, friendly to dynamic lists. React optimizes internally.
+// Usually nothing extra for you to do — understand for interviews.
 // -----------------------------------------------------------------------------
 function DelegatedList({ items, onPick }) {
   return (
@@ -454,11 +454,11 @@ function DelegatedList({ items, onPick }) {
 // -----------------------------------------------------------------------------
 // Q18: onBlur / onFocus — field touch tracking
 //
-// Kya karna hai:
-// Blur pe "touched" true — validation message dikhao.
+// Task:
+// On blur set "touched" true — show validation message.
 //
-// Seedha matlab:
-// Change = har keystroke. Blur = user field chhod gaya — UX validation timing.
+// In simple words:
+// Change = every keystroke. Blur = user left field — UX validation timing.
 // -----------------------------------------------------------------------------
 function TouchedField() {
   const [value, setValue] = useState("");
@@ -479,11 +479,11 @@ function TouchedField() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] Custom event payload object
 //
-// Kya karna hai:
-// onChange({ name, value }) — native event se zyada app-specific API.
+// Task:
+// onChange({ name, value }) — app-specific API beyond native event.
 //
-// Seedha matlab:
-// Design system components native event expose na kare — simpler parent API.
+// In simple words:
+// Design system components may not expose native event — simpler parent API.
 // Tradeoff: flexibility vs convenience.
 // -----------------------------------------------------------------------------
 function Field({ name, value, onChange }) {
@@ -506,12 +506,12 @@ function FieldForm() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Passive scroll / touch — rare
 //
-// Kya karna hai:
-// preventDefault scroll pe block ho sakta hai — mostly native feel chhod do.
+// Task:
+// preventDefault on scroll may be blocked — usually leave native feel alone.
 //
-// Seedha matlab:
-// Touch/wheel listeners me browser passive default — React me usually issue nahi.
-// Custom drag scroll library banate waqt dhyaan.
+// In simple words:
+// Touch/wheel listeners have passive default in browser — usually no issue in React.
+// Watch out when building custom drag scroll libraries.
 // -----------------------------------------------------------------------------
 function ScrollBox() {
   return (
@@ -524,11 +524,11 @@ function ScrollBox() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] onDoubleClick pattern
 //
-// Kya karna hai:
-// Double click edit mode — single vs double alag handlers.
+// Task:
+// Double click edit mode — separate single vs double handlers.
 //
-// Seedha matlab:
-// Timing: double-click delay ke beech do single click fire ho sakte — design careful.
+// In simple words:
+// Timing: two single clicks may fire before double-click delay — design carefully.
 // Alternative: explicit Edit button — clearer UX.
 // -----------------------------------------------------------------------------
 function DoubleEdit() {
@@ -550,14 +550,14 @@ function DoubleEdit() {
 }
 
 // -----------------------------------------------------------------------------
-// Q22: [ADV] Anti-pattern — inline handler har render naya
+// Q22: [ADV] Anti-pattern — inline handler new every render
 //
-// Kya karna hai:
-// onClick={() => ...} har render new function — memo child ko tod sakta hai (16).
+// Task:
+// onClick={() => ...} is new function every render — can break memo child (16).
 //
-// Seedha matlab:
-// Simple apps me fine. Heavy lists + React.memo → useCallback (17) ya stable handler.
-// Premature useCallback bhi cost — profile pe optimize karo.
+// In simple words:
+// Fine in simple apps. Heavy lists + React.memo → useCallback (17) or stable handler.
+// Premature useCallback also has cost — optimize when profile shows need.
 // -----------------------------------------------------------------------------
 function MemoRow({ label, onClick }) {
   return (

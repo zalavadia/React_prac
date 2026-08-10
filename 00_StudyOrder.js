@@ -68,4 +68,4 @@ for (const [level, files] of Object.entries(order)) {
   files.forEach((f, i) => console.log(i + 1 + ". " + f));
 }
 console.log("\nTotal:", Object.values(order).reduce((n,a)=>n+a.length,0));
-console.log("Padho: 01 → 47. Docs app: cd docs && python3 -m http.server 5600");
+console.log("Study order: 01 → 47. Docs app: cd docs && python3 -m http.server 5600");

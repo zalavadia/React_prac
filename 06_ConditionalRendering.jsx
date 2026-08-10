@@ -1,28 +1,28 @@
 // ============================================================================
 // 06 — Conditional Rendering
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Kabhi UI dikhao, kabhi mat dikhao — jaise fridge light: door khuli
-// to on. React me if/return, && , ternary (? :) se decide.
+// SIMPLE: Sometimes show UI, sometimes do not — like a fridge light: on when door opens.
+// In React use if/return, && , ternary (? :) to decide.
 //
-// && : left truthy ho to right dikhao. Careful: 0 && <X /> → 0 screen pe!
-// Ternary: A ? <Yes /> : <No />. null return = kuch mat dikhao.
+// && : if left is truthy, show right. Careful: 0 && <X /> → 0 on screen!
+// Ternary: A ? <Yes /> : <No />. null return = show nothing.
 //
-// KYUN: Loading, error, empty, auth — har real app conditional.
+// WHY: Loading, error, empty, auth — every real app uses conditionals.
 // INTERVIEW: && pitfall with 0; early return; null vs false.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
 // -----------------------------------------------------------------------------
 // Q1: Ternary Show / Hide
 //
-// Kya karna hai:
+// Task:
 // loggedIn ? <Dash /> : <Login />
 //
-// Seedha matlab:
-// Do clear branches. Readable for A vs B.
+// In simple words:
+// Two clear branches. Readable for A vs B.
 // -----------------------------------------------------------------------------
 function Gate({ loggedIn }) {
   return loggedIn ? <p>Dashboard</p> : <p>Please login</p>;
@@ -31,11 +31,11 @@ function Gate({ loggedIn }) {
 // -----------------------------------------------------------------------------
 // Q2: && short show
 //
-// Kya karna hai:
+// Task:
 // unread > 0 && <Badge />
 //
-// Seedha matlab:
-// Sirf "maybe show" ke liye. Else branch nahi.
+// In simple words:
+// For "maybe show" only. No else branch.
 // -----------------------------------------------------------------------------
 function Inbox({ unread }) {
   return (
@@ -49,11 +49,11 @@ function Inbox({ unread }) {
 // -----------------------------------------------------------------------------
 // Q3: Early return loading
 //
-// Kya karna hai:
+// Task:
 // if (loading) return <Spinner />; return <Data />
 //
-// Seedha matlab:
-// Nested ternary avoid. Guard clauses clean.
+// In simple words:
+// Avoid nested ternary. Guard clauses are clean.
 // -----------------------------------------------------------------------------
 function UserProfile({ loading, user }) {
   if (loading) return <p>Loading...</p>;
@@ -64,11 +64,11 @@ function UserProfile({ loading, user }) {
 // -----------------------------------------------------------------------------
 // Q4: return null
 //
-// Kya karna hai:
-// Feature flag off → component kuch render na kare.
+// Task:
+// Feature flag off → component renders nothing.
 //
-// Seedha matlab:
-// null = DOM me kuch nahi. Valid React return.
+// In simple words:
+// null = nothing in DOM. Valid React return.
 // -----------------------------------------------------------------------------
 function BetaBanner({ enabled }) {
   if (!enabled) return null;
@@ -78,11 +78,11 @@ function BetaBanner({ enabled }) {
 // -----------------------------------------------------------------------------
 // Q5: [MID] && with number 0 pitfall
 //
-// Kya karna hai:
-// count && <p>{count}</p> — count 0 pe "0" dikhega!
+// Task:
+// count && <p>{count}</p> — when count is 0, "0" shows on screen!
 //
-// Seedha matlab:
-// 0 falsy hai lekin React 0 render karta hai. Fix: count > 0 && ...
+// In simple words:
+// 0 is falsy but React renders 0. Fix: count > 0 && ...
 // -----------------------------------------------------------------------------
 function CartCount({ count }) {
   // BAD: {count && <span>{count}</span>}  → shows 0
@@ -92,11 +92,11 @@ function CartCount({ count }) {
 // -----------------------------------------------------------------------------
 // Q6: Multi-state UI machine (simple)
 //
-// Kya karna hai:
+// Task:
 // status: idle | loading | error | success — switch UI.
 //
-// Seedha matlab:
-// Real fetch UIs yahi pattern. Enum-like string status.
+// In simple words:
+// Real fetch UIs use this pattern. Enum-like string status.
 // -----------------------------------------------------------------------------
 function FetchUI({ status, data, error }) {
   if (status === "loading") return <p>Loading...</p>;
@@ -108,11 +108,11 @@ function FetchUI({ status, data, error }) {
 // -----------------------------------------------------------------------------
 // Q7: Toggle with conditional class
 //
-// Kya karna hai:
+// Task:
 // isActive ? "tab on" : "tab" className.
 //
-// Seedha matlab:
-// Conditional styling bhi rendering ka cousin.
+// In simple words:
+// Conditional styling is a cousin of conditional rendering.
 // -----------------------------------------------------------------------------
 function Tab({ isActive, label }) {
   return (
@@ -123,11 +123,11 @@ function Tab({ isActive, label }) {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Element variables
 //
-// Kya karna hai:
-// let content = ...; ifs se set; return <div>{content}</div>
+// Task:
+// let content = ...; set with ifs; return <div>{content}</div>
 //
-// Seedha matlab:
-// Complex conditions JSX se pehle resolve — readable.
+// In simple words:
+// Resolve complex conditions before JSX — more readable.
 // -----------------------------------------------------------------------------
 function Message({ type }) {
   let content;
@@ -140,11 +140,11 @@ function Message({ type }) {
 // -----------------------------------------------------------------------------
 // Q9: Empty string && pitfall
 //
-// Kya karna hai:
-// name && <Greeting /> — name "" ho to kuch nahi, lekin pattern samjho.
+// Task:
+// name && <Greeting /> — when name is "", understand the pattern.
 //
-// Seedha matlab:
-// "" falsy hai, render nahi hota — 0 se alag. Still explicit check safe.
+// In simple words:
+// "" is falsy, does not render — unlike 0. Still, explicit check is safer.
 // -----------------------------------------------------------------------------
 function Greeting({ name }) {
   return <div>{name ? <p>Hi {name}</p> : <p>Guest</p>}</div>;
@@ -153,11 +153,11 @@ function Greeting({ name }) {
 // -----------------------------------------------------------------------------
 // Q10: null vs false vs undefined
 //
-// Kya karna hai:
-// return false / null / undefined — teeno screen pe kuch nahi.
+// Task:
+// return false / null / undefined — all three show nothing on screen.
 //
-// Seedha matlab:
-// React inhe skip karta hai. false common in && chains by accident nahi.
+// In simple words:
+// React skips these. false is common in && chains but not by accident.
 // -----------------------------------------------------------------------------
 function NothingReturns({ show }) {
   if (!show) return null; // preferred over false
@@ -167,11 +167,11 @@ function NothingReturns({ show }) {
 // -----------------------------------------------------------------------------
 // Q11: Switch statement UI
 //
-// Kya karna hai:
+// Task:
 // switch (role) { case "admin": return <Admin />; ... }
 //
-// Seedha matlab:
-// Bahut branches ho to switch readable. Default case zaroor.
+// In simple words:
+// When many branches, switch is readable. Always include default case.
 // -----------------------------------------------------------------------------
 function RolePanel({ role }) {
   switch (role) {
@@ -187,14 +187,14 @@ function RolePanel({ role }) {
 // -----------------------------------------------------------------------------
 // Q12: Enum map object pattern
 //
-// Kya karna hai:
+// Task:
 // const VIEWS = { list: <List />, grid: <Grid /> }; return VIEWS[mode]
 //
-// Seedha matlab:
-// Status/type → component map. Switch se chhota jab simple mapping ho.
+// In simple words:
+// Status/type → component map. Shorter than switch when mapping is simple.
 // -----------------------------------------------------------------------------
 const STATUS_UI = {
-  idle: <p>Start karo</p>,
+  idle: <p>Get started</p>,
   loading: <p>Loading...</p>,
   done: <p>Done!</p>,
 };
@@ -206,15 +206,15 @@ function StatusFromMap({ status }) {
 // -----------------------------------------------------------------------------
 // Q13: Empty state conditional
 //
-// Kya karna hai:
+// Task:
 // items.length === 0 ? <Empty /> : <List items={items} />
 //
-// Seedha matlab:
-// Empty list alag UI — sirf "kuch nahi" mat dikhao blank screen.
+// In simple words:
+// Empty list needs its own UI — do not show a blank screen.
 // -----------------------------------------------------------------------------
 function ItemPanel({ items }) {
   if (items.length === 0) {
-    return <p className="empty">Koi item nahi — add karo!</p>;
+    return <p className="empty">No items — add one!</p>;
   }
   return (
     <ul>
@@ -228,11 +228,11 @@ function ItemPanel({ items }) {
 // -----------------------------------------------------------------------------
 // Q14: Error state with retry
 //
-// Kya karna hai:
+// Task:
 // error ? <ErrorBox onRetry={refetch} /> : children
 //
-// Seedha matlab:
-// Error branch me action do — user stuck na rahe.
+// In simple words:
+// Error branch should offer action — user should not get stuck.
 // -----------------------------------------------------------------------------
 function DataShell({ error, onRetry, children }) {
   if (error) {
@@ -249,11 +249,11 @@ function DataShell({ error, onRetry, children }) {
 // -----------------------------------------------------------------------------
 // Q15: Nested ternary avoid
 //
-// Kya karna hai:
-// a ? b ? c : d : e — mat likho; early return ya variables use karo.
+// Task:
+// a ? b ? c : d : e — do not write this; use early return or variables.
 //
-// Seedha matlab:
-// Nested ternary padhna mushkil. Guard clauses ya Q8 jaisa pattern.
+// In simple words:
+// Nested ternary is hard to read. Use guard clauses or Q8 pattern.
 // -----------------------------------------------------------------------------
 function NestedAvoid({ loading, error, data }) {
   if (loading) return <p>Loading...</p>;
@@ -265,12 +265,12 @@ function NestedAvoid({ loading, error, data }) {
 // -----------------------------------------------------------------------------
 // Q16: Boolean coercion pitfall
 //
-// Kya karna hai:
-// !!value && <Badge /> ya Boolean(value) && ...
+// Task:
+// !!value && <Badge /> or Boolean(value) && ...
 //
-// Seedha matlab:
-// Object/array truthy hain — empty [] bhi show karwa sakta hai galat UI.
-// Explicit length/count check better.
+// In simple words:
+// Objects/arrays are truthy — empty [] can show wrong UI.
+// Explicit length/count check is better.
 // -----------------------------------------------------------------------------
 function HasItems({ items }) {
   return <div>{items.length > 0 && <span>{items.length} items</span>}</div>;
@@ -279,11 +279,11 @@ function HasItems({ items }) {
 // -----------------------------------------------------------------------------
 // Q17: Conditional children wrapper
 //
-// Kya karna hai:
-// show ? <Card>{children}</Card> : children — layout wrap optional.
+// Task:
+// show ? <Card>{children}</Card> : children — optional layout wrap.
 //
-// Seedha matlab:
-// Kabhi sirf wrapper conditional; content same rahe.
+// In simple words:
+// Sometimes only the wrapper is conditional; content stays the same.
 // -----------------------------------------------------------------------------
 function MaybeCard({ framed, children }) {
   if (!framed) return children;
@@ -291,13 +291,13 @@ function MaybeCard({ framed, children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q18: [MID] Exclusive UI — tabs ek time pe ek
+// Q18: [MID] Exclusive UI — one tab at a time
 //
-// Kya karna hai:
-// activeTab state; sirf matching panel render.
+// Task:
+// activeTab state; render only matching panel.
 //
-// Seedha matlab:
-// Sab panels DOM me mat rakho hidden CSS se — heavy panels unmount karo.
+// In simple words:
+// Do not keep all panels in DOM hidden with CSS — unmount heavy panels.
 // -----------------------------------------------------------------------------
 function Tabs({ tabs, activeId }) {
   const active = tabs.find((t) => t.id === activeId);
@@ -312,11 +312,11 @@ function Tabs({ tabs, activeId }) {
 // -----------------------------------------------------------------------------
 // Q19: [MID] CSS hidden vs conditional unmount
 //
-// Kya karna hai:
-// display:none se hide vs {open && <Modal />} — state preserve?
+// Task:
+// display:none to hide vs {open && <Modal />} — preserve state?
 //
-// Seedha matlab:
-// Hidden = DOM me rahe, state/form values bache. Unmount = wipe + less DOM.
+// In simple words:
+// Hidden = stays in DOM, form values kept. Unmount = wipe + less DOM.
 // -----------------------------------------------------------------------------
 function PreserveOrWipe({ open }) {
   // Hidden: <div style={{ display: open ? "block" : "none" }}><Form /></div>
@@ -327,11 +327,11 @@ function PreserveOrWipe({ open }) {
 // -----------------------------------------------------------------------------
 // Q20: [MID] Animation mount tip
 //
-// Kya karna hai:
-// enter animation ke liye pehle mount, phir class add — ya CSS @keyframes on mount.
+// Task:
+// For enter animation: mount first, then add class — or CSS @keyframes on mount.
 //
-// Seedha matlab:
-// Conditional render se element naya aata hai — transition libraries isi pe kaam karti.
+// In simple words:
+// Conditional render creates new element — transition libraries work on this.
 // -----------------------------------------------------------------------------
 function FadeIn({ show }) {
   return show ? <div className="fade-in">Hello!</div> : null;
@@ -340,11 +340,11 @@ function FadeIn({ show }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Exclusive UI state machine
 //
-// Kya karna hai:
-// view: "list" | "detail" | "edit" — ek hi view render, baaki null.
+// Task:
+// view: "list" | "detail" | "edit" — render one view, others null.
 //
-// Seedha matlab:
-// Multiple booleans (showList && !showEdit) messy. Ek enum string clean.
+// In simple words:
+// Multiple booleans (showList && !showEdit) gets messy. One enum string is clean.
 // -----------------------------------------------------------------------------
 function ViewRouter({ view, item }) {
   if (view === "list") return <ul><li>Items...</li></ul>;
@@ -356,11 +356,11 @@ function ViewRouter({ view, item }) {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Accessibility — aria-hidden vs unmount
 //
-// Kya karna hai:
+// Task:
 // Off-screen content: aria-hidden="true" vs remove from DOM.
 //
-// Seedha matlab:
-// Screen readers: hidden still in tab order bad. Modal close → unmount + focus return.
+// In simple words:
+// Screen readers: hidden content still in tab order is bad. Modal close → unmount + return focus.
 // -----------------------------------------------------------------------------
 function AccessibleModal({ open, onClose }) {
   if (!open) return null;
@@ -375,11 +375,11 @@ function AccessibleModal({ open, onClose }) {
 // -----------------------------------------------------------------------------
 // Q23: Optional chaining in conditions
 //
-// Kya karna hai:
+// Task:
 // user?.isAdmin && <AdminTools />
 //
-// Seedha matlab:
-// Null user pe crash nahi. Still && pitfall: 0/"" check alag se.
+// In simple words:
+// No crash on null user. Still watch && pitfall: check 0/"" separately.
 // -----------------------------------------------------------------------------
 function AdminTools({ user }) {
   return <div>{user?.isAdmin && <button>Delete all</button>}</div>;
@@ -388,11 +388,11 @@ function AdminTools({ user }) {
 // -----------------------------------------------------------------------------
 // Q24: Fragment with conditional
 //
-// Kya karna hai:
+// Task:
 // return ( <> {a && <A />} {b && <B />} </> );
 //
-// Seedha matlab:
-// Extra wrapper div nahi chahiye to Fragment. Multiple conditional siblings OK.
+// In simple words:
+// No extra wrapper div needed — Fragment. Multiple conditional siblings OK.
 // -----------------------------------------------------------------------------
 function MultiConditional({ showA, showB }) {
   return (

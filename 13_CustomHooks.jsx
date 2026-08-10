@@ -1,17 +1,17 @@
 // ============================================================================
 // 13 — Custom Hooks
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Custom hook = apna kitchen gadget. useX naam, andar built-in hooks.
-// Logic reuse: localStorage sync, fetch, form — copy-paste mat, hook nikaalo.
+// SIMPLE: Custom hook = your own kitchen gadget. Name it useX, use built-in hooks inside.
+// Logic reuse: localStorage sync, fetch, form — don't copy-paste, extract a hook.
 //
-// Rules of Hooks apply: top level, sirf React functions me.
-// Return jo chahiye: value, tuple [val, set], ya object { data, error }.
+// Rules of Hooks apply: top level, only in React functions.
+// Return what you need: value, tuple [val, set], or object { data, error }.
 //
-// KYUN: DRY + testable units. Libraries khud custom hooks hain.
+// WHY: DRY + testable units. Libraries are custom hooks themselves.
 // INTERVIEW: rules of hooks; extract when; naming use*.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -20,11 +20,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: useToggle
 //
-// Kya karna hai:
-// boolean + toggle function return.
+// Task:
+// Return boolean + toggle function.
 //
-// Seedha matlab:
-// Chhota reusable pattern. Har jagah useState mat dohrao.
+// In simple words:
+// Small reusable pattern. Don't repeat useState everywhere.
 // -----------------------------------------------------------------------------
 function useToggle(initial = false) {
   const [on, setOn] = useState(initial);
@@ -40,11 +40,11 @@ function MenuBtn() {
 // -----------------------------------------------------------------------------
 // Q2: useLocalStorage
 //
-// Kya karna hai:
-// key se read/write; state sync.
+// Task:
+// Read/write by key; sync state.
 //
-// Seedha matlab:
-// Persist preference. SSR careful (window check) — yahan client assume.
+// In simple words:
+// Persist preference. SSR careful (window check) — here we assume client.
 // -----------------------------------------------------------------------------
 function useLocalStorage(key, initial) {
   const [value, setValue] = useState(() => {
@@ -69,11 +69,11 @@ function ThemeRemember() {
 // -----------------------------------------------------------------------------
 // Q3: useFetch sketch
 //
-// Kya karna hai:
+// Task:
 // url → { data, error, loading }
 //
-// Seedha matlab:
-// Data fetching pattern encapsulate. Abort cleanup.
+// In simple words:
+// Encapsulate data fetching pattern. Abort cleanup.
 // -----------------------------------------------------------------------------
 function useFetch(url) {
   const [data, setData] = useState(null);
@@ -106,10 +106,10 @@ function useFetch(url) {
 // -----------------------------------------------------------------------------
 // Q4: useDocumentTitle
 //
-// Kya karna hai:
+// Task:
 // title string effect.
 //
-// Seedha matlab:
+// In simple words:
 // One-liner side effect hooks — readable App.
 // -----------------------------------------------------------------------------
 function useDocumentTitle(title) {
@@ -126,11 +126,11 @@ function Page() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] useDebouncedValue
 //
-// Kya karna hai:
+// Task:
 // value change → wait ms → debounced return (search).
 //
-// Seedha matlab:
-// Typeahead: API spam kam. Timer cleanup.
+// In simple words:
+// Typeahead: fewer API calls. Timer cleanup.
 // -----------------------------------------------------------------------------
 function useDebouncedValue(value, ms = 300) {
   const [debounced, setDebounced] = useState(value);
@@ -153,11 +153,11 @@ function SearchBox() {
 // -----------------------------------------------------------------------------
 // Q6: [MID] Hook composing hooks
 //
-// Kya karna hai:
-// useAuthHeaders ke upar useApi — hooks nest OK.
+// Task:
+// useApi on top of useAuthHeaders — hooks nest OK.
 //
-// Seedha matlab:
-// Composition > inheritance. Custom hooks milake badi feature.
+// In simple words:
+// Composition > inheritance. Build big features from custom hooks.
 // -----------------------------------------------------------------------------
 function useOnline() {
   const [online, setOnline] = useState(navigator.onLine);
@@ -183,11 +183,11 @@ function useSafeFetch(url) {
 // -----------------------------------------------------------------------------
 // Q7: Return stable callbacks
 //
-// Kya karna hai:
-// useCallback se returned functions stable (deps sahi).
+// Task:
+// useCallback makes returned functions stable (correct deps).
 //
-// Seedha matlab:
-// Child memoized ho to matter. Warna optional.
+// In simple words:
+// Matters if child is memoized. Otherwise optional.
 // -----------------------------------------------------------------------------
 function useCounter(start = 0) {
   const [n, setN] = useState(start);
@@ -199,11 +199,11 @@ function useCounter(start = 0) {
 // -----------------------------------------------------------------------------
 // Q8: Don't conditionally call hooks
 //
-// Kya karna hai:
+// Task:
 // if (x) useSomething() — FORBIDDEN.
 //
-// Seedha matlab:
-// Rules of Hooks. Conditional logic hook KE ANDAR.
+// In simple words:
+// Rules of Hooks. Conditional logic goes INSIDE the hook.
 // -----------------------------------------------------------------------------
 function Bad() {
   // if ( Cond) useToggle(); // ❌
@@ -214,28 +214,28 @@ function Bad() {
 // -----------------------------------------------------------------------------
 // Q9: Rules of Hooks — top level only
 //
-// Kya karna hai:
-// Hooks loop / nested function / class me mat call karo.
+// Task:
+// Don't call hooks in loop / nested function / class.
 //
-// Seedha matlab:
-// React hook order fixed rakhta hai. Break rules = random bugs.
-// Custom hooks me bhi same rules — wo bhi hooks hain.
+// In simple words:
+// React keeps hook order fixed. Break rules = random bugs.
+// Same rules in custom hooks — they are hooks too.
 // -----------------------------------------------------------------------------
 function GoodRules() {
   const [a, setA] = useState(0);
-  // for (let i = 0; i < 3; i++) useState(i); // ❌ loop me mat
+  // for (let i = 0; i < 3; i++) useState(i); // ❌ not in loop
   return <button onClick={() => setA(a + 1)}>{a}</button>;
 }
 
 // -----------------------------------------------------------------------------
 // Q10: Return tuple vs object
 //
-// Kya karna hai:
+// Task:
 // [value, setValue] vs { value, setValue, reset } — API design.
 //
-// Seedha matlab:
-// Tuple = useState jaisa familiar, order matter. Object = named, extensible.
-// 3+ returns → object better. Destructure rename easy object me.
+// In simple words:
+// Tuple = familiar like useState, order matters. Object = named, extensible.
+// 3+ returns → object better. Easy to rename on destructure with object.
 // -----------------------------------------------------------------------------
 function useNamedCounter(initial = 0) {
   const [n, setN] = useState(initial);
@@ -257,11 +257,11 @@ function TupleVsObjectDemo() {
 // -----------------------------------------------------------------------------
 // Q11: [MID] useLocalStorage SSR trap
 //
-// Kya karna hai:
-// typeof window !== "undefined" check lazy init me.
+// Task:
+// typeof window !== "undefined" check in lazy init.
 //
-// Seedha matlab:
-// SSR pe localStorage nahi — crash. Lazy initializer me guard.
+// In simple words:
+// No localStorage on SSR — crash. Guard in lazy initializer.
 // Hydration mismatch: server default vs client stored value — flash possible.
 // -----------------------------------------------------------------------------
 function useLocalStorageSafe(key, initial) {
@@ -281,12 +281,12 @@ function useLocalStorageSafe(key, initial) {
 // -----------------------------------------------------------------------------
 // Q12: useFetch — AbortController cleanup
 //
-// Kya karna hai:
+// Task:
 // const ctrl = new AbortController(); fetch(url, { signal: ctrl.signal })
 //
-// Seedha matlab:
-// Unmount / url change pe purana request cancel — race condition fix.
-// alive flag bhi chalega; AbortController zyada proper.
+// In simple words:
+// Cancel old request on unmount / url change — fixes race condition.
+// alive flag also works; AbortController is more proper.
 // -----------------------------------------------------------------------------
 function useFetchAbort(url) {
   const [data, setData] = useState(null);
@@ -309,12 +309,12 @@ function useFetchAbort(url) {
 // -----------------------------------------------------------------------------
 // Q13: Naming — must start with use*
 //
-// Kya karna hai:
+// Task:
 // function getTheme() { useContext(...) } — ❌ Rules of Hooks break.
 //
-// Seedha matlab:
-// use prefix = linter + React samjhe hook hai. Call sirf components/hooks se.
-// fetchData() me useState mat — rename useFetchData.
+// In simple words:
+// use prefix = linter + React know it's a hook. Call only from components/hooks.
+// Don't put useState in fetchData() — rename to useFetchData.
 // -----------------------------------------------------------------------------
 function useWindowWidth() {
   const [w, setW] = useState(window.innerWidth);
@@ -329,12 +329,12 @@ function useWindowWidth() {
 // -----------------------------------------------------------------------------
 // Q14: [MID] Stale closure in custom hook
 //
-// Kya karna hai:
+// Task:
 // useEffect(() => { setInterval(() => setCount(count+1), 1000) }, []) — stale count.
 //
-// Seedha matlab:
-// Functional update setCount(c => c+1) ya count deps me.
-// Custom hooks me bhi wahi closure rules — extract matlab bug-free karo.
+// In simple words:
+// Functional update setCount(c => c+1) or put count in deps.
+// Same closure rules in custom hooks — extract means make it bug-free.
 // -----------------------------------------------------------------------------
 function useStaleAwareCounter(start = 0) {
   const [count, setCount] = useState(start);
@@ -345,12 +345,12 @@ function useStaleAwareCounter(start = 0) {
 // -----------------------------------------------------------------------------
 // Q15: Composing hooks — useAuth + useFetch
 //
-// Kya karna hai:
+// Task:
 // useUserPosts() { const { token } = useAuth(); return useFetch(`/posts?token=${token}`) }
 //
-// Seedha matlab:
-// Hooks nest freely. Badi feature chhoti hooks se banao.
-// Shared logic extract — component slim.
+// In simple words:
+// Hooks nest freely. Build big features from small hooks.
+// Extract shared logic — keep component slim.
 // -----------------------------------------------------------------------------
 function useAuthToken() {
   const [token] = useLocalStorage("token", null);
@@ -365,26 +365,26 @@ function useUserPosts() {
 // -----------------------------------------------------------------------------
 // Q16: Testing hooks note
 //
-// Kya karna hai:
-// @testing-library/react renderHook(() => useToggle()) — act() wrap updates.
+// Task:
+// @testing-library/react renderHook(() => useToggle()) — wrap updates in act().
 //
-// Seedha matlab:
-// Hooks ko component ke andar test karo ya renderHook use karo.
-// Provider wrap zaroori agar hook context use kare.
-// Pure logic alag function me = test aur easy.
+// In simple words:
+// Test hooks inside a component or use renderHook.
+// Wrap Provider if hook uses context.
+// Pure logic in separate function = even easier to test.
 // -----------------------------------------------------------------------------
 // const { result } = renderHook(() => useToggle(true));
 // act(() => result.current[1]()); // toggle
 
 // -----------------------------------------------------------------------------
-// Q17: Extract when — duplicate logic 2+ jagah
+// Q17: Extract when — duplicate logic 2+ places
 //
-// Kya karna hai:
-// Same useEffect copy-paste do components me → hook banao.
+// Task:
+// Same useEffect copy-pasted in two components → make a hook.
 //
-// Seedha matlab:
-// Ek baar use ho raha — mat banao (YAGNI). Do jagah = extract socho.
-// Hook = behavior reuse, UI nahi.
+// In simple words:
+// Used once — don't make it (YAGNI). Used twice = consider extract.
+// Hook = behavior reuse, not UI.
 // -----------------------------------------------------------------------------
 function useMediaQuery(query) {
   const [matches, setMatches] = useState(() =>
@@ -402,12 +402,12 @@ function useMediaQuery(query) {
 // -----------------------------------------------------------------------------
 // Q18: [MID] Hook returning stable object — useMemo
 //
-// Kya karna hai:
-// return { data, loading, refetch } — har render naya object → consumer memo fail.
+// Task:
+// return { data, loading, refetch } — new object every render → consumer memo fails.
 //
-// Seedha matlab:
-// useMemo return object jab consumer memoized ho. Warna often OK.
-// refetch = useCallback stable rakho.
+// In simple words:
+// useMemo return object when consumer is memoized. Otherwise often OK.
+// Keep refetch stable with useCallback.
 // -----------------------------------------------------------------------------
 function useFetchStable(url) {
   const { data, error, loading } = useFetch(url);
@@ -423,11 +423,11 @@ function useFetchStable(url) {
 // -----------------------------------------------------------------------------
 // Q19: usePrevious hook pattern
 //
-// Kya karna hai:
-// ref me last value; effect me update after render.
+// Task:
+// last value in ref; effect updates after render.
 //
-// Seedha matlab:
-// "Pehle value kya thi?" animations / diff ke liye.
+// In simple words:
+// "What was the previous value?" — for animations / diff.
 // Classic custom hook interview question.
 // -----------------------------------------------------------------------------
 function usePrevious(value) {
@@ -441,11 +441,11 @@ function usePrevious(value) {
 // -----------------------------------------------------------------------------
 // Q20: useEventListener reusable hook
 //
-// Kya karna hai:
+// Task:
 // useEventListener("keydown", handler, window) — add/remove cleanup.
 //
-// Seedha matlab:
-// Event listener boilerplate ek jagah. handler ref pattern stale avoid.
+// In simple words:
+// Event listener boilerplate in one place. handler ref pattern avoids stale.
 // -----------------------------------------------------------------------------
 function useEventListener(event, handler, target = window) {
   const saved = useRef(handler);
@@ -462,12 +462,12 @@ function useEventListener(event, handler, target = window) {
 // -----------------------------------------------------------------------------
 // Q21: [MID] Custom hook parameters — primitives vs objects
 //
-// Kya karna hai:
-// useFetch({ url, method }) — object arg har render naya → effect rerun risk.
+// Task:
+// useFetch({ url, method }) — object arg new every render → effect rerun risk.
 //
-// Seedha matlab:
-// Primitive deps stable. Object pass karo to parent memoize ya flatten args.
-// Hook API design matter karta hai bugs ke liye.
+// In simple words:
+// Primitive deps stable. If you pass object, parent should memoize or flatten args.
+// Hook API design matters for bugs.
 // -----------------------------------------------------------------------------
 function useFetchOpts(url, method = "GET") {
   return useFetch(url); // primitives as deps — predictable
@@ -476,12 +476,12 @@ function useFetchOpts(url, method = "GET") {
 // -----------------------------------------------------------------------------
 // Q22: Don't share mutable refs between hook instances
 //
-// Kya karna hai:
-// Module-level let cache = {} — do components share = bug.
+// Task:
+// Module-level let cache = {} — two components share = bug.
 //
-// Seedha matlab:
-// Har hook call apna useRef/useState. Global mutable state hook me mat.
-// Singleton cache alag pattern — document clearly.
+// In simple words:
+// Each hook call gets its own useRef/useState. No global mutable state in hook.
+// Singleton cache is a separate pattern — document clearly.
 // -----------------------------------------------------------------------------
 function useIdGenerator() {
   const idRef = useRef(0);

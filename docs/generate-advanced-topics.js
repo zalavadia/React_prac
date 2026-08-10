@@ -113,8 +113,8 @@ function parseQuestions(src) {
     questions.push({
       title: "Example / Solution",
       explain: code
-        ? "Working solution — padho; Vite project me try karo."
-        : "Conceptual — teaching file me comments dekho.",
+        ? "Working solution — read it, then try it in a Vite project."
+        : "Conceptual — see the comments in the teaching file.",
       code: code || "// see teaching file comments",
     });
 

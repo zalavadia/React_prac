@@ -1,30 +1,30 @@
 // ============================================================================
 // 32 — React 19 useOptimistic
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Optimistic UI = pehle UI me success dikhao, API baad me confirm.
-// Jaise WhatsApp double-tick se pehle message list me aa jata.
-// Agar API fail → rollback (purani state).
+// SIMPLE: Optimistic UI = show success in the UI first, then let the API confirm later.
+// Like a WhatsApp message appearing in the list before the double tick.
+// If the API fails → rollback (old state).
 //
 // useOptimistic(state, updateFn) → [optimisticState, addOptimistic]
-// Real state (useState / action state) source of truth.
-// Optimistic = temporary overlay jab tak real state catch-up na kare.
+// Real state (useState / action state) is the source of truth.
+// Optimistic = a temporary overlay until real state catches up.
 //
-// KYUN: Mid interviews me "optimistic update kaise?" classic.
-// INTERVIEW: rollback kab; action ke saath combo; race conditions.
+// WHY: "How do you do optimistic updates?" is a classic mid interview question.
+// INTERVIEW: when to rollback; combo with actions; race conditions.
 //
 // ============================================================================
 
 import { useState, useOptimistic, useRef, useActionState } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: Like button — turant +1, phir server
+// Q1: Like button — instant +1, then server
 //
-// Seedha matlab:
-// setOptimistic(likes + 1) turant.
-// await api — success pe real setLikes; fail pe real state wapas dikhegi
-// jab optimistic settle hota (React real state se sync).
+// In simple words:
+// setOptimistic(likes + 1) instantly.
+// await api — on success real setLikes; on fail UI shows real state again
+// when optimistic settles (React syncs with real state).
 // -----------------------------------------------------------------------------
 async function fakeLikeApi(ok = true) {
   await new Promise((r) => setTimeout(r, 500));
@@ -56,11 +56,11 @@ export function LikeOptimistic() {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: [MID] Todo add — list me pehle dikhao
+// Q2: [MID] Todo add — show in list first
 //
-// Seedha matlab:
+// In simple words:
 // updateFn (current, optimisticValue) => newOptimisticState
-// Yahan optimisticValue = naya todo object.
+// Here optimisticValue = new todo object.
 // -----------------------------------------------------------------------------
 export function OptimisticTodos() {
   const [todos, setTodos] = useState([{ id: "1", title: "Learn React" }]);
@@ -97,13 +97,13 @@ export function OptimisticTodos() {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: Rollback idea jab API fail
+// Q3: Rollback idea when API fails
 //
-// Seedha matlab:
-// Optimistic sirf tab tak jeeta jab base state update na ho.
-// Fail → setTodos mat karo; optimistic automatically base pe aa jata
-// (action/transition complete hone ke baad).
-// User ko error toast dikhana alag — UX zaroori.
+// In simple words:
+// Optimistic only wins until base state updates.
+// On fail → do not setTodos; optimistic automatically returns to base
+// (after action/transition completes).
+// Show user an error toast separately — UX matters.
 // -----------------------------------------------------------------------------
 export function AddWithPossibleFail() {
   const [items, setItems] = useState([]);
@@ -142,10 +142,10 @@ export function AddWithPossibleFail() {
 // -----------------------------------------------------------------------------
 // Q4: [MID] useOptimistic + Actions / startTransition
 //
-// Seedha matlab:
-// Docs often optimistic updates ko Transition/Action ke andar expect karte.
-// Form action={fn} me addOptimistic call common pattern.
-// Bahar random setState timing se weird flashes ho sakte.
+// In simple words:
+// Docs often expect optimistic updates inside Transition/Action.
+// Calling addOptimistic in form action={fn} is a common pattern.
+// Random setState timing outside can cause weird flashes.
 // -----------------------------------------------------------------------------
 export function OptimisticInsideAction() {
   const [name, setName] = useState("Ada");
@@ -170,9 +170,9 @@ export function OptimisticInsideAction() {
 // -----------------------------------------------------------------------------
 // Q5: updateFn complex merge
 //
-// Seedha matlab:
-// Doosra arg kuch bhi — id, patch, reducer-style action.
-// updateFn pure rakho: (current, msg) => nextOptimistic
+// In simple words:
+// Second arg can be anything — id, patch, reducer-style action.
+// Keep updateFn pure: (current, msg) => nextOptimistic
 // -----------------------------------------------------------------------------
 export function OptimisticCart() {
   const [cart, setCart] = useState({ qty: 1 });
@@ -198,8 +198,8 @@ export function OptimisticCart() {
 // -----------------------------------------------------------------------------
 // Q6: [MID] Race — double click fast
 //
-// Seedha matlab:
-// Do optimistic updates overlap → careful design (disable pending, queue, id).
+// In simple words:
+// Two optimistic updates overlap → careful design (disable pending, queue, id).
 // Mid answer: pending flag / useFormStatus / ignore stale responses.
 // -----------------------------------------------------------------------------
 export function GuardDoubleSubmit() {
@@ -223,10 +223,10 @@ export function GuardDoubleSubmit() {
 }
 
 // -----------------------------------------------------------------------------
-// Q7: Kab optimistic NAHI?
+// Q7: When NOT to use optimistic?
 //
-// Seedha matlab:
-// Payment, irreversible delete, stock "last item" — pehle server confirm better.
+// In simple words:
+// Payment, irreversible delete, stock "last item" — server confirm first is better.
 // Optimistic = low-risk, reversible, social-ish actions.
 // -----------------------------------------------------------------------------
 const whenNot = ["payments", "permissions changes", "inventory-critical buys"];
@@ -234,9 +234,9 @@ const whenNot = ["payments", "permissions changes", "inventory-critical buys"];
 // -----------------------------------------------------------------------------
 // Q8: Interview one-liner
 //
-// Seedha matlab:
-// "useOptimistic temporary UI dikhata jab tak real state update na ho;
-// fail pe base state rollback; Actions ke saath best."
+// In simple words:
+// "useOptimistic shows temporary UI until real state updates;
+// on fail rollback to base state; works best with Actions."
 // -----------------------------------------------------------------------------
 const interviewLine =
   "Optimistic = instant UI; server confirms; failure rolls back to source state.";
@@ -244,10 +244,10 @@ const interviewLine =
 // -----------------------------------------------------------------------------
 // Q9: useOptimistic with useActionState — full pattern sketch
 //
-// Kya karna hai:
+// Task:
 // const [state, action, pending] = useActionState(...); const [opt, addOpt] = useOptimistic(state, fn).
 //
-// Seedha matlab:
+// In simple words:
 // Real state = useActionState return after action completes.
 // Optimistic overlay during pending transition.
 // React 18: temp useState + revert on catch manually.
@@ -282,11 +282,11 @@ export function OptimisticWithActionState() {
 // -----------------------------------------------------------------------------
 // Q10: [MID] updateFn signature — (currentState, optimisticValue)
 //
-// Kya karna hai:
-// Doosra arg kuch bhi pass karo — id, delta, whole object.
+// Task:
+// Second argument can be anything you pass — id, delta, whole object.
 //
-// Seedha matlab:
-// updateFn pure function — side effects mat.
+// In simple words:
+// updateFn is a pure function — no side effects.
 // React 18 manual: setItems([...items, temp]) same logic inline.
 // Complex: (cur, { type, payload }) => reducer style merge.
 // Trap: mutate current inside updateFn — breaks React assumptions.
@@ -315,13 +315,13 @@ export function OptimisticReducerStyle() {
 // -----------------------------------------------------------------------------
 // Q11: Pending flag on optimistic items UI
 //
-// Kya karna hai:
-// Temp item { pending: true } — opacity/style se dikhao.
+// Task:
+// Temp item { pending: true } — show with opacity/style.
 //
-// Seedha matlab:
-// User ko pata optimistic hai — honest UX.
+// In simple words:
+// User knows it is optimistic — honest UX.
 // React 18: same visual pattern with temp ids.
-// Server confirm ke baad pending: false real id se replace.
+// After server confirm replace with pending: false and real id.
 // Edge: duplicate temp ids — use unique temp keys.
 // -----------------------------------------------------------------------------
 export function PendingVisualTodos() {
@@ -354,10 +354,10 @@ export function PendingVisualTodos() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] React 18 manual optimistic — contrast code idea
 //
-// Kya karna hai:
+// Task:
 // const [display, setDisplay]=useState(real); onClick: setDisplay(opt); fetch; catch revert.
 //
-// Seedha matlab:
+// In simple words:
 // Manual revert: setDisplay(realSnapshot) on fail.
 // useOptimistic: base state unchanged on fail → auto rollback to base.
 // Less bug-prone — no forgotten revert branch.
@@ -369,14 +369,14 @@ const react18ManualOptimistic =
 // -----------------------------------------------------------------------------
 // Q13: startTransition + useOptimistic
 //
-// Kya karna hai:
+// Task:
 // Docs recommend optimistic updates inside transition/action context.
 //
-// Seedha matlab:
-// Form action={fn} already transition-like for updates.
+// In simple words:
+// Form action={fn} is already transition-like for updates.
 // Random setState outside → UI flash / tearing possible in edge cases.
 // React 18 startTransition + manual optimistic same pairing advice.
-// useTransition isPending alag hai useOptimistic se — dono combine ho sakte.
+// useTransition isPending is different from useOptimistic — both can combine.
 // -----------------------------------------------------------------------------
 export function TransitionOptimisticNote() {
   return (
@@ -390,12 +390,12 @@ export function TransitionOptimisticNote() {
 // -----------------------------------------------------------------------------
 // Q14: [MID] Stale closure in onLike — trap
 //
-// Kya karna hai:
-// setOptimisticLikes(likes + 1) — likes stale ho sakta rapid clicks me.
+// Task:
+// setOptimisticLikes(likes + 1) — likes can be stale on rapid clicks.
 //
-// Seedha matlab:
-// Functional base update better: setOptimisticLikes(c => c + 1) pattern nahi — useOptimistic send current+delta.
-// Guard inflight ref (Q6) ya disable while pending.
+// In simple words:
+// Functional base update better: not setOptimisticLikes(c => c + 1) pattern — useOptimistic send current+delta.
+// Guard with inflight ref (Q6) or disable while pending.
 // React 18 same stale closure in async handlers.
 // Fix: useOptimistic updateFn (current, delta) => current + delta.
 // -----------------------------------------------------------------------------
@@ -415,12 +415,12 @@ export function StaleClosureLikeFix() {
 // -----------------------------------------------------------------------------
 // Q15: Delete optimistic — remove from list before server
 //
-// Kya karna hai:
-// addOptimistic filter out id; fail pe item wapas base list se aayega.
+// Task:
+// addOptimistic filter out id; on fail item returns from base list.
 //
-// Seedha matlab:
+// In simple words:
 // updateFn: (cur, id) => cur.filter(x => x.id !== id)
-// Fail → don't update base → optimistic reverts showing item again + error toast.
+// On fail → do not update base → optimistic reverts showing item again + error toast.
 // React 18: optimistic filter + restore array on catch.
 // When NOT: irreversible delete UX — wait for server confirm.
 // -----------------------------------------------------------------------------
@@ -460,14 +460,14 @@ export function OptimisticDelete() {
 // -----------------------------------------------------------------------------
 // Q16: [MID] useOptimistic without second arg
 //
-// Kya karna hai:
+// Task:
 // useOptimistic(state) — setOptimistic(next) directly sets optimistic value.
 //
-// Seedha matlab:
-// Shorthand jab poora next state pass ho (rename string).
+// In simple words:
+// Shorthand when passing whole next state (rename string).
 // File Q4 OptimisticInsideAction example.
 // React 18: setTempState(next) equivalent.
-// updateFn wala form zyada flexible lists/carts ke liye.
+// updateFn form is more flexible for lists/carts.
 // -----------------------------------------------------------------------------
 export function ShorthandOptimistic() {
   const [label, setLabel] = useState("Draft");
@@ -492,10 +492,10 @@ export function ShorthandOptimistic() {
 // -----------------------------------------------------------------------------
 // Q17: Multiple optimistic fields — one base state object
 //
-// Kya karna hai:
+// Task:
 // Base { name, qty }; optimistic overlay whole object or field patches.
 //
-// Seedha matlab:
+// In simple words:
 // updateFn merge patches: (cur, patch) => ({ ...cur, ...patch })
 // React 18: clone object manually for temp view.
 // Keep base updates atomic on server success.
@@ -526,11 +526,11 @@ export function OptimisticObjectPatch() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] Race — out-of-order server responses
 //
-// Kya karna hai:
+// Task:
 // Request A slow, B fast — B then A arrive → stale overwrite risk on base state.
 //
-// Seedha matlab:
-// Optimistic rollback base pe — base update me request id / abort controller.
+// In simple words:
+// Optimistic rollback to base — use request id / abort controller in base update.
 // React 18: ignore stale responses with counter ref.
 // useOptimistic doesn't replace response ordering guards on setState.
 // Pattern: if (reqId !== latestRef.current) return prev;
@@ -547,14 +547,14 @@ export function RaceGuardNote() {
 // -----------------------------------------------------------------------------
 // Q19: [MID] When NOT useOptimistic — expand
 //
-// Kya karna hai:
+// Task:
 // Financial confirm, legal consent, medical doses — server truth first.
 //
-// Seedha matlab:
+// In simple words:
 // Low-risk social UI = good fit (likes, comments, todo add).
 // High-risk = spinner until server OK — user trust matters.
 // React 18 same guidance — optimistic is product decision.
-// Misleading success worse than short wait.
+// Misleading success is worse than a short wait.
 // -----------------------------------------------------------------------------
 const whenNotOptimisticExpanded = [
   "payments & money",
@@ -567,10 +567,10 @@ const whenNotOptimisticExpanded = [
 // -----------------------------------------------------------------------------
 // Q20: Server Action + useOptimistic (file 38 link)
 //
-// Kya karna hai:
-// Client form action server fn — optimistic client pe, mutation server pe.
+// Task:
+// Client form action server fn — optimistic on client, mutation on server.
 //
-// Seedha matlab:
+// In simple words:
 // addOptimistic before await serverAction(formData).
 // Server fail return → base unchanged → rollback + show error.
 // React 18: optimistic client + fetch API route same architecture.
@@ -582,10 +582,10 @@ const serverOptimistic =
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Testing optimistic flows
 //
-// Kya karna hai:
+// Task:
 // Mock slow API; assert UI shows optimistic then final; mock fail assert rollback.
 //
-// Seedha matlab:
+// In simple words:
 // RTL: click → expect temp text → resolve promise → expect final.
 // Fail path: reject promise → expect original list count.
 // React 18 tests same structure — hook reduces manual revert code to test.
@@ -598,10 +598,10 @@ export function TestingOptimisticNote() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview answer template
 //
-// Kya karna hai:
+// Task:
 // Define optimistic UI → useOptimistic(base, updateFn) → rollback on unchanged base.
 //
-// Seedha matlab:
+// In simple words:
 // vs React 18: manual temp state + revert.
 // vs useActionState: action state is truth; optimistic is overlay.
 // Traps: high-risk flows; stale races on base; forget error toast on rollback.

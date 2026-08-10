@@ -1,18 +1,18 @@
 // ============================================================================
 // 08 — Forms Controlled
-// Level: BASE  |  Sequence: pehle yeh, phir agla number
+// Level: BASE  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Controlled input = React state boss hai. Input dikhata hai jo state
-// kehti hai. Har type pe onChange → setState → dubara value={state}.
-// Uncontrolled = DOM apna rakhe (ref) — 25 me compare.
+// SIMPLE: Controlled input = React state is the boss. Input shows what state says.
+// Every type: onChange → setState → value={state} again.
+// Uncontrolled = DOM keeps its own value (ref) — compare in 25.
 //
-// Form: saari fields state (ya ek object), submit pe preventDefault + validate.
-// select, checkbox, radio bhi value/checked + onChange.
+// Form: all fields in state (or one object), submit with preventDefault + validate.
+// select, checkbox, radio also use value/checked + onChange.
 //
-// KYUN: Validation, disable button, live preview — controlled se asaan.
+// WHY: Validation, disable button, live preview — easier with controlled inputs.
 // INTERVIEW: controlled vs uncontrolled; single source of truth.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Single controlled input
 //
-// Kya karna hai:
+// Task:
 // value + onChange pair.
 //
-// Seedha matlab:
-// Bina value={state} controlled nahi. Bina onChange read-only feel.
+// In simple words:
+// Without value={state} it is not controlled. Without onChange it feels read-only.
 // -----------------------------------------------------------------------------
 function ControlledInput() {
   const [value, setValue] = useState("");
@@ -37,10 +37,10 @@ function ControlledInput() {
 // -----------------------------------------------------------------------------
 // Q2: Multi-field form object
 //
-// Kya karna hai:
-// form = { name, email }; name se update.
+// Task:
+// form = { name, email }; update by name.
 //
-// Seedha matlab:
+// In simple words:
 // e.target.name + computed key: setForm({ ...form, [name]: value })
 // -----------------------------------------------------------------------------
 function Signup() {
@@ -66,11 +66,11 @@ function Signup() {
 // -----------------------------------------------------------------------------
 // Q3: Checkbox controlled
 //
-// Kya karna hai:
+// Task:
 // checked={agree} onChange → setAgree(e.target.checked)
 //
-// Seedha matlab:
-// Checkbox pe value nahi — checked boolean.
+// In simple words:
+// Checkbox uses checked boolean, not value.
 // -----------------------------------------------------------------------------
 function Terms() {
   const [agree, setAgree] = useState(false);
@@ -89,11 +89,11 @@ function Terms() {
 // -----------------------------------------------------------------------------
 // Q4: Select dropdown
 //
-// Kya karna hai:
+// Task:
 // <select value={city} onChange=...>
 //
-// Seedha matlab:
-// Same controlled pattern. Options children.
+// In simple words:
+// Same controlled pattern. Options as children.
 // -----------------------------------------------------------------------------
 function CitySelect() {
   const [city, setCity] = useState("pune");
@@ -108,11 +108,11 @@ function CitySelect() {
 // -----------------------------------------------------------------------------
 // Q5: Textarea
 //
-// Kya karna hai:
-// <textarea value={bio} onChange=...> — children text HTML style mat.
+// Task:
+// <textarea value={bio} onChange=...> — not children text HTML style.
 //
-// Seedha matlab:
-// React me textarea bhi value prop se control.
+// In simple words:
+// In React, textarea is also controlled with value prop.
 // -----------------------------------------------------------------------------
 function Bio() {
   const [bio, setBio] = useState("");
@@ -124,11 +124,11 @@ function Bio() {
 // -----------------------------------------------------------------------------
 // Q6: Simple validation + disable submit
 //
-// Kya karna hai:
-// email me @ nahi to button disabled.
+// Task:
+// If email has no @, disable button.
 //
-// Seedha matlab:
-// Derived: const valid = email.includes("@"). State alag mat rakhna sync ke liye.
+// In simple words:
+// Derived: const valid = email.includes("@"). Do not keep separate isValid state to sync.
 // -----------------------------------------------------------------------------
 function EmailForm() {
   const [email, setEmail] = useState("");
@@ -152,11 +152,11 @@ function EmailForm() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Radio group
 //
-// Kya karna hai:
-// same name, checked={plan === "pro"}, value set on change.
+// Task:
+// same name, checked={plan === "pro"}, set value on change.
 //
-// Seedha matlab:
-// Ek state string = selected radio.
+// In simple words:
+// One state string = selected radio.
 // -----------------------------------------------------------------------------
 function PlanPicker() {
   const [plan, setPlan] = useState("free");
@@ -185,11 +185,11 @@ function PlanPicker() {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Reset form
 //
-// Kya karna hai:
-// setForm(initial) se clear.
+// Task:
+// Clear with setForm(initial).
 //
-// Seedha matlab:
-// Controlled me reset = state wapas initial. DOM reset() optional.
+// In simple words:
+// Controlled reset = state back to initial. DOM reset() is optional.
 // -----------------------------------------------------------------------------
 const INITIAL = { title: "", body: "" };
 
@@ -218,11 +218,11 @@ function NoteForm() {
 // -----------------------------------------------------------------------------
 // Q9: Number input controlled
 //
-// Kya karna hai:
+// Task:
 // type="number" value={qty} — parseInt/Number on change.
 //
-// Seedha matlab:
-// value string hoti hai input se. Math ke liye number me convert.
+// In simple words:
+// Input value is string. Convert to number for math.
 // -----------------------------------------------------------------------------
 function QtyInput() {
   const [qty, setQty] = useState(1);
@@ -238,11 +238,11 @@ function QtyInput() {
 // -----------------------------------------------------------------------------
 // Q10: Multi checkbox (array state)
 //
-// Kya karna hai:
+// Task:
 // checked={selected.includes(id)} toggle array add/remove.
 //
-// Seedha matlab:
-// Multiple select — string[] state. Har box alag id.
+// In simple words:
+// Multiple select — string[] state. Each box has its own id.
 // -----------------------------------------------------------------------------
 function Toppings() {
   const [selected, setSelected] = useState([]);
@@ -271,16 +271,16 @@ function Toppings() {
 // -----------------------------------------------------------------------------
 // Q11: Validation UX — inline error
 //
-// Kya karna hai:
-// touched state; blur pe error dikhao, type karte hi clear.
+// Task:
+// touched state; show error on blur, clear while typing.
 //
-// Seedha matlab:
-// Submit pe hi error = rude. Field-level feedback better UX.
+// In simple words:
+// Error only on submit feels rude. Field-level feedback is better UX.
 // -----------------------------------------------------------------------------
 function InlineError() {
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
-  const error = touched && !email.includes("@") ? "Valid email daalo" : "";
+  const error = touched && !email.includes("@") ? "Enter a valid email" : "";
   return (
     <div>
       <input
@@ -296,11 +296,11 @@ function InlineError() {
 // -----------------------------------------------------------------------------
 // Q12: Submit disabled until valid
 //
-// Kya karna hai:
+// Task:
 // const canSubmit = name.trim() && password.length >= 8;
 //
-// Seedha matlab:
-// Derived flag — alag isValid state sync mat. Button disabled={!canSubmit}.
+// In simple words:
+// Derived flag — do not sync separate isValid state. Button disabled={!canSubmit}.
 // -----------------------------------------------------------------------------
 function SecureSignup() {
   const [name, setName] = useState("");
@@ -324,11 +324,11 @@ function SecureSignup() {
 // -----------------------------------------------------------------------------
 // Q13: FormData vs controlled sketch
 //
-// Kya karna hai:
+// Task:
 // onSubmit: new FormData(e.target) — uncontrolled bulk submit.
 //
-// Seedha matlab:
-// Simple forms OK. Live validation / disable button ke liye controlled better.
+// In simple words:
+// Simple forms OK. Live validation / disable button needs controlled better.
 // -----------------------------------------------------------------------------
 function FormDataSketch() {
   function submit(e) {
@@ -347,11 +347,11 @@ function FormDataSketch() {
 // -----------------------------------------------------------------------------
 // Q14: File input — uncontrolled note
 //
-// Kya karna hai:
-// type="file" — value set karna restricted; ref ya FormData use.
+// Task:
+// type="file" — setting value is restricted; use ref or FormData.
 //
-// Seedha matlab:
-// Controlled file rare. onChange me file object state me rakho agar chahiye.
+// In simple words:
+// Controlled file is rare. Store file object in state onChange if needed.
 // -----------------------------------------------------------------------------
 function FileUpload() {
   const [file, setFile] = useState(null);
@@ -366,11 +366,11 @@ function FileUpload() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Nested form state
 //
-// Kya karna hai:
-// form = { user: { name, addr: { city } } } — spread deep update.
+// Task:
+// form = { user: { name, addr: { city } } } — spread for deep update.
 //
-// Seedha matlab:
-// Nested path: setForm({ ...form, user: { ...form.user, name: v } }). Ya reducer.
+// In simple words:
+// Nested path: setForm({ ...form, user: { ...form.user, name: v } }). Or use reducer.
 // -----------------------------------------------------------------------------
 function NestedAddress() {
   const [form, setForm] = useState({
@@ -395,11 +395,11 @@ function NestedAddress() {
 // -----------------------------------------------------------------------------
 // Q16: Select multiple
 //
-// Kya karna hai:
-// <select multiple value={tags} onChange> — value array.
+// Task:
+// <select multiple value={tags} onChange> — value is array.
 //
-// Seedha matlab:
-// Ctrl+click multi. selectedOptions se array bhi bana sakte ho.
+// In simple words:
+// Ctrl+click multi. Can also build array from selectedOptions.
 // -----------------------------------------------------------------------------
 function MultiSelect() {
   const [tags, setTags] = useState(["js"]);
@@ -419,13 +419,13 @@ function MultiSelect() {
 }
 
 // -----------------------------------------------------------------------------
-// Q17: Controlled vs defaultValue mix mat
+// Q17: Controlled vs defaultValue mix do not
 //
-// Kya karna hai:
-// Ek input pe value + defaultValue dono mat — pick one pattern.
+// Task:
+// Do not put value + defaultValue on same input — pick one pattern.
 //
-// Seedha matlab:
-// Switch controlled/uncontrolled mid-life = warning. Consistent raho.
+// In simple words:
+// Switching controlled/uncontrolled mid-life = warning. Stay consistent.
 // -----------------------------------------------------------------------------
 function ControlledOnly() {
   const [text, setText] = useState("");
@@ -433,13 +433,13 @@ function ControlledOnly() {
 }
 
 // -----------------------------------------------------------------------------
-// Q18: onSubmit preventDefault zaroori
+// Q18: onSubmit preventDefault required
 //
-// Kya karna hai:
-// form submit pe page reload roko; apna handler chalao.
+// Task:
+// On form submit stop page reload; run your handler.
 //
-// Seedha matlab:
-// Bina preventDefault browser navigate/reload. SPA me hamesha roko.
+// In simple words:
+// Without preventDefault browser navigates/reloads. Always stop in SPAs.
 // -----------------------------------------------------------------------------
 function SafeSubmit() {
   const [msg, setMsg] = useState("");
@@ -459,11 +459,11 @@ function SafeSubmit() {
 // -----------------------------------------------------------------------------
 // Q19: Read-only controlled display
 //
-// Kya karna hai:
-// value={computed} readOnly — user edit nahi, still controlled.
+// Task:
+// value={computed} readOnly — user cannot edit, still controlled.
 //
-// Seedha matlab:
-// Summary field, slug preview — state se derive, input dikhao.
+// In simple words:
+// Summary field, slug preview — derive from state, show in input.
 // -----------------------------------------------------------------------------
 function SlugPreview() {
   const [title, setTitle] = useState("");
@@ -479,11 +479,11 @@ function SlugPreview() {
 // -----------------------------------------------------------------------------
 // Q20: [MID] React 19 form actions contrast
 //
-// Kya karna hai:
+// Task:
 // <form action={async (fd) => { "use server" }} /> vs onSubmit + useState.
 //
-// Seedha matlab:
-// Actions = submit flow declarative, pending state useFormStatus se. Classic controlled ab bhi valid.
+// In simple words:
+// Actions = declarative submit flow, pending state via useFormStatus. Classic controlled still valid.
 // -----------------------------------------------------------------------------
 function ClassicVsActionNote() {
   const [pending, setPending] = useState(false);
@@ -503,11 +503,11 @@ function ClassicVsActionNote() {
 // -----------------------------------------------------------------------------
 // Q21: Input name for FormData
 //
-// Kya karna hai:
-// Har field name="fieldName" — FormData me key aati hai.
+// Task:
+// Each field name="fieldName" — key appears in FormData.
 //
-// Seedha matlab:
-// Controlled me bhi name rakho agar progressive enhancement / FormData mix ho.
+// In simple words:
+// In controlled forms keep name too if mixing FormData / progressive enhancement.
 // -----------------------------------------------------------------------------
 function NamedFields() {
   const [form, setForm] = useState({ title: "", body: "" });
@@ -525,11 +525,11 @@ function NamedFields() {
 // -----------------------------------------------------------------------------
 // Q22: Max length live counter
 //
-// Kya karna hai:
-// maxLength={100} + {text.length}/100 dikhao.
+// Task:
+// maxLength={100} + show {text.length}/100.
 //
-// Seedha matlab:
-// Controlled se live feedback easy — derived count render me.
+// In simple words:
+// Controlled makes live feedback easy — derived count in render.
 // -----------------------------------------------------------------------------
 function BioCounter() {
   const [text, setText] = useState("");
@@ -551,11 +551,11 @@ function BioCounter() {
 // -----------------------------------------------------------------------------
 // Q23: Pattern HTML + JS double validate
 //
-// Kya karna hai:
-// pattern="[0-9]+" browser hint + JS me bhi check submit pe.
+// Task:
+// pattern="[0-9]+" browser hint + JS check on submit.
 //
-// Seedha matlab:
-// HTML validation UX help; trust mat — server + JS bhi.
+// In simple words:
+// HTML validation helps UX; do not trust it alone — server + JS too.
 // -----------------------------------------------------------------------------
 function PhoneField() {
   const [phone, setPhone] = useState("");
@@ -573,11 +573,11 @@ function PhoneField() {
 // -----------------------------------------------------------------------------
 // Q24: Fieldset disabled group
 //
-// Kya karna hai:
-// <fieldset disabled={loading}> — saari fields ek saath off.
+// Task:
+// <fieldset disabled={loading}> — turn off all fields at once.
 //
-// Seedha matlab:
-// Submit ke dauran form lock — har input pe alag disabled mat lagao.
+// In simple words:
+// Lock form during submit — do not disable each input separately.
 // -----------------------------------------------------------------------------
 function LoadingForm({ loading }) {
   const [email, setEmail] = useState("");

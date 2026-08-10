@@ -1,17 +1,17 @@
 // ============================================================================
 // 22 — Routing Basics
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: SPA me URL badlo bina full reload — React Router (ya similar).
+// SIMPLE: In an SPA, change the URL without a full reload — React Router (or similar).
 // BrowserRouter, Routes, Route, Link, useParams, useNavigate, Outlet.
-// Jaise mall me directories — alag floor, same building (ek HTML).
+// Like mall directories — different floors, same building (one HTML).
 //
-// Nested routes = layout share. Navigate programmatic (login ke baad).
+// Nested routes = shared layout. Navigate programmatically (after login).
 //
-// KYUN: Multi-page feel apps. Interview me routing basics expected.
+// WHY: Multi-page feel in apps. Interview expects routing basics.
 // INTERVIEW: Link vs a; nested routes; params; protected route idea.
-// Vite/React 19 project me use — teaching file (react-router v6 style API).
+// Vite/React 19 project — teaching file (react-router v6 style API).
 //
 // ============================================================================
 
@@ -33,11 +33,11 @@ import {
 // -----------------------------------------------------------------------------
 // Q1: Basic Routes + Link
 //
-// Kya karna hai:
-// / aur /about — Link se navigate (full reload nahi).
+// Task:
+// / and /about — navigate with Link (no full reload).
 //
-// Seedha matlab:
-// <a href> reload. <Link to> client route.
+// In simple words:
+// <a href> reloads. <Link to> is client-side routing.
 // -----------------------------------------------------------------------------
 function Home() {
   return <h1>Home</h1>;
@@ -64,11 +64,11 @@ function AppRoutes() {
 // -----------------------------------------------------------------------------
 // Q2: useParams — /users/:id
 //
-// Kya karna hai:
+// Task:
 // const { id } = useParams()
 //
-// Seedha matlab:
-// Dynamic segment URL se padho.
+// In simple words:
+// Read dynamic segment from the URL.
 // -----------------------------------------------------------------------------
 function UserPage() {
   const { id } = useParams();
@@ -79,11 +79,11 @@ function UserPage() {
 // -----------------------------------------------------------------------------
 // Q3: useNavigate programmatic
 //
-// Kya karna hai:
+// Task:
 // login success → navigate("/dashboard")
 //
-// Seedha matlab:
-// Button/handler se route change. replace option history clean.
+// In simple words:
+// Change route from button/handler. replace option keeps history clean.
 // -----------------------------------------------------------------------------
 function Login() {
   const navigate = useNavigate();
@@ -96,10 +96,10 @@ function Login() {
 // -----------------------------------------------------------------------------
 // Q4: Nested layout + Outlet
 //
-// Kya karna hai:
-// Parent layout Route; child routes; <Outlet /> jagah content.
+// Task:
+// Parent layout Route; child routes; <Outlet /> where content goes.
 //
-// Seedha matlab:
+// In simple words:
 // Shared nav/sidebar. Children plug into outlet.
 // -----------------------------------------------------------------------------
 function AdminLayout() {
@@ -117,11 +117,11 @@ function AdminLayout() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Protected route idea
 //
-// Kya karna hai:
-// Agar !user → <Navigate to="/login" />
+// Task:
+// If !user → <Navigate to="/login" />
 //
-// Seedha matlab:
-// Wrapper component auth check. Real apps me loader/token.
+// In simple words:
+// Wrapper component checks auth. Real apps use loader/token.
 // -----------------------------------------------------------------------------
 function PrivateRoute({ user, children }) {
   if (!user) return <Navigate to="/login" replace />;
@@ -131,11 +131,11 @@ function PrivateRoute({ user, children }) {
 // -----------------------------------------------------------------------------
 // Q6: useSearchParams query string
 //
-// Kya karna hai:
-// ?q=react padho/likho.
+// Task:
+// Read/write ?q=react.
 //
-// Seedha matlab:
-// Filters URL me — shareable/back button friendly.
+// In simple words:
+// Filters in URL — shareable and back-button friendly.
 // -----------------------------------------------------------------------------
 function SearchPage() {
   const [params, setParams] = useSearchParams();
@@ -151,11 +151,11 @@ function SearchPage() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] 404 Not Found route
 //
-// Kya karna hai:
+// Task:
 // path="*" element={<NotFound />}
 //
-// Seedha matlab:
-// Catch-all last. Unknown URLs handle.
+// In simple words:
+// Catch-all last. Handles unknown URLs.
 // -----------------------------------------------------------------------------
 function NotFound() {
   return <h1>404</h1>;
@@ -165,11 +165,11 @@ function NotFound() {
 // -----------------------------------------------------------------------------
 // Q8: Index route
 //
-// Kya karna hai:
-// Parent path pe default child — <Route index element={...} />
+// Task:
+// Default child on parent path — <Route index element={...} />
 //
-// Seedha matlab:
-// /parent exact pe default panel.
+// In simple words:
+// /parent exact shows default panel.
 // -----------------------------------------------------------------------------
 // <Route path="/shop" element={<ShopLayout />}>
 //   <Route index element={<Featured />} />
@@ -179,11 +179,11 @@ function NotFound() {
 // -----------------------------------------------------------------------------
 // Q9: NavLink — active class automatic
 //
-// Kya karna hai:
+// Task:
 // NavLink to="/about" className={({ isActive }) => isActive ? "on" : ""}
 //
-// Seedha matlab:
-// Link sirf navigate; NavLink current route highlight deta.
+// In simple words:
+// Link only navigates; NavLink highlights current route.
 // -----------------------------------------------------------------------------
 function Nav() {
   return (
@@ -202,19 +202,19 @@ function Nav() {
 }
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] Relative paths nested routes me
+// Q10: [MID] Relative paths in nested routes
 //
-// Kya karna hai:
-// Parent /admin; child path="users" → /admin/users (leading / mat).
+// Task:
+// Parent /admin; child path="users" → /admin/users (no leading /).
 //
-// Seedha matlab:
-// Nested Route paths relative — URL compose parent se.
+// In simple words:
+// Nested Route paths are relative — URL composes from parent.
 // -----------------------------------------------------------------------------
 function RelativeNestedNote() {
   return (
     <p>
       Nested child path="settings" under /app → /app/settings. Absolute path /
-      se root.
+      starts from root.
     </p>
   );
 }
@@ -222,10 +222,10 @@ function RelativeNestedNote() {
 // -----------------------------------------------------------------------------
 // Q11: useLocation — pathname + state read
 //
-// Kya karna hai:
+// Task:
 // const loc = useLocation(); loc.pathname, loc.state from navigate.
 //
-// Seedha matlab:
+// In simple words:
 // URL + hidden state (flash message) — shareable vs private data.
 // -----------------------------------------------------------------------------
 function FlashBanner() {
@@ -237,11 +237,11 @@ function FlashBanner() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] navigate with state pass
 //
-// Kya karna hai:
+// Task:
 // navigate("/done", { state: { from: "checkout" } })
 //
-// Seedha matlab:
-// Query string public; state object history me — refresh pe lost ho sakta.
+// In simple words:
+// Query string is public; state object in history — may be lost on refresh.
 // -----------------------------------------------------------------------------
 function GoDone() {
   const navigate = useNavigate();
@@ -259,29 +259,29 @@ function GoDone() {
 // -----------------------------------------------------------------------------
 // Q13: Route loader sketch (data before render idea)
 //
-// Kya karna hai:
-// v6.4+ loader async — component ko data ready mile.
+// Task:
+// v6.4+ loader async — component gets data ready.
 //
-// Seedha matlab:
-// useEffect fetch kam; router loader waterfall avoid helper.
+// In simple words:
+// Less useEffect fetch; router loader helps avoid waterfall.
 // -----------------------------------------------------------------------------
 function LoaderSketchNote() {
   return (
     <p>
-      Route loader: data fetch route match pe — component render se pehle. Advanced
-      44 me depth.
+      Route loader: data fetch on route match — before component render. Advanced
+      depth in file 44.
     </p>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Q14: [MID] Outlet context — parent se child ko data
+// Q14: [MID] Outlet context — parent data to child
 //
-// Kya karna hai:
+// Task:
 // Outlet context={{ user }} — child useOutletContext().
 //
-// Seedha matlab:
-// Layout shared data bina prop drill — nested routes ke liye.
+// In simple words:
+// Layout shared data without prop drilling — for nested routes.
 // -----------------------------------------------------------------------------
 function LayoutWithContext() {
   const user = { name: "Jay" };
@@ -296,24 +296,24 @@ function LayoutWithContext() {
 // -----------------------------------------------------------------------------
 // Q15: Index route vs path=""
 //
-// Kya karna hai:
-// index element parent exact URL pe; path="" similar v6 semantics.
+// Task:
+// index element on parent exact URL; path="" similar v6 semantics.
 //
-// Seedha matlab:
-// /shop → Featured (index); /shop/cart → Cart. Default child clear.
+// In simple words:
+// /shop → Featured (index); /shop/cart → Cart. Default child is clear.
 // -----------------------------------------------------------------------------
 function IndexVsEmptyNote() {
-  return <p>Index route = parent URL pe default child bina extra segment.</p>;
+  return <p>Index route = default child on parent URL without extra segment.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q16: [MID] Protected route — Outlet wrapper pattern
 //
-// Kya karna hai:
-// ProtectedLayout check auth; andar Outlet ya Navigate login.
+// Task:
+// ProtectedLayout checks auth; inside Outlet or Navigate to login.
 //
-// Seedha matlab:
-// Har child route ek saath protect — DRY auth guard.
+// In simple words:
+// Protect all child routes at once — DRY auth guard.
 // -----------------------------------------------------------------------------
 function ProtectedLayout({ user }) {
   if (!user) return <Navigate to="/login" replace />;
@@ -326,10 +326,10 @@ function ProtectedLayout({ user }) {
 // -----------------------------------------------------------------------------
 // Q17: Link replace — history stack clean
 //
-// Kya karna hai:
-// Login success Link replace to dashboard — back button login pe na jaye.
+// Task:
+// Login success Link replace to dashboard — back button should not return to login.
 //
-// Seedha matlab:
+// In simple words:
 // replace={true} same as navigate replace option.
 // -----------------------------------------------------------------------------
 function ReplaceLink() {
@@ -343,17 +343,17 @@ function ReplaceLink() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] BrowserRouter vs HashRouter
 //
-// Kya karna hai:
-// BrowserRouter = clean URLs (/about); HashRouter = #/about static host pe.
+// Task:
+// BrowserRouter = clean URLs (/about); HashRouter = #/about on static host.
 //
-// Seedha matlab:
-// Server config vs GitHub Pages — deployment decide karta.
+// In simple words:
+// Server config vs GitHub Pages — deployment decides.
 // -----------------------------------------------------------------------------
 function RouterModeNote() {
   return (
     <p>
-      BrowserRouter: server fallback index.html chahiye. HashRouter: hash routing,
-      server config easy.
+      BrowserRouter: server fallback to index.html needed. HashRouter: hash routing,
+      easier server config.
     </p>
   );
 }
@@ -361,11 +361,11 @@ function RouterModeNote() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] Splat / catch-all segment
 //
-// Kya karna hai:
-// path="/docs/*" — baaki path match; useParams se * part.
+// Task:
+// path="/docs/*" — match rest of path; useParams for * part.
 //
-// Seedha matlab:
-// Nested docs/files dynamic depth — splat flexible.
+// In simple words:
+// Nested docs/files at dynamic depth — splat is flexible.
 // -----------------------------------------------------------------------------
 function DocsCatchAll() {
   const params = useParams();
@@ -376,11 +376,11 @@ function DocsCatchAll() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Scroll restoration basic
 //
-// Kya karna hai:
-// Route change pe window.scrollTo(0,0) ya ScrollRestoration component.
+// Task:
+// On route change: window.scrollTo(0,0) or ScrollRestoration component.
 //
-// Seedha matlab:
-// SPA me browser auto scroll top nahi — khud handle.
+// In simple words:
+// In SPA browser does not auto scroll to top — handle it yourself.
 // -----------------------------------------------------------------------------
 function ScrollTopOnNav() {
   const { pathname } = useLocation();
@@ -391,13 +391,13 @@ function ScrollTopOnNav() {
 }
 
 // -----------------------------------------------------------------------------
-// Q21: [ADV] Relative Link "../" nested me
+// Q21: [ADV] Relative Link "../" in nested routes
 //
-// Kya karna hai:
-// /admin/users/5/edit se Link to=".." → /admin/users/5
+// Task:
+// From /admin/users/5/edit, Link to=".." → /admin/users/5
 //
-// Seedha matlab:
-// Relative navigation — URL manually mat likho, router relative resolve.
+// In simple words:
+// Relative navigation — do not write URL manually, router resolves relative paths.
 // -----------------------------------------------------------------------------
 function BackToList() {
   return <Link to="..">Back to list</Link>;
@@ -406,11 +406,11 @@ function BackToList() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — nested routes mental model
 //
-// Kya karna hai:
+// Task:
 // Layout Route + Outlet + child paths + index + 404 last.
 //
-// Seedha matlab:
-// Ek diagram bolke: URL tree = Route tree, Outlet = child slot.
+// In simple words:
+// Explain with one diagram: URL tree = Route tree, Outlet = child slot.
 // -----------------------------------------------------------------------------
 function RoutingInterview() {
   return (

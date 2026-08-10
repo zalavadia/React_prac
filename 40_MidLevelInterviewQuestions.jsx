@@ -1,17 +1,17 @@
 // ============================================================================
-// 40 — Mid-Level React Interview Questions (Hinglish dump) — 47 Qs
-// Level: INTERVIEW  |  Sequence seekho: pehle React19 files, phir yeh revise
+// 40 — Mid-Level React Interview Questions (interview revision) — 47 Qs
+// Level: INTERVIEW  |  Study in order: read React 19 files first, then revise with this
 // ============================================================================
 //
-// LAYMAN: Yeh file RUNBOOK hai mid React interviews ke liye —
+// SIMPLE: This file is a RUNBOOK for mid-level React interviews —
 // hooks rules, keys, batching, stale closures, Virtual DOM myth,
-// useEffect deps, performance, React 19 Actions vs purane submit handlers.
+// useEffect deps, performance, React 19 Actions vs old submit handlers.
 //
-// Har Q: Seedha matlab + chhota code jahan useful.
-// [MID] = typical mid-level depth. Ratta mat — soch ke bolo.
+// Each Q: in simple words + small code where useful.
+// [MID] = typical mid-level depth. Do not memorize — explain with your own words.
 //
-// KYUN: Ek jagah revise; baaki files me depth.
-// INTERVIEW: Clear Hinglish/English mix OK — concepts precise.
+// WHY: Revise in one place; other files go deeper.
+// INTERVIEW: Use clear plain English — keep concepts precise.
 //
 // ============================================================================
 
@@ -27,13 +27,13 @@ import {
 } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: [MID] Rules of Hooks kya hain?
+// Q1: [MID] What are the Rules of Hooks?
 //
-// Seedha matlab:
-// 1) Sirf React function components / custom hooks ke top-level pe call.
-// 2) Loops, conditions, nested functions me ordinary hooks mat.
-// 3) Order har render same rehna chahiye — React hooks list pe depend.
-// Exception: React 19 ka `use()` conditional context/promise allow (file 33).
+// In simple words:
+// 1) Call only at the top level of React function components / custom hooks.
+// 2) Do not call ordinary hooks inside loops, conditions, or nested functions.
+// 3) Order must stay the same every render — React depends on the hooks list.
+// Exception: React 19 `use()` allows conditional context/promise (file 33).
 // -----------------------------------------------------------------------------
 function BadHooks({ flag }) {
   // if (flag) useState(0); // ❌
@@ -42,11 +42,11 @@ function BadHooks({ flag }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: [MID] List me key kyun? index kab avoid?
+// Q2: [MID] Why key in lists? When to avoid index?
 //
-// Seedha matlab:
-// key = identity across reorders. Galat key = state galat item pe chipak.
-// index key OK static list; avoid jab insert/delete/reorder + item state.
+// In simple words:
+// key = identity across reorders. Wrong key = state sticks to wrong item.
+// index key OK for static list; avoid when insert/delete/reorder + item state.
 // -----------------------------------------------------------------------------
 export function TodoList({ todos }) {
   return (
@@ -59,12 +59,12 @@ export function TodoList({ todos }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: [MID] setState async / batching?
+// Q3: [MID] Is setState async / batching?
 //
-// Seedha matlab:
-// React 18+ mostly automatic batching — ek event me multiple setState
-// ek re-render. Turant purana state mat expect.
-// Next value chahiye → functional updater setN(n => n+1).
+// In simple words:
+// React 18+ mostly automatic batching — multiple setState in one event
+// one re-render. Do not expect old state immediately.
+// Need next value → functional updater setN(n => n+1).
 // -----------------------------------------------------------------------------
 export function BatchDemo() {
   const [a, setA] = useState(0);
@@ -83,9 +83,9 @@ export function BatchDemo() {
 // -----------------------------------------------------------------------------
 // Q4: [MID] Stale closure / stale state in setTimeout
 //
-// Seedha matlab:
-// Handler ne purana count close kiya. setCount(count+1) stale ho sakta.
-// Fix: functional update, ya ref for latest, ya EffectEvent (19.2) patterns.
+// In simple words:
+// Handler closed over old count. setCount(count+1) can be stale.
+// Fix: functional update, or ref for latest, or EffectEvent (19.2) patterns.
 // -----------------------------------------------------------------------------
 export function StaleCounter() {
   const [count, setCount] = useState(0);
@@ -99,13 +99,13 @@ export function StaleCounter() {
 }
 
 // -----------------------------------------------------------------------------
-// Q5: [MID] Virtual DOM myth — "Virtual DOM fast isliye React fast"?
+// Q5: [MID] Virtual DOM myth — "React is fast because Virtual DOM is fast"?
 //
-// Seedha matlab:
-// VDOM = UI ka JS object snapshot; diff se kam DOM updates decide.
-// Fast ka asli game: predictable update model, batching, concurrent,
-// avoiding unnecessary work — sirf "VDOM magic" nahi.
-// Svelte/Solid bina classic VDOM bhi fast. Nuanced answer do.
+// In simple words:
+// VDOM = JS object snapshot of UI; diff decides fewer DOM updates.
+// The real speed game: predictable update model, batching, concurrent,
+// avoiding unnecessary work — not just "VDOM magic".
+// Svelte/Solid are fast without classic VDOM too. Give a nuanced answer.
 // -----------------------------------------------------------------------------
 const vdomAnswer =
   "VDOM is a strategy, not the only reason React apps feel fast; avoid unnecessary renders too.";
@@ -113,11 +113,11 @@ const vdomAnswer =
 // -----------------------------------------------------------------------------
 // Q6: [MID] useEffect deps — empty vs missing vs full
 //
-// Seedha matlab:
+// In simple words:
 // [] = mount/unmount sync (subscribe once).
-// [id] = jab id change, re-run.
+// [id] = re-run when id changes.
 // Missing dep = stale bug. Extra dep = extra runs.
-// Derive during render jab ho sake — effect se state copy mat.
+// Derive during render when possible — do not copy state from effect.
 // -----------------------------------------------------------------------------
 export function UserEffect({ userId }) {
   const [user, setUser] = useState(null);
@@ -138,9 +138,9 @@ export function UserEffect({ userId }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Controlled vs uncontrolled input
 //
-// Seedha matlab:
-// Controlled: value + onChange (React state source).
-// Uncontrolled: defaultValue + ref / FormData (DOM source).
+// In simple words:
+// Controlled: value + onChange (React state is source).
+// Uncontrolled: defaultValue + ref / FormData (DOM is source).
 // React 19 Actions often FormData/uncontrolled-friendly.
 // -----------------------------------------------------------------------------
 export function Controlled({ value, onChange }) {
@@ -150,9 +150,9 @@ export function Controlled({ value, onChange }) {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Lifting state up kab?
 //
-// Seedha matlab:
-// Jab do children same data share / sync. Parent owner.
-// Over-lift mat karo — prop drilling → Context / composition.
+// In simple words:
+// When two children share / sync the same data. Parent is owner.
+// Do not over-lift — prop drilling → Context / composition.
 // -----------------------------------------------------------------------------
 export function ParentLift() {
   const [text, setText] = useState("");
@@ -167,9 +167,9 @@ export function ParentLift() {
 // -----------------------------------------------------------------------------
 // Q9: [MID] useMemo / useCallback kab?
 //
-// Seedha matlab:
-// Expensive calc; ya referential equality for memoized child deps.
-// Default har jagah mat chipkao — measure / compiler (file 39).
+// In simple words:
+// Expensive calc; or referential equality for memoized child deps.
+// Do not slap it everywhere by default — measure / compiler (file 39).
 // -----------------------------------------------------------------------------
 export function Filtered({ items, query }) {
   const filtered = useMemo(
@@ -180,12 +180,12 @@ export function Filtered({ items, query }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] React.memo kya karta?
+// Q10: [MID] What does React.memo do?
 //
-// Seedha matlab:
-// Shallow props compare — same props pe re-render skip (usually).
-// Parent re-render ≠ child re-render agar memo + stable props.
-// Callbacks unstable → memo tod — useCallback / compiler.
+// In simple words:
+// Shallow props compare — skip re-render on same props (usually).
+// Parent re-render ≠ child re-render if memo + stable props.
+// Unstable callbacks break memo — useCallback / compiler.
 // -----------------------------------------------------------------------------
 export const Row = memo(function Row({ label }) {
   return <div>{label}</div>;
@@ -194,9 +194,9 @@ export const Row = memo(function Row({ label }) {
 // -----------------------------------------------------------------------------
 // Q11: [MID] useRef vs useState
 //
-// Seedha matlab:
-// ref change re-render nahi karta. DOM handles, timers, latest values.
-// State = UI me dikhana. Render ke dauran ref.current padh ke UI decide risky.
+// In simple words:
+// ref change does not re-render. DOM handles, timers, latest values.
+// State = show in UI. Deciding UI by reading ref.current during render is risky.
 // -----------------------------------------------------------------------------
 export function TimerRef() {
   const id = useRef(null);
@@ -211,9 +211,9 @@ export function TimerRef() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] Why cleanup in useEffect?
 //
-// Seedha matlab:
-// Subscribe kiya to unsubscribe. Timers clear. Stale fetch ignore.
-// Strict Mode dev me mount→unmount→remount — cleanup sahi hona chahiye.
+// In simple words:
+// If you subscribe, unsubscribe. Clear timers. Ignore stale fetch.
+// Strict Mode dev mount→unmount→remount — cleanup must be correct.
 // -----------------------------------------------------------------------------
 export function WatchWidth() {
   const [w, setW] = useState(0);
@@ -231,9 +231,9 @@ export function WatchWidth() {
 // -----------------------------------------------------------------------------
 // Q13: [MID] Keys + local state bug story
 //
-// Seedha matlab:
-// Do inputs list — key=index, pehla delete → doosre ka text pehle pe aa sakta.
-// Stable id keys + remount via key={id} jab form reset chahiye.
+// In simple words:
+// Two inputs in list — key=index, delete first → second's text may move to first.
+// Stable id keys + remount via key={id} when form reset is needed.
 // -----------------------------------------------------------------------------
 export function EditableList({ items, onRemove }) {
   return items.map((item) => (
@@ -247,9 +247,9 @@ export function EditableList({ items, onRemove }) {
 // -----------------------------------------------------------------------------
 // Q14: [MID] State updates with objects — mutate mat
 //
-// Seedha matlab:
-// setUser me user.name = x; setUser(user) — same reference, miss updates.
-// Naya object: setUser({ ...user, name: x }).
+// In simple words:
+// user.name = x in setUser; setUser(user) — same reference, miss updates.
+// New object: setUser({ ...user, name: x }).
 // -----------------------------------------------------------------------------
 export function Profile() {
   const [user, setUser] = useState({ name: "Ada", age: 30 });
@@ -265,19 +265,19 @@ export function Profile() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Context performance pain
 //
-// Seedha matlab:
-// Ek bada value object change → saare consumers re-render.
+// In simple words:
+// One big value object change → all consumers re-render.
 // Split context; pass stable dispatch; children composition.
 // React 19: <Ctx value={...}> syntax (file 36) — problem same.
 // -----------------------------------------------------------------------------
 const tip = "Split frequently-changing state from static config in context.";
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] Error Boundaries kya catch karti?
+// Q16: [MID] What do Error Boundaries catch?
 //
-// Seedha matlab:
-// Render/lifecycle errors children me. Event handlers / async khud try/catch.
-// Suspense alag (loading). Rejected use(promise) → boundary.
+// In simple words:
+// Render/lifecycle errors in children. Event handlers / async need their own try/catch.
+// Suspense is separate (loading). Rejected use(promise) → boundary.
 // -----------------------------------------------------------------------------
 const errorBoundaryNote =
   "Boundaries catch render errors; not click handlers or setTimeout unless rethrown to render.";
@@ -285,10 +285,10 @@ const errorBoundaryNote =
 // -----------------------------------------------------------------------------
 // Q17: [MID] Concurrent / startTransition kab?
 //
-// Seedha matlab:
+// In simple words:
 // Urgent: typing input. Non-urgent: filter huge list.
-// startTransition se input snappy, list peeche update.
-// isPending se pending UI.
+// startTransition keeps input snappy, list updates behind.
+// isPending for pending UI.
 // -----------------------------------------------------------------------------
 export function SearchBig({ all }) {
   const [q, setQ] = useState("");
@@ -314,11 +314,11 @@ export function SearchBig({ all }) {
 // -----------------------------------------------------------------------------
 // Q18: [MID] React 19 Actions vs old onSubmit handlers
 //
-// Seedha matlab:
+// In simple words:
 // Old: onSubmit → preventDefault → manual loading/error state.
 // New: action={async (formData)=>...} + useActionState / useFormStatus.
-// Old ab bhi valid. Actions = FormData-first + pending integration.
-// Server Actions ('use server') mutations server pe (file 38).
+// Old is still valid. Actions = FormData-first + pending integration.
+// Server Actions ('use server') run mutations on server (file 38).
 // -----------------------------------------------------------------------------
 async function save(prev, formData) {
   // await api
@@ -339,9 +339,9 @@ export function ActionVsSubmit() {
 // -----------------------------------------------------------------------------
 // Q19: [MID] useOptimistic one-liner
 //
-// Seedha matlab:
-// Pehle UI update, server baad me; fail pe base state pe rollback.
-// Low-risk actions (likes). Payments pe conservative raho.
+// In simple words:
+// Update UI first, server later; on fail rollback to base state.
+// Low-risk actions (likes). Be conservative with payments.
 // -----------------------------------------------------------------------------
 const optimisticLine =
   "Show success instantly; reconcile with server; roll back on failure.";
@@ -349,9 +349,9 @@ const optimisticLine =
 // -----------------------------------------------------------------------------
 // Q20: [MID] use() hook rules
 //
-// Seedha matlab:
+// In simple words:
 // use(promise) Suspense; use(context) conditional OK.
-// Baaki hooks top-level. Promise identity stable.
+// Other hooks stay top-level. Promise identity must be stable.
 // -----------------------------------------------------------------------------
 const useHookLine =
   "use unwraps promise/context; conditional OK for use; cache promises.";
@@ -359,8 +359,8 @@ const useHookLine =
 // -----------------------------------------------------------------------------
 // Q21: [MID] forwardRef ab?
 //
-// Seedha matlab:
-// React 19: ref normal prop. forwardRef legacy/compat.
+// In simple words:
+// React 19: ref is a normal prop. forwardRef is legacy/compat.
 // useImperativeHandle limited parent API.
 // -----------------------------------------------------------------------------
 function Input19({ ref, ...rest }) {
@@ -370,9 +370,9 @@ function Input19({ ref, ...rest }) {
 // -----------------------------------------------------------------------------
 // Q22: [MID] CSR fetch waterfall vs RSC
 //
-// Seedha matlab:
+// In simple words:
 // Client mount → spinner → fetch → nested fetch = waterfall.
-// Server Components await tree pe parallelize / closer to data.
+// Server Components parallelize on the tree / closer to data.
 // Hybrid: server initial + client interactivity.
 // -----------------------------------------------------------------------------
 const rscLine =
@@ -381,10 +381,10 @@ const rscLine =
 // -----------------------------------------------------------------------------
 // Q23: [MID] Why not put everything in useEffect?
 //
-// Seedha matlab:
+// In simple words:
 // Effects = sync external system (DOM, network subscription, widgets).
-// Derived values → render me calculate.
-// Reset state jab prop change → key remount pattern often cleaner.
+// Derived values → calculate in render.
+// Reset state when prop changes → key remount pattern is often cleaner.
 // -----------------------------------------------------------------------------
 export function FullName({ first, last }) {
   // ❌ useEffect sync full from first/last
@@ -393,11 +393,11 @@ export function FullName({ first, last }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q24: [MID] Strict Mode double invoke — bug ya feature?
+// Q24: [MID] Strict Mode double invoke — bug or feature?
 //
-// Seedha matlab:
-// Dev me effects setup/cleanup/setup — impure effects pakadne ke liye.
-// Production me double nahi. Cleanup sahi likho.
+// In simple words:
+// Dev effects setup/cleanup/setup — to catch impure effects.
+// Not double in production. Write cleanup correctly.
 // -----------------------------------------------------------------------------
 const strictLine =
   "Dev double-mount finds missing cleanup; write effects idempotent.";
@@ -405,7 +405,7 @@ const strictLine =
 // -----------------------------------------------------------------------------
 // Q25: [MID] Performance checklist (bolke sunao)
 //
-// Seedha matlab:
+// In simple words:
 // 1) Unnecessary state 2) State location 3) memo where measured
 // 4) virtualize long lists 5) code split 6) RSC/less JS
 // 7) images/network 8) avoid layout thrash in effects
@@ -422,9 +422,9 @@ export const perfChecklist = [
 // -----------------------------------------------------------------------------
 // Q26: [MID] useFormStatus child-only rule
 //
-// Seedha matlab:
-// react-dom se; nearest parent form; form ke child component me call.
-// Same component jo <form> likhe wahan mat.
+// In simple words:
+// from react-dom; nearest parent form; call in child component of form.
+// Not in the same component that renders <form>.
 // -----------------------------------------------------------------------------
 const formStatusLine =
   "useFormStatus in child of form; import from react-dom.";
@@ -432,7 +432,7 @@ const formStatusLine =
 // -----------------------------------------------------------------------------
 // Q27: [MID] useEffectEvent (19.2) — trap question
 //
-// Seedha matlab:
+// In simple words:
 // Latest props in event inside effect WITHOUT adding them as deps.
 // NOT for hiding required deps (fetch userId must stay in deps).
 // -----------------------------------------------------------------------------
@@ -442,19 +442,19 @@ const effectEventLine =
 // -----------------------------------------------------------------------------
 // Q28: [MID] Controlled form + Action mix advice
 //
-// Seedha matlab:
+// In simple words:
 // Live validation → local useState.
 // Submit mutation → action / server action.
-// Don't fight FormData — name attributes rakho ya intentionally controlled.
+// Do not fight FormData — keep name attributes or intentionally controlled.
 // -----------------------------------------------------------------------------
 const mixLine = "Local state for UX; Actions for submit/mutation pipeline.";
 
 // -----------------------------------------------------------------------------
 // Q29: [MID] TypeScript — props typing basics
 //
-// Seedha matlab:
-// Explicit props type/interface best practice. React.FC optional — children
-// implicit wala purana pattern avoid karo unless chahiye.
+// In simple words:
+// Explicit props type/interface is best practice. React.FC optional — children
+// avoid the old implicit children pattern unless needed.
 // Optional props: prop?: string. Union: variant: 'sm' | 'lg'.
 // -----------------------------------------------------------------------------
 /** @typedef {{ label: string; onClick?: () => void; disabled?: boolean }} ButtonProps */
@@ -469,7 +469,7 @@ function TypedButton({ label, onClick, disabled = false }) {
 // -----------------------------------------------------------------------------
 // Q30: [MID] TypeScript — events, useRef, generic list
 //
-// Seedha matlab:
+// In simple words:
 // onChange: ChangeEvent<HTMLInputElement>. Ref: useRef<HTMLInputElement>(null).
 // Generic: function List<T>({ items, render }: { items: T[]; render: (x: T) => ReactNode })
 // as const for literal unions. Discriminated unions for modal state.
@@ -489,8 +489,8 @@ export function TypedInput() {
 // -----------------------------------------------------------------------------
 // Q31: [MID] Accessibility quick hits
 //
-// Seedha matlab:
-// Semantic HTML pehle: button, nav, main, label htmlFor.
+// In simple words:
+// Semantic HTML first: button, nav, main, label htmlFor.
 // Icon-only button → aria-label. Modal → focus trap + Esc close.
 // Keyboard: Tab order logical; custom widgets → role + key handlers.
 // Color contrast + don't rely on color alone. Live regions for toasts.
@@ -504,13 +504,13 @@ export function A11yIconButton({ onClick, label }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q32: [MID] Zustand vs Context — kab kya?
+// Q32: [MID] Zustand vs Context — when to use which?
 //
-// Seedha matlab:
-// Context: theme, locale, auth shell — kam change, tree-wide read.
+// In simple words:
+// Context: theme, locale, auth shell — low change, tree-wide read.
 // Zustand/Redux: frequent updates, many selectors, outside-React reads.
-// Context har value change pe saare consumers re-render (split mat karo to).
-// Zustand = subscribe slice-wise → kam unnecessary renders.
+// Context re-renders all consumers on every value change (unless you split).
+// Zustand = subscribe slice-wise → fewer unnecessary renders.
 // Small app + simple global → Context OK. Cart/filters/realtime → store.
 // -----------------------------------------------------------------------------
 const zustandVsContext =
@@ -519,11 +519,11 @@ const zustandVsContext =
 // -----------------------------------------------------------------------------
 // Q33: [MID] React Hook Form + Zod
 //
-// Seedha matlab:
-// RHF = uncontrolled default, register/ref, kam re-renders on keystroke.
+// In simple words:
+// RHF = uncontrolled default, register/ref, fewer re-renders on keystroke.
 // zodResolver(schema) → typed errors; schema single source of truth.
-// Server errors → setError('root' | field). defaultValues reset ke liye.
-// Large forms: Controller sirf jahan controlled widget chahiye (MUI date).
+// Server errors → setError('root' | field). defaultValues for reset.
+// Large forms: Controller only where controlled widget is needed (MUI date).
 // -----------------------------------------------------------------------------
 const rhfZodPattern = `
 const schema = z.object({ email: z.string().email(), age: z.coerce.number().min(18) });
@@ -533,8 +533,8 @@ const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zo
 // -----------------------------------------------------------------------------
 // Q34: [ADV] React Router loaders / data routers
 //
-// Seedha matlab:
-// loader route enter pe data fetch — component render se pehle.
+// In simple words:
+// loader fetches data on route enter — before component render.
 // defer() + Suspense → critical fast, slow stream. action for mutations.
 // shouldRevalidate control stale refetch. ErrorBoundary + errorElement.
 // vs useEffect fetch: no spinner flash, parallel routes, redirect in loader.
@@ -545,12 +545,12 @@ const loaderLine =
 // -----------------------------------------------------------------------------
 // Q35: [ADV] startTransition vs useDeferredValue — deep
 //
-// Seedha matlab:
+// In simple words:
 // startTransition: YOU mark state update non-urgent (setState inside).
 // useDeferredValue: defer DISPLAY of already-urgent state (prop/value lag).
 // Typing filter: setQ urgent + startTransition filter OR defer deferredQ.
-// deferredValue stale dikha sakta — isPending/deferred !== value check.
-// Dono concurrent; choose based on who owns the update.
+// deferredValue can look stale — check isPending/deferred !== value.
+// Both are concurrent features; choose based on who owns the update.
 // -----------------------------------------------------------------------------
 export function DeferredSearch({ query, items }) {
   const deferredQuery = useDeferredValue(query);
@@ -571,7 +571,7 @@ export function DeferredSearch({ query, items }) {
 // -----------------------------------------------------------------------------
 // Q36: [MID] Class lifecycle → hooks map
 //
-// Seedha matlab:
+// In simple words:
 // constructor/state init → useState initial
 // componentDidMount → useEffect([], ...)
 // componentDidUpdate → useEffect([deps], ...) — specific deps, not "everything"
@@ -591,12 +591,12 @@ const lifecycleMap = {
 // -----------------------------------------------------------------------------
 // Q37: [MID] Auth token storage — interview security
 //
-// Seedha matlab:
-// localStorage XSS pe steal ho sakta — sensitive long-lived token avoid.
-// httpOnly Secure SameSite cookie = refresh token sweet spot (JS read nahi).
+// In simple words:
+// localStorage can be stolen via XSS — avoid sensitive long-lived tokens.
+// httpOnly Secure SameSite cookie = refresh token sweet spot (JS cannot read).
 // Access token memory-only / short TTL; BFF pattern extra layer.
-// Never URL/hash me token. CSRF: SameSite + token header for cookie auth.
-// "localStorage easy" ≠ production-safe answer bolo.
+// Never put token in URL/hash. CSRF: SameSite + token header for cookie auth.
+// Do not say "localStorage is easy" as a production-safe answer.
 // -----------------------------------------------------------------------------
 const authStorageLine =
   "httpOnly cookie for refresh; short-lived access in memory; localStorage = XSS risk.";
@@ -604,11 +604,11 @@ const authStorageLine =
 // -----------------------------------------------------------------------------
 // Q38: [MID] React 19 Actions vs React Hook Form
 //
-// Seedha matlab:
+// In simple words:
 // RHF: complex client validation, field-level UX, 50+ fields, MUI integration.
 // Actions: native form submit, FormData, server mutations, progressive enhancement.
 // Mix: RHF handleSubmit → build FormData → call server action.
-// Actions replace RHF nahi — overlap submit pipeline pe. Pick by form complexity.
+// Actions do not replace RHF — overlap on submit pipeline. Pick by form complexity.
 // useActionState pending vs RHF isSubmitting — similar mental model.
 // -----------------------------------------------------------------------------
 const actionsVsRhf =
@@ -617,25 +617,25 @@ const actionsVsRhf =
 // -----------------------------------------------------------------------------
 // Q39: [MID] Testing Library — getByRole first
 //
-// Seedha matlab:
+// In simple words:
 // Query priority: getByRole > label > placeholder > text > testId (last resort).
 // getByRole('button', { name: /save/i }) = user + a11y aligned.
 // userEvent over fireEvent for realistic clicks/type.
 // findBy* async; waitFor transitions. within() scope nested widgets.
-// Implementation details (class, internal state) test mat — behavior test.
+// Do not test implementation details (class, internal state) — test behavior.
 // -----------------------------------------------------------------------------
 const rtlQueryLine =
   "getByRole('textbox', { name: 'Email' }) beats getByTestId('email-input').";
 
 // -----------------------------------------------------------------------------
-// Q40: [MID] Hydration mismatch — kyun hota, fix?
+// Q40: [MID] Hydration mismatch — why does it happen, fix?
 //
-// Seedha matlab:
-// Server HTML ≠ client first render → React warn + re-render client side.
+// In simple words:
+// Server HTML ≠ client first render → React warns + re-renders client side.
 // Culprits: Date.now(), Math.random(), window/localStorage in render,
 // invalid HTML nesting (p inside p), browser extensions.
 // Fix: useEffect for client-only bits; suppressHydrationWarning sparingly on
-// known diffs (timestamp). SSR me same deterministic output ensure karo.
+// known diffs (timestamp). Ensure same deterministic output in SSR.
 // -----------------------------------------------------------------------------
 const hydrationLine =
   "Render same on server and client; defer browser-only values to useEffect.";
@@ -643,11 +643,11 @@ const hydrationLine =
 // -----------------------------------------------------------------------------
 // Q41: [ADV] Keys + state — checkbox reorder horror story
 //
-// Seedha matlab:
+// In simple words:
 // Todo list: checkbox + text, key={index}. Reorder/delete → checked state
-// galat row pe shift (React reused DOM node by wrong identity).
+// shifts to wrong row (React reused DOM node by wrong identity).
 // Fix: key={item.id}. Form reset per item: key={`${id}-${version}`}.
-// Anti-pattern: key={Math.random()} — har render remount, state/focus lost.
+// Anti-pattern: key={Math.random()} — remount every render, state/focus lost.
 // -----------------------------------------------------------------------------
 export function CheckableList({ items }) {
   return items.map((item) => (
@@ -661,11 +661,11 @@ export function CheckableList({ items }) {
 // -----------------------------------------------------------------------------
 // Q42: [MID] Composition vs inheritance
 //
-// Seedha matlab:
-// React me inheritance avoid — components compose. children, render props,
+// In simple words:
+// In React avoid inheritance — components compose. children, render props,
 // slots (header/footer props), compound components (Tabs.Tab).
 // "Is-a" Button extends Input ❌. "Has-a" Card with actions prop ✅.
-// HOC / wrappers legacy; hooks + composition preferred today.
+// HOC / wrappers are legacy; hooks + composition preferred today.
 // -----------------------------------------------------------------------------
 function Card({ title, children, footer }) {
   return (
@@ -680,8 +680,8 @@ function Card({ title, children, footer }) {
 // -----------------------------------------------------------------------------
 // Q43: [ADV] Controlled forms at scale
 //
-// Seedha matlab:
-// 50 fields pure useState = prop drilling + re-render storm.
+// In simple words:
+// 50 fields with pure useState = prop drilling + re-render storm.
 // Patterns: useReducer single form state; RHF register; Formik less common now.
 // Field components wrap register + error display. Schema validation (Zod).
 // Split wizard steps — unmount step = consider persist or keep mounted hidden.
@@ -693,12 +693,12 @@ const scaledFormLine =
 // -----------------------------------------------------------------------------
 // Q44: [MID] Performance profiling — interview answers
 //
-// Seedha matlab:
+// In simple words:
 // React DevTools Profiler: record interaction, flamegraph, "why did this render?"
-// Commit duration rank karo — optimize slowest first. Don't memo blind.
+// Rank commit duration — optimize slowest first. Do not memo blindly.
 // Chrome Performance + React profiler combined for long tasks.
 // Lighthouse ≠ React perf; use for load metrics. Web Vitals INP/LCP.
-// Production build profile karo — dev Strict Mode double render misleading.
+// Profile production build — dev Strict Mode double render is misleading.
 // -----------------------------------------------------------------------------
 export const profilingSteps = [
   "reproduce slow interaction",
@@ -711,12 +711,12 @@ export const profilingSteps = [
 // -----------------------------------------------------------------------------
 // Q45: [ADV] Fiber / reconciliation one-liners
 //
-// Seedha matlab:
+// In simple words:
 // Fiber = unit of work node (type, props, child/sibling, alternate).
 // Reconciliation = diff old vs new tree → minimal DOM ops.
 // Render phase pure; commit phase DOM mutate + effects run.
 // Concurrent: work interruptible, priorities, lanes. Not "VDOM always fast."
-// key helps sibling identity; without key React index match kar sakta wrong.
+// key helps sibling identity; without key React may match by index wrongly.
 // -----------------------------------------------------------------------------
 const fiberLines = [
   "Fiber = work unit with alternate for double buffering",
@@ -727,9 +727,9 @@ const fiberLines = [
 // -----------------------------------------------------------------------------
 // Q46: [ADV] Suspense boundaries — design
 //
-// Seedha matlab:
-// Boundary = loading fallback jab child suspend (lazy, use(promise), RSC stream).
-// Granular boundaries: sidebar fast, main skeleton — ek poora page spinner mat.
+// In simple words:
+// Boundary = loading fallback when child suspends (lazy, use(promise), RSC stream).
+// Granular boundaries: sidebar fast, main skeleton — not one whole page spinner.
 // Nested Suspense: outer coarse, inner fine. ErrorBoundary sibling/alternate tree.
 // resetKeys remount on route change. Streaming SSR: shell first, holes fill later.
 // Don't wrap everything — intentional UX per section.
@@ -740,12 +740,12 @@ const suspenseDesign =
 // -----------------------------------------------------------------------------
 // Q47: [ADV] Server vs Client Component decision tree
 //
-// Seedha matlab:
+// In simple words:
 // Server default (Next App Router): DB, secrets, heavy libs, zero JS to client.
 // Client ('use client'): useState, useEffect, onClick, browser APIs, most 3rd party UI.
-// Pass serializable props only — functions/classes server→client nahi.
+// Pass serializable props only — no functions/classes server→client.
 // Composition: Server wraps Client; children trick for slotting client inside server.
-// Boundary cost: 'use client' file + imports bundle me aate hain — leaf pe rakho.
+// Boundary cost: 'use client' file + imports go in bundle — keep at leaves.
 // -----------------------------------------------------------------------------
 const rscDecisionTree = `
 Need interactivity/hooks/browser? → Client

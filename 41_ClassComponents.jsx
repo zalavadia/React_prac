@@ -1,15 +1,15 @@
 // ============================================================================
 // 41 — Class Components (Legacy / Interview)
-// Level: ADVANCED  |  Sequence: hooks seekho pehle, phir yeh interview revise
+// Level: ADVANCED  |  Sequence: learn hooks first, then use this for interview revision
 // ============================================================================
 //
-// LAYMAN: Purane React me components CLASS the — class Counter extends Component.
-// Ab hooks wale function components standard hain, par interviews + legacy codebases
-// me class lifecycle, setState, binding, Error Boundaries ab bhi poochte hain.
+// SIMPLE: In old React, components were CLASSES — class Counter extends Component.
+// Function components with hooks are standard now, but interviews and legacy codebases
+// still ask about class lifecycle, setState, binding, and Error Boundaries.
 //
-// KYUN: Samjho to hooks migration easy; Error Boundary ab bhi class-only core API.
+// WHY: Understanding this makes hooks migration easier; Error Boundary is still class-only in the core API.
 // INTERVIEW: lifecycle order, setState batching, bind trap, PureComponent shallow compare.
-// Vite/React 19 project me use — teaching file. (class API yahan intentional)
+// Use in Vite/React 19 project — teaching file. (class API intentional here)
 //
 // ============================================================================
 
@@ -24,13 +24,13 @@ import {
 // -----------------------------------------------------------------------------
 // Q1: Component vs PureComponent
 //
-// Kya karna hai:
-// Component har parent re-render pe child render (default).
-// PureComponent shallow compare props/state — same refs → skip render.
+// Task:
+// Component re-renders child on every parent re-render (default).
+// PureComponent shallow compares props/state — same refs → skip render.
 //
-// Seedha matlab:
+// In simple words:
 // PureComponent = built-in shouldComponentUpdate with shallow compare.
-// Deep nested object change detect nahi — mutation trap.
+// Does not detect deep nested object changes — mutation trap.
 // -----------------------------------------------------------------------------
 class PlainChild extends Component {
   render() {
@@ -64,12 +64,12 @@ class ParentPlainPure extends Component {
 // -----------------------------------------------------------------------------
 // Q2: render, constructor + super(props)
 //
-// Kya karna hai:
-// constructor me state/refs init; super(props) pehle — warna this undefined.
-// render() JSX return — required.
+// Task:
+// Initialize state/refs in constructor; call super(props) first — otherwise this is undefined.
+// render() must return JSX — required.
 //
-// Seedha matlab:
-// Class field state = {} bhi chalega (modern). Constructor me bind bhi yahan.
+// In simple words:
+// Class field state = {} also works (modern). You can bind handlers in the constructor too.
 // -----------------------------------------------------------------------------
 class Greeting extends Component {
   constructor(props) {
@@ -88,18 +88,18 @@ class Greeting extends Component {
 // -----------------------------------------------------------------------------
 // Q3: this.state + setState (object + functional)
 //
-// Kya karna hai:
-// setState({ partial }) merge hota hai. Functional: prevState => next.
+// Task:
+// setState({ partial }) merges. Functional form: prevState => next.
 //
-// Seedha matlab:
-// Object form async feel — do setState same tick me stale ho sakta.
-// Functional updater safe jab purani state pe depend.
+// In simple words:
+// Object form feels async — two setState calls in the same tick can use stale state.
+// Functional updater is safe when you depend on previous state.
 // -----------------------------------------------------------------------------
 class CounterState extends Component {
   state = { count: 0 };
   inc = () => {
     this.setState({ count: this.state.count + 1 }); // object
-    this.setState({ count: this.state.count + 1 }); // ❌ dono same base — +1 hi
+    this.setState({ count: this.state.count + 1 }); // ❌ both read same base — only +1 total
   };
   incSafe = () => {
     this.setState((prev) => ({ count: prev.count + 1 })); // ✅
@@ -119,12 +119,12 @@ class CounterState extends Component {
 // -----------------------------------------------------------------------------
 // Q4: Binding — constructor bind vs arrow class fields
 //
-// Kya karna hai:
-// this.handleClick ko JSX me dena — bind zaroori warna this undefined.
+// Task:
+// Pass this.handleClick to JSX — binding is required, otherwise this is undefined.
 //
-// Seedha matlab:
-// 3 tareeke: constructor bind, arrow class field, ya render me arrow wrapper.
-// Arrow class field sabse clean modern class code me.
+// In simple words:
+// 3 ways: constructor bind, arrow class field, or arrow wrapper in render.
+// Arrow class field is the cleanest in modern class code.
 // -----------------------------------------------------------------------------
 class BindDemo extends Component {
   // way 1 — constructor (legacy style)
@@ -159,11 +159,11 @@ class BindDemo extends Component {
 // -----------------------------------------------------------------------------
 // Q5: props vs state
 //
-// Kya karna hai:
-// props = parent se read-only input. state = component ka khud ka data.
+// Task:
+// props = read-only input from parent. state = component's own data.
 //
-// Seedha matlab:
-// props mutate mat. state setState se. "Smart vs dumb" — class me bhi same idea.
+// In simple words:
+// Do not mutate props. Update state with setState. "Smart vs dumb" — same idea in classes.
 // -----------------------------------------------------------------------------
 class UserCard extends Component {
   state = { expanded: false };
@@ -181,11 +181,11 @@ class UserCard extends Component {
 // -----------------------------------------------------------------------------
 // Q6: componentDidMount fetch
 //
-// Kya karna hai:
-// Mount ke baad API call — DOM ready, good for initial data.
+// Task:
+// API call after mount — DOM is ready, good for initial data.
 //
-// Seedha matlab:
-// Hooks me useEffect(() => {}, []) same job. Cancel flag ya AbortController use karo.
+// In simple words:
+// useEffect(() => {}, []) does the same job in hooks. Use a cancel flag or AbortController.
 // -----------------------------------------------------------------------------
 class UserFetch extends Component {
   state = { user: null, loading: true };
@@ -212,12 +212,12 @@ class UserFetch extends Component {
 // -----------------------------------------------------------------------------
 // Q7: componentDidUpdate + infinite loop trap
 //
-// Kya karna hai:
-// prevProps/prevState compare karke conditional setState.
+// Task:
+// Compare prevProps/prevState and call setState conditionally.
 //
-// Seedha matlab:
-// Har update pe bina condition setState → infinite loop 💥
-// Hooks: useEffect deps galat = same trap.
+// In simple words:
+// setState on every update without a condition → infinite loop 💥
+// Hooks: wrong useEffect deps = same trap.
 // -----------------------------------------------------------------------------
 class SyncProp extends Component {
   state = { mirror: "" };
@@ -225,7 +225,7 @@ class SyncProp extends Component {
     if (prevProps.text !== this.props.text) {
       this.setState({ mirror: this.props.text.toUpperCase() });
     }
-    // ❌ this.setState({ mirror: this.props.text }); // har bar → loop
+    // ❌ this.setState({ mirror: this.props.text }); // every time → loop
   }
   render() {
     return <p>{this.state.mirror}</p>;
@@ -235,11 +235,11 @@ class SyncProp extends Component {
 // -----------------------------------------------------------------------------
 // Q8: componentWillUnmount cleanup
 //
-// Kya karna hai:
-// Timers, subscriptions, listeners hatao — memory leak na ho.
+// Task:
+// Remove timers, subscriptions, and listeners — avoid memory leaks.
 //
-// Seedha matlab:
-// didMount me subscribe → willUnmount me unsubscribe. Symmetric cleanup.
+// In simple words:
+// Subscribe in didMount → unsubscribe in willUnmount. Symmetric cleanup.
 // -----------------------------------------------------------------------------
 class TimerClass extends Component {
   state = { sec: 0 };
@@ -259,12 +259,12 @@ class TimerClass extends Component {
 // -----------------------------------------------------------------------------
 // Q9: shouldComponentUpdate
 //
-// Kya karna hai:
-// Manual render gate — return false skip render.
+// Task:
+// Manual render gate — return false to skip render.
 //
-// Seedha matlab:
-// PureComponent yeh automatically shallow karta hai.
-// Custom deep compare rare — prefer immutable data + PureComponent/memo.
+// In simple words:
+// PureComponent does this automatically with shallow compare.
+// Custom deep compare is rare — prefer immutable data + PureComponent/memo.
 // -----------------------------------------------------------------------------
 class ManualSCU extends Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -279,12 +279,12 @@ class ManualSCU extends Component {
 // -----------------------------------------------------------------------------
 // Q10: getDerivedStateFromProps (rare, anti-pattern note)
 //
-// Kya karna hai:
-// Static method — props se state derive. Pure, no side effects.
+// Task:
+// Static method — derive state from props. Pure, no side effects.
 //
-// Seedha matlab:
-// ⚠️ Anti-pattern aksar: prop copy state me. Prefer controlled OR key remount.
-// Valid: UI state jo prop flip pe reset ho (rare).
+// In simple words:
+// ⚠️ Often an anti-pattern: copying props into state. Prefer controlled OR key remount.
+// Valid case: UI state that resets when a prop flips (rare).
 // -----------------------------------------------------------------------------
 class DerivedDemo extends Component {
   state = { draft: "" };
@@ -307,12 +307,12 @@ class DerivedDemo extends Component {
 // -----------------------------------------------------------------------------
 // Q11: getSnapshotBeforeUpdate
 //
-// Kya karna hai:
-// DOM update se PEHLE snapshot (scroll position). didUpdate me use.
+// Task:
+// Snapshot BEFORE DOM update (scroll position). Use in didUpdate.
 //
-// Seedha matlab:
-// Chat list scroll preserve. Return value → componentDidUpdate 3rd arg.
-// Hooks me ref + layout effect patterns common ab.
+// In simple words:
+// Preserve chat list scroll. Return value → componentDidUpdate 3rd arg.
+// Ref + layout effect patterns are more common in hooks now.
 // -----------------------------------------------------------------------------
 class ChatList extends Component {
   listRef = createRef();
@@ -343,12 +343,12 @@ class ChatList extends Component {
 // -----------------------------------------------------------------------------
 // Q12: Error boundary as class
 //
-// Kya karna hai:
-// getDerivedStateFromError + componentDidCatch — sirf class (core API).
+// Task:
+// getDerivedStateFromError + componentDidCatch — class only (core API).
 //
-// Seedha matlab:
-// Render/lifecycle errors pakadta. Events/async nahi — try/catch wahan.
-// See file 20 — yahan class syntax revise.
+// In simple words:
+// Catches render/lifecycle errors. Not events/async — use try/catch there.
+// See file 20 — class syntax revision here.
 // -----------------------------------------------------------------------------
 class ClassErrorBoundary extends Component {
   state = { hasError: false };
@@ -384,12 +384,12 @@ class BoundaryDemo extends Component {
 // -----------------------------------------------------------------------------
 // Q13: defaultProps / propTypes mention
 //
-// Kya karna hai:
+// Task:
 // defaultProps static; propTypes runtime dev check (prop-types package).
 //
-// Seedha matlab:
-// TS projects me PropTypes kam; default params / defaultProps ab bhi.
-// defaultProps function components pe deprecated direction — destructure defaults.
+// In simple words:
+// PropTypes less common in TS projects; default params / defaultProps still used.
+// defaultProps on function components trending deprecated — use destructure defaults.
 // -----------------------------------------------------------------------------
 class Avatar extends Component {
   static defaultProps = {
@@ -401,17 +401,17 @@ class Avatar extends Component {
     return <img src={src} width={size} height={size} alt={alt} />;
   }
 }
-// PropTypes (Vite me: npm i prop-types):
+// PropTypes (in Vite: npm i prop-types):
 // Avatar.propTypes = { src: PropTypes.string.isRequired, size: PropTypes.number };
 
 // -----------------------------------------------------------------------------
 // Q14: refs — createRef vs callback ref
 //
-// Kya karna hai:
-// createRef instance field; callback ref fn (legacy string refs mat use).
+// Task:
+// createRef as instance field; callback ref fn (do not use legacy string refs).
 //
-// Seedha matlab:
-// Focus input: this.inputRef.current.focus(). Callback jab unmount/remount dynamic ho.
+// In simple words:
+// Focus input: this.inputRef.current.focus(). Callback when unmount/remount is dynamic.
 // -----------------------------------------------------------------------------
 class FocusInput extends Component {
   inputRef = createRef();
@@ -443,12 +443,12 @@ class CallbackRefDemo extends Component {
 // -----------------------------------------------------------------------------
 // Q15: Force update — when NOT to
 //
-// Kya karna hai:
+// Task:
 // this.forceUpdate() exists — almost never use.
 //
-// Seedha matlab:
-// State/props change se render aana chahiye. forceUpdate = code smell.
-// External mutable data? → state me copy ya subscription pattern.
+// In simple words:
+// Render should come from state/props change. forceUpdate = code smell.
+// External mutable data? → copy into state or use subscription pattern.
 // -----------------------------------------------------------------------------
 class ForceBad extends Component {
   external = { n: 0 };
@@ -466,10 +466,10 @@ class ForceBad extends Component {
 // -----------------------------------------------------------------------------
 // Q16: Lifecycle order — mount / update / unmount (comment diagram)
 //
-// Kya karna hai:
-// Yaad kar interview me bolne ke liye.
+// Task:
+// Memorize this for interviews.
 //
-// Seedha matlab:
+// In simple words:
 //
 // MOUNT (parent → child):
 //   constructor → getDerivedStateFromProps → render →
@@ -482,7 +482,7 @@ class ForceBad extends Component {
 // UNMOUNT:
 //   componentWillUnmount (child first, parent last)
 //
-// React 18+ Strict Mode DEV: mount/unmount/remount extra — cleanup test.
+// React 18+ Strict Mode DEV: extra mount/unmount/remount — tests cleanup.
 // -----------------------------------------------------------------------------
 const lifecycleOrderNote =
   "Mount: construct→render→didMount. Update: derive→SCU→render→snapshot→didUpdate. Unmount: willUnmount.";
@@ -490,10 +490,10 @@ const lifecycleOrderNote =
 // -----------------------------------------------------------------------------
 // Q17: Class → hooks migration map
 //
-// Kya karna hai:
+// Task:
 // Mental translation table — interview gold.
 //
-// Seedha matlab:
+// In simple words:
 // constructor state     → useState / useReducer initial
 // componentDidMount       → useEffect(() => {}, [])
 // componentDidUpdate      → useEffect(() => {}, [deps])
@@ -519,10 +519,10 @@ const migrationMap = {
 // -----------------------------------------------------------------------------
 // Q18: Why industry moved to hooks
 //
-// Kya karna hai:
-// Conceptual — code me comment + chhota hook version.
+// Task:
+// Conceptual — comment in code + small hook version.
 //
-// Seedha matlab:
+// In simple words:
 // 1) Logic reuse without HOC/render-prop nesting hell
 // 2) Related lifecycle split across methods → one useEffect cluster
 // 3) Classes: this binding confusion, bigger bundle, no compiler wins easy
@@ -537,12 +537,12 @@ function HookCounter({ initial = 0 }) {
 // -----------------------------------------------------------------------------
 // Q19: Mixed class parent + function child
 //
-// Kya karna hai:
-// Class parent render me function child — normal React, no special API.
+// Task:
+// Class parent renders function child — normal React, no special API.
 //
-// Seedha matlab:
-// Legacy screen class wrapper + new feature function components andar.
-// Gradual migration pattern real companies me.
+// In simple words:
+// Legacy screen as class wrapper + new feature function components inside.
+// Gradual migration pattern in real companies.
 // -----------------------------------------------------------------------------
 function ModernButton({ label, onClick }) {
   return <button onClick={onClick}>{label}</button>;
@@ -566,12 +566,12 @@ class LegacyShell extends Component {
 // -----------------------------------------------------------------------------
 // Q20: setState batching in classes
 //
-// Kya karna hai:
-// React 18+ automatic batching — event handlers, promises, timeouts sab.
+// Task:
+// React 18+ automatic batching — event handlers, promises, timeouts all batched.
 //
-// Seedha matlab:
-// Multiple setState → usually ek re-render. Functional updaters chain safe.
-// flushSync force sync rare — perf hit.
+// In simple words:
+// Multiple setState → usually one re-render. Functional updaters chain safely.
+// flushSync forces sync rarely — perf hit.
 // -----------------------------------------------------------------------------
 class BatchClass extends Component {
   state = { a: 0, b: 0 };
@@ -592,10 +592,10 @@ class BatchClass extends Component {
 // -----------------------------------------------------------------------------
 // Q21: Context in class — static contextType
 //
-// Kya karna hai:
-// ThemeContext assign static contextType; this.context read.
+// Task:
+// Assign ThemeContext to static contextType; read this.context.
 //
-// Seedha matlab:
+// In simple words:
 // Hooks: useContext. Class: contextType OR Context.Consumer wrapper (verbose).
 // -----------------------------------------------------------------------------
 const ThemeContextClass = createContext("light");
@@ -622,14 +622,14 @@ class ThemeProviderClass extends Component {
 // -----------------------------------------------------------------------------
 // Q22: [MID] Interview pitfalls — mutate state, forget bind
 //
-// Kya karna hai:
-// Common galatiyan dikhao + fix.
+// Task:
+// Show common mistakes + fix.
 //
-// Seedha matlab:
+// In simple words:
 // ❌ this.state.items.push(x); this.setState({ items: this.state.items })
 // ✅ this.setState({ items: [...this.state.items, x] })
 // ❌ <button onClick={this.handle}> — this undefined
-// ✅ arrow field ya bind
+// ✅ arrow field or bind
 // -----------------------------------------------------------------------------
 class PitfallDemo extends Component {
   state = { items: ["a"] };
@@ -657,13 +657,13 @@ class PitfallDemo extends Component {
 // -----------------------------------------------------------------------------
 // Q23: PureComponent shallow compare demo
 //
-// Kya karna hai:
-// Same object reference prop → PureChild skip render.
-// New object each time → render hoga.
+// Task:
+// Same object reference prop → PureChild skips render.
+// New object each time → will render.
 //
-// Seedha matlab:
-// style={{ color: "red" }} har bar naya object — PureComponent faida zero.
-// Stable reference ya primitive props pass karo.
+// In simple words:
+// style={{ color: "red" }} new object every time — PureComponent benefit zero.
+// Pass stable reference or primitive props.
 // -----------------------------------------------------------------------------
 class ShallowDemo extends Component {
   state = { n: 0 };
@@ -684,15 +684,15 @@ class ShallowDemo extends Component {
 // -----------------------------------------------------------------------------
 // Q24: [ADV] Legacy UNSAFE_ lifecycle warning
 //
-// Kya karna hai:
+// Task:
 // UNSAFE_componentWillMount/ReceiveProps/Update — deprecated paths.
 //
-// Seedha matlab:
-// Strict Mode + future React me hata sakte. Migrate:
+// In simple words:
+// Strict Mode + future React may remove them. Migrate:
 // willMount → constructor / componentDidMount
-// willReceiveProps → getDerivedStateFromProps (careful) ya derived render
+// willReceiveProps → getDerivedStateFromProps (careful) or derived render
 // willUpdate → getSnapshotBeforeUpdate + didUpdate
-// Codemods exist — interview me "UNSAFE prefix = migrate" bolo.
+// Codemods exist — in interview say "UNSAFE prefix = migrate".
 // -----------------------------------------------------------------------------
 const unsafeLifecycleNote =
   "UNSAFE_* lifecycles = legacy; use getDerivedStateFromProps, getSnapshotBeforeUpdate, or hooks.";
@@ -700,12 +700,12 @@ const unsafeLifecycleNote =
 // -----------------------------------------------------------------------------
 // Q25: Counter — class vs function (mental conversion)
 //
-// Kya karna hai:
-// Same counter dono style — side-by-side seekho.
+// Task:
+// Same counter both styles — learn side-by-side.
 //
-// Seedha matlab:
-// Class: state + bound handlers + lifecycle optional.
-// Function: useState one-liner. Behavior same — syntax different.
+// In simple words:
+// Class: state + bound handlers + optional lifecycle.
+// Function: useState one-liner. Same behavior — different syntax.
 // -----------------------------------------------------------------------------
 class ClassCounter extends Component {
   state = { count: 0 };

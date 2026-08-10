@@ -1,18 +1,18 @@
 // ============================================================================
 // 43 — Accessibility (a11y) Deep Dive
-// Level: MID / ADV  |  Sequence: pehle 22 routing, phir yeh UI polish ke liye
+// Level: MID / ADV  |  Sequence: file 22 routing first, then this for UI polish
 // ============================================================================
 //
-// LAYMAN: a11y = sab users app use kar saken — keyboard-only, screen reader,
-// low vision, motor issues. Semantic HTML pehle; ARIA sirf jab native element
-// kaafi na ho. Button ko button banao, div pe onClick mat.
+// SIMPLE: a11y = all users can use the app — keyboard-only, screen reader,
+// low vision, motor issues. Semantic HTML first; ARIA only when a native element
+// is not enough. Make a button a real button; do not use div with onClick.
 //
-// Screen reader = software jo page padhta hai (NVDA, VoiceOver, JAWS).
-// Focus = keyboard cursor kahan hai — modal/route change pe manage karo.
+// Screen reader = software that reads the page aloud (NVDA, VoiceOver, JAWS).
+// Focus = where the keyboard cursor is — manage it on modal/route change.
 //
-// KYUN: Legal (WCAG), SEO, better UX sabke liye. Mid+ interviews me expected.
-// INTERVIEW: button vs div; aria-* kab; focus trap; getByRole testing.
-// Vite/React 19 project me use — teaching file.
+// WHY: Legal (WCAG), SEO, better UX for everyone. Expected in mid+ interviews.
+// INTERVIEW: button vs div; aria-* when; focus trap; getByRole testing.
+// Vite/React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -24,13 +24,13 @@ import {
 } from "react";
 
 // -----------------------------------------------------------------------------
-// Q1: Semantic HTML pehle — div soup mat banao
+// Q1: Semantic HTML first — do not make div soup
 //
-// Kya karna hai:
-// nav, main, header, footer, section, article, button, ul/li use karo.
+// Task:
+// Use nav, main, header, footer, section, article, button, ul/li.
 //
-// Seedha matlab:
-// Browser + screen reader ko structure free me milta hai. ARIA band-aid nahi.
+// In simple words:
+// Browser and screen reader get structure for free. ARIA is not a band-aid.
 // -----------------------------------------------------------------------------
 function SemanticPage() {
   return (
@@ -59,11 +59,11 @@ function SemanticPage() {
 // -----------------------------------------------------------------------------
 // Q2: button vs div onClick — keyboard + SR default
 //
-// Kya karna hai:
-// Clickable cheez ke liye <button> ya <a href>. Div tab jab role+keyboard add karo.
+// Task:
+// For clickable things use <button> or <a href>. Use div only when you add role+keyboard.
 //
-// Seedha matlab:
-// Native button = Enter/Space, focusable, "button" announce. Div = kuch nahi.
+// In simple words:
+// Native button = Enter/Space, focusable, announces "button". Div = nothing.
 // -----------------------------------------------------------------------------
 function GoodButton() {
   return <button type="button">Save</button>;
@@ -94,13 +94,13 @@ function DivAsButtonIfYouMust() {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: label + htmlFor — input ko name do
+// Q3: label + htmlFor — give the input a name
 //
-// Kya karna hai:
-// <label htmlFor={id}> se input click area bada + SR label link.
+// Task:
+// <label htmlFor={id}> makes a bigger click area + links the label for screen reader.
 //
-// Seedha matlab:
-// Placeholder label nahi. Visible label best; nahi to aria-label.
+// In simple words:
+// Placeholder is not a label. Visible label is best; otherwise use aria-label.
 // -----------------------------------------------------------------------------
 function EmailField() {
   const id = useId();
@@ -115,10 +115,10 @@ function EmailField() {
 // -----------------------------------------------------------------------------
 // Q4: aria-label vs aria-labelledby
 //
-// Kya karna hai:
+// Task:
 // aria-label = hidden text string. aria-labelledby = existing element id(s).
 //
-// Seedha matlab:
+// In simple words:
 // Icon-only button → aria-label="Close". Dialog title id → aria-labelledby.
 // -----------------------------------------------------------------------------
 function IconClose({ onClose }) {
@@ -138,13 +138,13 @@ function NamedByTitle({ titleId }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q5: aria-describedby — extra hint / error link
+// Q5: aria-describedby — link extra hint / error
 //
-// Kya karna hai:
+// Task:
 // Input + hint/error element id → aria-describedby={hintId}.
 //
-// Seedha matlab:
-// SR label ke baad description padhta hai. Errors yahan attach karo.
+// In simple words:
+// Screen reader reads description after the label. Attach errors here.
 // -----------------------------------------------------------------------------
 function PasswordWithHint() {
   const inputId = useId();
@@ -165,11 +165,11 @@ function PasswordWithHint() {
 // -----------------------------------------------------------------------------
 // Q6: aria-live polite vs assertive — dynamic announcements
 //
-// Kya karna hai:
-// Toast/status ke liye region: role="status" (polite) ya role="alert" (assertive).
+// Task:
+// Toast/status region: role="status" (polite) or role="alert" (assertive).
 //
-// Seedha matlab:
-// polite = current speech khatam, phir padho. assertive = turant interrupt.
+// In simple words:
+// polite = finish current speech, then read. assertive = interrupt right away.
 // -----------------------------------------------------------------------------
 function LiveStatus({ message }) {
   return (
@@ -191,11 +191,11 @@ function LiveAlert({ error }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] role="dialog" + focus trap basics
 //
-// Kya karna hai:
-// Modal open → focus andar; Tab loop; background inert (aria-modal).
+// Task:
+// Modal open → focus inside; Tab loop; background inert (aria-modal).
 //
-// Seedha matlab:
-// Focus trap = Tab se bahar na nikle jab tak close. Libraries (FocusTrap) bhi.
+// In simple words:
+// Focus trap = Tab does not leave until close. Libraries (FocusTrap) help too.
 // -----------------------------------------------------------------------------
 function SimpleModal({ open, onClose, title, children }) {
   const dialogRef = useRef(null);
@@ -228,13 +228,13 @@ function SimpleModal({ open, onClose, title, children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q8: Escape se modal close
+// Q8: Close modal with Escape
 //
-// Kya karna hai:
-// keydown Escape → onClose. Focus wapas trigger pe.
+// Task:
+// keydown Escape → onClose. Return focus to trigger.
 //
-// Seedha matlab:
-// Expected keyboard pattern. onKeyDown document ya dialog pe.
+// In simple words:
+// Expected keyboard pattern. onKeyDown on document or dialog.
 // -----------------------------------------------------------------------------
 function ModalWithEscape({ open, onClose, children }) {
   useEffect(() => {
@@ -253,11 +253,11 @@ function ModalWithEscape({ open, onClose, children }) {
 // -----------------------------------------------------------------------------
 // Q9: tabIndex 0 vs -1
 //
-// Kya karna hai:
-// 0 = natural tab order me. -1 = programmatic focus only (modal container).
+// Task:
+// 0 = in natural tab order. -1 = programmatic focus only (modal container).
 //
-// Seedha matlab:
-// tabIndex positive mat (tab order hack). Roving tabindex lists me common.
+// In simple words:
+// Do not use positive tabIndex (tab order hack). Roving tabindex is common in lists.
 // -----------------------------------------------------------------------------
 function RovingTabMenu({ items }) {
   const [active, setActive] = useState(0);
@@ -282,11 +282,11 @@ function RovingTabMenu({ items }) {
 // -----------------------------------------------------------------------------
 // Q10: Keyboard Enter / Space handlers
 //
-// Kya karna hai:
-// Custom widgets pe Space default scroll roko; Enter/Space = activate.
+// Task:
+// On custom widgets stop Space default scroll; Enter/Space = activate.
 //
-// Seedha matlab:
-// Native button/link pe zarurat nahi. role="button" pe zaruri.
+// In simple words:
+// Not needed on native button/link. Required on role="button".
 // -----------------------------------------------------------------------------
 function CustomPressable({ onPress, children }) {
   function handleKey(e) {
@@ -303,13 +303,13 @@ function CustomPressable({ onPress, children }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Skip link — keyboard users ko main content jump
+// Q11: Skip link — keyboard users jump to main content
 //
-// Kya karna hai:
-// Page top pe hidden link → #main-content. Focus pe visible.
+// Task:
+// Hidden link at page top → #main-content. Visible on focus.
 //
-// Seedha matlab:
-// Har page pe nav repeat skip karo. CSS se off-screen until focus.
+// In simple words:
+// Skip repeated nav on every page. CSS off-screen until focus.
 // -----------------------------------------------------------------------------
 function SkipLink() {
   return (
@@ -319,18 +319,18 @@ function SkipLink() {
   );
 }
 
-// CSS (global ya module):
+// CSS (global or module):
 // .skip-link { position:absolute; left:-9999px; }
 // .skip-link:focus { left:1rem; top:1rem; z-index:9999; }
 
 // -----------------------------------------------------------------------------
-// Q12: Heading hierarchy — ek h1, order mat todo
+// Q12: Heading hierarchy — one h1, do not break order
 //
-// Kya karna hai:
-// Page me ek h1; sections h2, sub h3. Levels skip mat (h2→h4).
+// Task:
+// One h1 per page; sections h2, sub h3. Do not skip levels (h2→h4).
 //
-// Seedha matlab:
-// SR users headings se navigate. Visual size CSS se, tag semantic rakho.
+// In simple words:
+// Screen reader users navigate by headings. Visual size from CSS; keep tags semantic.
 // -----------------------------------------------------------------------------
 function HeadingOutline() {
   return (
@@ -350,11 +350,11 @@ function HeadingOutline() {
 // -----------------------------------------------------------------------------
 // Q13: Alt text — decorative vs informative images
 //
-// Kya karna hai:
-// Meaningful img → alt describe. Decorative → alt="" (SR skip).
+// Task:
+// Meaningful img → alt describes it. Decorative → alt="" (screen reader skips).
 //
-// Seedha matlab:
-// "image of" mat likho. Button me text ho to redundant alt avoid.
+// In simple words:
+// Do not write "image of". If button has text, avoid redundant alt.
 // -----------------------------------------------------------------------------
 function ProductCard({ name, decorative }) {
   return (
@@ -372,11 +372,11 @@ function ProductCard({ name, decorative }) {
 // -----------------------------------------------------------------------------
 // Q14: [MID] Form errors — aria-invalid + aria-errormessage
 //
-// Kya karna hai:
-// Error pe aria-invalid="true"; error span id → aria-errormessage.
+// Task:
+// On error aria-invalid="true"; error span id → aria-errormessage.
 //
-// Seedha matlab:
-// Color-only error mat. SR ko field invalid + message dono chahiye.
+// In simple words:
+// Do not use color-only errors. Screen reader needs both invalid field and message.
 // -----------------------------------------------------------------------------
 function FieldWithError({ label, value, onChange, error }) {
   const inputId = useId();
@@ -403,11 +403,11 @@ function FieldWithError({ label, value, onChange, error }) {
 // -----------------------------------------------------------------------------
 // Q15: disabled vs aria-disabled
 //
-// Kya karna hai:
+// Task:
 // disabled = no focus, no events. aria-disabled = looks disabled, focusable (explain why).
 //
-// Seedha matlab:
-// Real disabled best. aria-disabled tab jab tooltip se reason dena ho.
+// In simple words:
+// Real disabled is best. aria-disabled when you need a tooltip to explain why.
 // -----------------------------------------------------------------------------
 function SubmitRow({ canSubmit }) {
   return (
@@ -433,11 +433,11 @@ function SubmitRow({ canSubmit }) {
 // -----------------------------------------------------------------------------
 // Q16: [MID] Focus management after route / modal close
 //
-// Kya karna hai:
-// Modal band → trigger focus. Route change → heading ya main focus (SPA).
+// Task:
+// Modal close → focus trigger. Route change → focus heading or main (SPA).
 //
-// Seedha matlab:
-// Focus kho gaya = keyboard user lost. useEffect me restore karo.
+// In simple words:
+// Lost focus = keyboard user is lost. Restore in useEffect.
 // -----------------------------------------------------------------------------
 function RouteFocusMain() {
   const mainRef = useRef(null);
@@ -454,11 +454,11 @@ function RouteFocusMain() {
 // -----------------------------------------------------------------------------
 // Q17: prefers-reduced-motion — animation respect
 //
-// Kya karna hai:
+// Task:
 // CSS @media (prefers-reduced-motion: reduce) { animation: none; }
 //
-// Seedha matlab:
-// Vestibular issues wale users ko motion kam. JS se matchMedia bhi.
+// In simple words:
+// Less motion for users with vestibular issues. matchMedia in JS works too.
 // -----------------------------------------------------------------------------
 function usePrefersReducedMotion() {
   const [reduce, setReduce] = useState(false);
@@ -482,11 +482,11 @@ function MotionSafeSpinner() {
 // -----------------------------------------------------------------------------
 // Q18: Color contrast note (WCAG)
 //
-// Kya karna hai:
+// Task:
 // Text 4.5:1 (normal), 3:1 large. UI components 3:1. Don't rely on color alone.
 //
-// Seedha matlab:
-// Comment/design me contrast check. Error = icon + text, sirf red mat.
+// In simple words:
+// Check contrast in design/comments. Error = icon + text, not red alone.
 // -----------------------------------------------------------------------------
 // Design token example comment:
 // --text-on-bg: #1a1a1a on #ffffff → ~16:1 ✅
@@ -495,11 +495,11 @@ function MotionSafeSpinner() {
 // -----------------------------------------------------------------------------
 // Q19: Landmark roles — main, nav, complementary
 //
-// Kya karna hai:
-// Semantic tags = landmarks auto. Missing pe role="navigation" etc.
+// Task:
+// Semantic tags = landmarks auto. If missing use role="navigation" etc.
 //
-// Seedha matlab:
-// SR landmark shortcut se jump. Ek main per page. Multiple nav = aria-label.
+// In simple words:
+// Screen reader jumps via landmark shortcuts. One main per page. Multiple nav = aria-label.
 // -----------------------------------------------------------------------------
 function Landmarks() {
   return (
@@ -514,11 +514,11 @@ function Landmarks() {
 // -----------------------------------------------------------------------------
 // Q20: [ADV] Accessible custom checkbox / switch
 //
-// Kya karna hai:
-// Hidden native input + styled label; ya role="switch" + aria-checked.
+// Task:
+// Hidden native input + styled label; or role="switch" + aria-checked.
 //
-// Seedha matlab:
-// Native <input type="checkbox"> best. Custom me keyboard + checked state sync.
+// In simple words:
+// Native <input type="checkbox"> is best. Custom needs keyboard + checked state sync.
 // -----------------------------------------------------------------------------
 function AccessibleSwitch({ checked, onChange, label }) {
   const id = useId();
@@ -556,11 +556,11 @@ function CustomCheckbox({ checked, onChange, label }) {
 // -----------------------------------------------------------------------------
 // Q21: Screen-reader-only CSS (.sr-only / .visually-hidden)
 //
-// Kya karna hai:
-// Text visually hide, SR ko visible. Icon buttons ke extra context.
+// Task:
+// Hide text visually, keep visible to screen reader. Extra context for icon buttons.
 //
-// Seedha matlab:
-// display:none / visibility:hidden SR se bhi chhupa deta — mat use.
+// In simple words:
+// display:none / visibility:hidden hides from screen reader too — do not use.
 // -----------------------------------------------------------------------------
 const srOnlyStyles = {
   position: "absolute",
@@ -586,11 +586,11 @@ function SrOnlyExample() {
 // -----------------------------------------------------------------------------
 // Q22: [MID] Testing mindset — axe + RTL getByRole
 //
-// Kya karna hai:
+// Task:
 // eslint-plugin-jsx-a11y; jest-axe; query by role/name, not testId only.
 //
-// Seedha matlab:
-// getByRole('button', { name: /save/i }) = user + SR jaisa query.
+// In simple words:
+// getByRole('button', { name: /save/i }) = query like user + screen reader.
 // -----------------------------------------------------------------------------
 // import { render, screen } from '@testing-library/react';
 // import { axe, toHaveNoViolations } from 'jest-axe';
@@ -614,11 +614,11 @@ function testingChecklist() {
 // -----------------------------------------------------------------------------
 // Q23: React 19 — aria-* props on custom components
 //
-// Kya karna hai:
-// {...props} spread DOM tak; aria-* + id forward karo.
+// Task:
+// {...props} spread to DOM; forward aria-* + id.
 //
-// Seedha matlab:
-// Wrapper Button me aria-label pass-through. Don't strip unknown aria-*.
+// In simple words:
+// Pass aria-label through wrapper Button. Do not strip unknown aria-*.
 // -----------------------------------------------------------------------------
 function Button({ children, ...props }) {
   return (
@@ -635,10 +635,10 @@ function Button({ children, ...props }) {
 // -----------------------------------------------------------------------------
 // Q24: [ADV] Common anti-patterns — interview red flags
 //
-// Kya karna hai:
-// Yaad karo kya NA karna: div buttons, placeholder-only labels, positive tabIndex.
+// Task:
+// Remember what NOT to do: div buttons, placeholder-only labels, positive tabIndex.
 //
-// Seedha matlab:
+// In simple words:
 // "We added aria everywhere" without semantics = fail.
 // -----------------------------------------------------------------------------
 const a11yAntiPatterns = [
@@ -655,17 +655,17 @@ const a11yAntiPatterns = [
 // -----------------------------------------------------------------------------
 // Q25: [MID] Interview checklist — quick answers
 //
-// Kya karna hai:
+// Task:
 // Revise: first rule of ARIA, focus, live regions, testing.
 //
-// Seedha matlab:
-// "Can you use this with keyboard only?" — hamesha demo ready soch.
+// In simple words:
+// "Can you use this with keyboard only?" — always think demo-ready.
 // -----------------------------------------------------------------------------
 const interviewA11yChecklist = {
   firstRuleOfAria:
-    "If native HTML element + attribute kaam kare, use that — ARIA last.",
+    "If a native HTML element/attribute works, use that — ARIA last.",
   wcagLevels: "A / AA (common product target) / AAA",
-  focusVisible: ":focus-visible CSS — keyboard users ko dikhe, mouse spam na",
+  focusVisible: ":focus-visible CSS — show for keyboard users, not mouse spam",
   hiddenContent:
     "aria-hidden=true decorative; never on interactive or main content",
   mobile: "Touch targets ~44px; same semantics as desktop",

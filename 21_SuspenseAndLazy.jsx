@@ -1,18 +1,18 @@
 // ============================================================================
 // 21 — Suspense And Lazy
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: do this first, then the next file in sequence
 // ============================================================================
 //
-// LAYMAN: lazy() = component ka code baad me download (code split) — jaise
-// heavy dessert pehle mat banao jab guest order kare. Suspense = waiting room
-// UI (fallback) jab woh code/data ready nahi.
+// SIMPLE: lazy() = download component code later (code split) — like not
+// making a heavy dessert until the guest orders. Suspense = waiting room
+// UI (fallback) while that code/data is not ready yet.
 //
 // const Page = lazy(() => import("./Page"));
 // <Suspense fallback={<Spinner/>}><Page/></Suspense>
 //
-// KYUN: Chhoti initial bundle; faster first paint. Routes pe common.
-// INTERVIEW: code splitting; Suspense boundaries; error boundary saath.
-// Vite/React 19 project me use — teaching file. (React 19 data Suspense alag depth)
+// WHY: Smaller initial bundle; faster first paint. Common on routes.
+// INTERVIEW: code splitting; Suspense boundaries; pair with error boundary.
+// Vite/React 19 project — teaching file. (React 19 data Suspense is a separate depth)
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { lazy, Suspense, use, useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: React.lazy basic
 //
-// Kya karna hai:
+// Task:
 // lazy(() => import("./HeavyChart"))
 //
-// Seedha matlab:
-// Dynamic import → alag chunk. Pehli visit pe load.
+// In simple words:
+// Dynamic import → separate chunk. Loads on first visit.
 // -----------------------------------------------------------------------------
 const HeavyChart = lazy(() => import("./HeavyChart")); // path example
 
@@ -40,11 +40,11 @@ function Dashboard() {
 // -----------------------------------------------------------------------------
 // Q2: Route-level split sketch
 //
-// Kya karna hai:
-// Har page lazy — Router me Suspense wrap.
+// Task:
+// Lazy-load each page — wrap Router with Suspense.
 //
-// Seedha matlab:
-// Biggest win: users rarely-visited pages baad me.
+// In simple words:
+// Biggest win: users load rarely-visited pages later.
 // -----------------------------------------------------------------------------
 const Settings = lazy(() => import("./Settings"));
 const Profile = lazy(() => import("./Profile"));
@@ -60,11 +60,11 @@ function RoutesSketch({ page }) {
 // -----------------------------------------------------------------------------
 // Q3: Nested Suspense
 //
-// Kya karna hai:
-// Page shell turant; andar widgets alag fallback.
+// Task:
+// Page shell right away; inner widgets get their own fallback.
 //
-// Seedha matlab:
-// Granular spinners > ek bada blank.
+// In simple words:
+// Granular spinners beat one big blank screen.
 // -----------------------------------------------------------------------------
 const WidgetA = lazy(() => import("./WidgetA"));
 const WidgetB = lazy(() => import("./WidgetB"));
@@ -86,11 +86,11 @@ function Home() {
 // -----------------------------------------------------------------------------
 // Q4: Conditional lazy mount
 //
-// Kya karna hai:
-// Tab open hone pe hi heavy panel load.
+// Task:
+// Load heavy panel only when tab opens.
 //
-// Seedha matlab:
-// Mount = import trigger. Band rakho jab zarurat nahi.
+// In simple words:
+// Mount triggers import. Keep it unmounted when not needed.
 // -----------------------------------------------------------------------------
 function Tabs() {
   const [open, setOpen] = useState(false);
@@ -109,11 +109,11 @@ function Tabs() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Error boundary + Suspense
 //
-// Kya karna hai:
-// Lazy import fail / render error — boundary bahar.
+// Task:
+// Lazy import fail / render error — put boundary outside.
 //
-// Seedha matlab:
-// Suspense = wait. ErrorBoundary = fail. Dono stack.
+// In simple words:
+// Suspense = wait. ErrorBoundary = fail. Stack both.
 // -----------------------------------------------------------------------------
 // <ErrorBoundary>
 //   <Suspense fallback={<Spinner />}>
@@ -124,10 +124,10 @@ function Tabs() {
 // -----------------------------------------------------------------------------
 // Q6: Named export lazy
 //
-// Kya karna hai:
+// Task:
 // lazy(() => import("./mod").then(m => ({ default: m.Chart })))
 //
-// Seedha matlab:
+// In simple words:
 // lazy expects default export. Named → remap.
 // -----------------------------------------------------------------------------
 const Chart = lazy(() =>
@@ -137,11 +137,11 @@ const Chart = lazy(() =>
 // -----------------------------------------------------------------------------
 // Q7: [MID] Prefetch on hover (pattern)
 //
-// Kya karna hai:
-// Link hover pe import("./Page") — cache warm.
+// Task:
+// On link hover: import("./Page") — warm the cache.
 //
-// Seedha matlab:
-// UX snappy. Router libs often built-in.
+// In simple words:
+// Snappy UX. Router libs often built this in.
 // -----------------------------------------------------------------------------
 function PrefetchLink() {
   function warm() {
@@ -157,37 +157,37 @@ function PrefetchLink() {
 // -----------------------------------------------------------------------------
 // Q8: Fallback design tip
 //
-// Kya karna hai:
-// Fallback layout shift kam — skeleton same size.
+// Task:
+// Reduce layout shift in fallback — skeleton same size.
 //
-// Seedha matlab:
-// CLS avoid. Spinner center OK chhote widgets pe.
+// In simple words:
+// Avoid CLS. Centered spinner OK on small widgets.
 // -----------------------------------------------------------------------------
 function SkeletonFallback() {
   return <div className="skeleton h-40" aria-busy="true" />;
 }
 
 // -----------------------------------------------------------------------------
-// Q9: lazy sirf default export — named remap
+// Q9: lazy only for default export — named remap
 //
-// Kya karna hai:
+// Task:
 // .then(m => ({ default: m.Named })) — Q6 recap practice.
 //
-// Seedha matlab:
-// Dynamic import default expect karta; named ko wrap karo.
+// In simple words:
+// Dynamic import expects default; wrap named exports.
 // -----------------------------------------------------------------------------
 const NamedPanel = lazy(() =>
   import("./panels").then((m) => ({ default: m.SettingsPanel }))
 );
 
 // -----------------------------------------------------------------------------
-// Q10: [MID] Suspense boundary list ke har item pe mat
+// Q10: [MID] Do not put Suspense boundary on every list item
 //
-// Kya karna hai:
-// Ek Suspense poori list wrap; andar lazy items — ek fallback.
+// Task:
+// One Suspense wraps the whole list; lazy items inside — one fallback.
 //
-// Seedha matlab:
-// Har row alag Suspense = spinner spam; boundary level socho.
+// In simple words:
+// Suspense per row = spinner spam; think about boundary level.
 // -----------------------------------------------------------------------------
 function LazyList({ ids }) {
   return (
@@ -205,11 +205,11 @@ const LazyRow = lazy(() => import("./LazyRow"));
 // -----------------------------------------------------------------------------
 // Q11: startTransition + lazy route feel
 //
-// Kya karna hai:
-// Urgent tab click; transition me route/lazy load — UI responsive.
+// Task:
+// Urgent tab click; route/lazy load in transition — UI stays responsive.
 //
-// Seedha matlab:
-// Heavy lazy mount non-urgent — typing/input block na ho.
+// In simple words:
+// Heavy lazy mount is non-urgent — typing/input should not block.
 // -----------------------------------------------------------------------------
 function TransitionLazy({ showHeavy }) {
   return (
@@ -220,12 +220,12 @@ function TransitionLazy({ showHeavy }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: [MID] use() hook — promise read (React 19 data Suspense)
+// Q12: [MID] use() hook — read promise (React 19 data Suspense)
 //
-// Kya karna hai:
+// Task:
 // function Child({ dataPromise }) { const data = use(dataPromise); }
 //
-// Seedha matlab:
+// In simple words:
 // Promise throw/suspend → nearest Suspense fallback. RSC/CSR contrast.
 // -----------------------------------------------------------------------------
 function DataChild({ userPromise }) {
@@ -243,17 +243,17 @@ function DataSuspenseDemo({ promise }) {
 // -----------------------------------------------------------------------------
 // Q13: RSC vs client lazy contrast
 //
-// Kya karna hai:
+// Task:
 // Server Component = zero client bundle; lazy = client chunk split.
 //
-// Seedha matlab:
-// RSC data server pe; lazy code-splitting client pe — alag problems.
+// In simple words:
+// RSC data on server; lazy code-splitting on client — different problems.
 // -----------------------------------------------------------------------------
 function RSCContrast() {
   return (
     <p>
       RSC: server render + stream. lazy+Suspense: client JS chunk download.
-      Dono "wait" UI but mechanism alag.
+      Both show "wait" UI but the mechanism is different.
     </p>
   );
 }
@@ -261,11 +261,11 @@ function RSCContrast() {
 // -----------------------------------------------------------------------------
 // Q14: [MID] Suspense boundary placement — route vs widget
 //
-// Kya karna hai:
-// Route level ek bada fallback; widget level chhote skeletons.
+// Task:
+// Route level: one big fallback; widget level: small skeletons.
 //
-// Seedha matlab:
-// User ko kya dikhe jab wait — granularity UX decide karti.
+// In simple words:
+// What the user sees while waiting — granularity drives UX.
 // -----------------------------------------------------------------------------
 function PlacementDemo() {
   return (
@@ -276,13 +276,13 @@ function PlacementDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q15: Preload — component mount se pehle import()
+// Q15: Preload — import() before component mount
 //
-// Kya karna hai:
-// Route config me loader: () => import("./Page") — hover/route intent.
+// Task:
+// Route config loader: () => import("./Page") — hover/route intent.
 //
-// Seedha matlab:
-// Lazy first render slow; preload se Suspense time kam.
+// In simple words:
+// Lazy first render is slow; preload shortens Suspense time.
 // -----------------------------------------------------------------------------
 const PreloadedPage = lazy(() => import("./PreloadedPage"));
 function PreloadOnIntent() {
@@ -297,13 +297,13 @@ function PreloadOnIntent() {
 }
 
 // -----------------------------------------------------------------------------
-// Q16: [MID] Error vs Suspense — alag states
+// Q16: [MID] Error vs Suspense — different states
 //
-// Kya karna hai:
+// Task:
 // Suspense = pending; ErrorBoundary = rejected/render throw.
 //
-// Seedha matlab:
-// Dono stack karo; ek component me mix mat confuse.
+// In simple words:
+// Stack both; do not mix them confused in one component.
 // -----------------------------------------------------------------------------
 function ErrorSuspenseStack() {
   return (
@@ -312,24 +312,24 @@ function ErrorSuspenseStack() {
     //     <LazyOrUseData />
     //   </Suspense>
     // </ErrorBoundary>
-    <p>Boundary bahar, Suspense andar — loading vs error alag UI.</p>
+    <p>Boundary outside, Suspense inside — loading vs error are separate UI.</p>
   );
 }
 
 // -----------------------------------------------------------------------------
 // Q17: [ADV] Suspense for data fetching (CSR) limitations
 //
-// Kya karna hai:
-// Har fetch Suspense-friendly nahi — cache/resource layer chahiye.
+// Task:
+// Not every fetch is Suspense-friendly — need cache/resource layer.
 //
-// Seedha matlab:
-// TanStack Query suspense mode ya custom resource — throw promise pattern.
+// In simple words:
+// TanStack Query suspense mode or custom resource — throw promise pattern.
 // -----------------------------------------------------------------------------
 function DataSuspenseLimit() {
   return (
     <p>
-      Raw fetch in useEffect ≠ Suspense. Resource cache promise throw kare tab
-      Suspense kaam karta.
+      Raw fetch in useEffect ≠ Suspense. Suspense works when resource cache throws
+      the promise.
     </p>
   );
 }
@@ -337,16 +337,16 @@ function DataSuspenseLimit() {
 // -----------------------------------------------------------------------------
 // Q18: [ADV] React Query suspense mode contrast
 //
-// Kya karna hai:
-// useQuery({ suspense: true }) — library boundary handle; fallback Suspense.
+// Task:
+// useQuery({ suspense: true }) — library handles boundary; Suspense fallback.
 //
-// Seedha matlab:
-// Manual use() vs RQ — same mental model, less boilerplate lib se.
+// In simple words:
+// Manual use() vs RQ — same mental model, less boilerplate from the lib.
 // -----------------------------------------------------------------------------
 function RQContrast() {
   return (
     <p>
-      React Query suspense: query pending pe suspend. Cache/retry lib sambhalti.
+      React Query suspense: query pending suspends. Cache/retry handled by the lib.
     </p>
   );
 }
@@ -354,37 +354,37 @@ function RQContrast() {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] Streaming SSR + Suspense
 //
-// Kya karna hai:
-// Server HTML me fallback first; ready chunk stream replace.
+// Task:
+// Server HTML shows fallback first; ready chunk streams in to replace.
 //
-// Seedha matlab:
-// Client lazy alag; SSR Suspense HTML stream — faster TTFB feel.
+// In simple words:
+// Client lazy is different; SSR Suspense streams HTML — faster TTFB feel.
 // -----------------------------------------------------------------------------
 function StreamingNote() {
-  return <p>SSR Suspense: shell pehle, slow data baad me stream.</p>;
+  return <p>SSR Suspense: shell first, slow data streams later.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q20: [ADV] lazy().then wrap + memo combo
 //
-// Kya karna hai:
-// const C = lazy(...); export default memo(C) — re-render lazy child stable.
+// Task:
+// const C = lazy(...); export default memo(C) — stable lazy child on re-render.
 //
-// Seedha matlab:
-// Code split + perf — lazy load once, memo frequent parent renders.
+// In simple words:
+// Code split + perf — lazy load once, memo on frequent parent renders.
 // -----------------------------------------------------------------------------
 const MemoLazy = lazy(() =>
   import("./Heavy").then((m) => ({ default: m.default }))
 );
 
 // -----------------------------------------------------------------------------
-// Q21: [ADV] Kab lazy mat use karo
+// Q21: [ADV] When not to use lazy
 //
-// Kya karna hai:
+// Task:
 // Critical above-fold, tiny components, always-needed shell — eager import.
 //
-// Seedha matlab:
-// Over-splitting = extra requests + Suspense flash. Profile bundle pehle.
+// In simple words:
+// Over-splitting = extra requests + Suspense flash. Profile bundle first.
 // -----------------------------------------------------------------------------
 function WhenNotLazy() {
   return (
@@ -397,21 +397,21 @@ function WhenNotLazy() {
 }
 
 // -----------------------------------------------------------------------------
-// Q22: [ADV] Interview — Suspense + lazy + use() ek answer
+// Q22: [ADV] Interview — Suspense + lazy + use() in one answer
 //
-// Kya karna hai:
+// Task:
 // Code split (lazy), wait UI (Suspense), data (use), errors (Boundary).
 //
-// Seedha matlab:
-// Teen layer bolke sunao — mid interview strong close.
+// In simple words:
+// Explain three layers — strong mid-level interview close.
 // -----------------------------------------------------------------------------
 function SuspenseInterview() {
   return (
     <ol>
-      <li>lazy() — dynamic import, alag chunk</li>
-      <li>Suspense — suspend pe fallback</li>
+      <li>lazy() — dynamic import, separate chunk</li>
+      <li>Suspense — fallback on suspend</li>
       <li>use(promise) — data suspense React 19</li>
-      <li>ErrorBoundary — fail case alag</li>
+      <li>ErrorBoundary — separate fail case</li>
     </ol>
   );
 }

@@ -1,17 +1,17 @@
 // ============================================================================
 // 10 — useRef
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: useRef = dabba jiski value badalne pe RE-RENDER nahi. Do kaam:
-// 1) DOM node pakadna (input.focus())
+// SIMPLE: useRef = a box whose value can change WITHOUT re-render. Two jobs:
+// 1) Hold a DOM node (input.focus())
 // 2) Mutable box — previous value, timer id, "latest" callback
 //
-// ref.current padho/likho. JSX me ref={inputRef}. State = UI; ref = memory.
+// Read/write ref.current. JSX: ref={inputRef}. State = UI; ref = memory.
 //
-// KYUN: Focus, measure DOM, avoid stale closures without re-render spam.
+// WHY: Focus, measure DOM, avoid stale closures without re-render spam.
 // INTERVIEW: ref vs state; when not to put UI data in ref.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file (do not run with node alone).
 //
 // ============================================================================
 
@@ -20,11 +20,11 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 // -----------------------------------------------------------------------------
 // Q1: Focus input on mount
 //
-// Kya karna hai:
-// inputRef + useEffect me .focus()
+// Task:
+// inputRef + useEffect with .focus()
 //
-// Seedha matlab:
-// DOM API chahiye to ref. querySelector avoid in React.
+// In simple words:
+// Need DOM API? Use ref. Avoid querySelector in React.
 // -----------------------------------------------------------------------------
 function Autofocus() {
   const inputRef = useRef(null);
@@ -37,11 +37,11 @@ function Autofocus() {
 // -----------------------------------------------------------------------------
 // Q2: Scroll into view
 //
-// Kya karna hai:
+// Task:
 // bottomRef.current.scrollIntoView()
 //
-// Seedha matlab:
-// Chat apps — naya message pe scroll. Ref = target element.
+// In simple words:
+// Chat apps — scroll on new message. Ref = target element.
 // -----------------------------------------------------------------------------
 function ChatEnd() {
   const endRef = useRef(null);
@@ -60,11 +60,11 @@ function ChatEnd() {
 // -----------------------------------------------------------------------------
 // Q3: Store interval id
 //
-// Kya karna hai:
-// intervalRef.current = setInterval... clear pe use.
+// Task:
+// intervalRef.current = setInterval... use on clear.
 //
-// Seedha matlab:
-// Timer id UI me nahi — ref perfect. State banane se extra render.
+// In simple words:
+// Timer id is not UI — ref is perfect. State would cause extra render.
 // -----------------------------------------------------------------------------
 function Stopwatch() {
   const [ms, setMs] = useState(0);
@@ -89,11 +89,11 @@ function Stopwatch() {
 // -----------------------------------------------------------------------------
 // Q4: Previous value track
 //
-// Kya karna hai:
+// Task:
 // prevRef.current = count after render; compare.
 //
-// Seedha matlab:
-// "Pehle kya tha?" — ref me save, render pe dikhao.
+// In simple words:
+// "What was it before?" — save in ref, show on render.
 // -----------------------------------------------------------------------------
 function PrevCount() {
   const [count, setCount] = useState(0);
@@ -111,11 +111,11 @@ function PrevCount() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Click outside to close
 //
-// Kya karna hai:
-// boxRef — document click agar bahar to close.
+// Task:
+// boxRef — document click outside closes menu.
 //
-// Seedha matlab:
-// Dropdown/modal pattern. contains(target) check.
+// In simple words:
+// Dropdown/modal pattern. Check contains(target).
 // -----------------------------------------------------------------------------
 function Menu() {
   const [open, setOpen] = useState(false);
@@ -140,11 +140,11 @@ function Menu() {
 // -----------------------------------------------------------------------------
 // Q6: [MID] Ref for latest callback (stale fix)
 //
-// Kya karna hai:
-// cbRef.current = onMessage; interval/socket purana closure avoid.
+// Task:
+// cbRef.current = onMessage; interval/socket avoids old closure.
 //
-// Seedha matlab:
-// Effect [] pe listener, lekin hamesha latest handler — ref bridge.
+// In simple words:
+// Effect with [] listener but always latest handler — ref bridge.
 // -----------------------------------------------------------------------------
 function Socketish({ onMessage }) {
   const cbRef = useRef(onMessage);
@@ -163,11 +163,11 @@ function Socketish({ onMessage }) {
 // -----------------------------------------------------------------------------
 // Q7: Uncontrolled input read on submit
 //
-// Kya karna hai:
-// defaultValue + ref.current.value submit pe.
+// Task:
+// defaultValue + ref.current.value on submit.
 //
-// Seedha matlab:
-// Har keystroke state nahi — performance/simple forms. (25 deep)
+// In simple words:
+// No state on every keystroke — performance/simple forms. (25 goes deeper)
 // -----------------------------------------------------------------------------
 function UncontrolledName() {
   const ref = useRef(null);
@@ -186,11 +186,11 @@ function UncontrolledName() {
 // -----------------------------------------------------------------------------
 // Q8: Don't use ref for visible UI state
 //
-// Kya karna hai:
-// count dikhana hai to useState, useRef nahi.
+// Task:
+// To show count on screen use useState, not useRef.
 //
-// Seedha matlab:
-// ref.current++ se screen nahi badlegi. Rule: UI me dikhe → state.
+// In simple words:
+// ref.current++ does not update screen. Rule: if it shows in UI → state.
 // -----------------------------------------------------------------------------
 function WrongVsRight() {
   const [count, setCount] = useState(0); // ✅
@@ -201,11 +201,11 @@ function WrongVsRight() {
 // -----------------------------------------------------------------------------
 // Q9: Callback ref pattern
 //
-// Kya karna hai:
-// ref={(node) => { ... }} — mount/unmount pe node milega.
+// Task:
+// ref={(node) => { ... }} — get node on mount/unmount.
 //
-// Seedha matlab:
-// Dynamic refs, measure on attach. useRef object se alag — function har attach pe call.
+// In simple words:
+// Dynamic refs, measure on attach. Different from useRef object — function called each attach.
 // -----------------------------------------------------------------------------
 function CallbackRefDemo() {
   function setRef(node) {
@@ -217,11 +217,11 @@ function CallbackRefDemo() {
 // -----------------------------------------------------------------------------
 // Q10: Measure layout — useLayoutEffect contrast
 //
-// Kya karna hai:
-// height measure tooltip position — layoutEffect before paint.
+// Task:
+// Measure height for tooltip position — layoutEffect before paint.
 //
-// Seedha matlab:
-// useEffect measure = user ko jump dikhe. LayoutEffect = sync DOM read/write.
+// In simple words:
+// useEffect measure = user may see jump. LayoutEffect = sync DOM read/write.
 // -----------------------------------------------------------------------------
 function TooltipMeasure() {
   const boxRef = useRef(null);
@@ -238,13 +238,13 @@ function TooltipMeasure() {
 }
 
 // -----------------------------------------------------------------------------
-// Q11: Ref mutable box — render count nahi badhta
+// Q11: Ref mutable box — render count does not increase
 //
-// Kya karna hai:
-// rendersRef.current++ har render pe — screen pe nahi dikhega.
+// Task:
+// rendersRef.current++ every render — not shown on screen.
 //
-// Seedha matlab:
-// Debug/metrics ke liye. UI update chahiye to state use karo.
+// In simple words:
+// For debug/metrics. Need UI update? Use state.
 // -----------------------------------------------------------------------------
 function RenderCount() {
   const renders = useRef(0);
@@ -258,13 +258,13 @@ function RenderCount() {
 }
 
 // -----------------------------------------------------------------------------
-// Q12: forwardRef parent se child DOM
+// Q12: forwardRef parent to child DOM
 //
-// Kya karna hai:
+// Task:
 // const Input = forwardRef((props, ref) => <input ref={ref} {...props} />)
 //
-// Seedha matlab:
-// Parent ko child ka DOM chahiye — focus(), measure. React 19 me ref prop bhi direct.
+// In simple words:
+// Parent needs child's DOM — focus(), measure. React 19 also allows ref as direct prop.
 // -----------------------------------------------------------------------------
 const FancyInput = forwardRef(function FancyInput(props, ref) {
   return <input ref={ref} className="fancy" {...props} />;
@@ -283,11 +283,11 @@ function FocusChild() {
 // -----------------------------------------------------------------------------
 // Q13: [MID] React 19 ref as prop note
 //
-// Kya karna hai:
-// function Input({ ref, ...props }) — forwardRef optional ho raha.
+// Task:
+// function Input({ ref, ...props }) — forwardRef becoming optional.
 //
-// Seedha matlab:
-// ref ab normal prop bhi ban sakta hai React 19 me. forwardRef legacy support.
+// In simple words:
+// ref can be a normal prop in React 19. forwardRef still supported for legacy.
 // -----------------------------------------------------------------------------
 function RefAsPropNote({ ref }) {
   return <input ref={ref} placeholder="React 19 style" />;
@@ -296,11 +296,11 @@ function RefAsPropNote({ ref }) {
 // -----------------------------------------------------------------------------
 // Q14: Instance var pattern — latest value
 //
-// Kya karna hai:
-// latestQueryRef.current = query; async callback me padho.
+// Task:
+// latestQueryRef.current = query; read in async callback.
 //
-// Seedha matlab:
-// Stale closure fix bina re-subscribe. Effect/event me ref read karo.
+// In simple words:
+// Stale closure fix without re-subscribe. Read ref in effect/event.
 // -----------------------------------------------------------------------------
 function LatestQuery({ query }) {
   const latest = useRef(query);
@@ -317,11 +317,11 @@ function LatestQuery({ query }) {
 // -----------------------------------------------------------------------------
 // Q15: Ref hold DOM collection
 //
-// Kya karna hai:
-// itemsRef.current = [] map me ref push — multiple nodes.
+// Task:
+// itemsRef.current = [] push ref in map — multiple nodes.
 //
-// Seedha matlab:
-// List of refs kabhi chahiye. Usually key + single ref enough; pattern rare.
+// In simple words:
+// List of refs sometimes needed. Usually key + single ref is enough; pattern is rare.
 // -----------------------------------------------------------------------------
 function ItemRefs({ items }) {
   const refs = useRef([]);
@@ -345,11 +345,11 @@ function ItemRefs({ items }) {
 // -----------------------------------------------------------------------------
 // Q16: Merge refs utility sketch
 //
-// Kya karna hai:
-// ref={node => { refA.current = node; refB(node); }} — do refs ek element.
+// Task:
+// ref={node => { refA.current = node; refB(node); }} — two refs one element.
 //
-// Seedha matlab:
-// Library + apna ref dono. Callback ref se merge.
+// In simple words:
+// Library + your ref both. Merge with callback ref.
 // -----------------------------------------------------------------------------
 function MergeRefInput() {
   const localRef = useRef(null);
@@ -362,11 +362,11 @@ function MergeRefInput() {
 // -----------------------------------------------------------------------------
 // Q17: [ADV] Instance vars vs state
 //
-// Kya karna hai:
-// isSubmittingRef vs isSubmitting state — UI dikhe to state.
+// Task:
+// isSubmittingRef vs isSubmitting state — if UI shows it, use state.
 //
-// Seedha matlab:
-// Guard flag sirf logic me (double submit rok) → ref OK. Spinner → state.
+// In simple words:
+// Guard flag for logic only (stop double submit) → ref OK. Spinner → state.
 // -----------------------------------------------------------------------------
 function SubmitGuard() {
   const busyRef = useRef(false);
@@ -390,11 +390,11 @@ function SubmitGuard() {
 // -----------------------------------------------------------------------------
 // Q18: Ref for animation frame id
 //
-// Kya karna hai:
+// Task:
 // rafRef.current = requestAnimationFrame(...); cancel on cleanup.
 //
-// Seedha matlab:
-// Timer jaisa — id UI me nahi. Ref me rakho, unmount pe cancel.
+// In simple words:
+// Like timer — id is not UI. Store in ref, cancel on unmount.
 // -----------------------------------------------------------------------------
 function RafDemo() {
   const rafRef = useRef(null);
@@ -418,11 +418,11 @@ function RafDemo() {
 // -----------------------------------------------------------------------------
 // Q19: Textarea select all on focus
 //
-// Kya karna hai:
+// Task:
 // ref + onFocus → ref.current.select()
 //
-// Seedha matlab:
-// DOM imperative API — ref se natural fit.
+// In simple words:
+// DOM imperative API — ref is a natural fit.
 // -----------------------------------------------------------------------------
 function SelectOnFocus() {
   const ref = useRef(null);
@@ -438,11 +438,11 @@ function SelectOnFocus() {
 // -----------------------------------------------------------------------------
 // Q20: Ref null on unmount
 //
-// Kya karna hai:
-// Cleanup me ref.current = null optional — usually React handle.
+// Task:
+// Cleanup ref.current = null optional — React usually handles.
 //
-// Seedha matlab:
-// Callback ref me node null aata detach pe. Object ref bhi clear hota detach pe.
+// In simple words:
+// Callback ref gets node null on detach. Object ref clears on detach too.
 // -----------------------------------------------------------------------------
 function RefLifecycle() {
   const ref = useRef(null);
@@ -457,11 +457,11 @@ function RefLifecycle() {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Class instance vars analogy
 //
-// Kya karna hai:
+// Task:
 // this.timerId in class = useRef in function — survives render, no re-render.
 //
-// Seedha matlab:
-// Functional component me "instance fields" = refs. State = this.setState equivalent.
+// In simple words:
+// In functional components "instance fields" = refs. State = this.setState equivalent.
 // -----------------------------------------------------------------------------
 function ClassAnalogyTimer() {
   const tickRef = useRef(0);
@@ -477,11 +477,11 @@ function ClassAnalogyTimer() {
 // -----------------------------------------------------------------------------
 // Q22: Imperative handle sketch
 //
-// Kya karna hai:
-// useImperativeHandle(ref, () => ({ focus: () => ... })) — custom API expose.
+// Task:
+// useImperativeHandle(ref, () => ({ focus: () => ... })) — expose custom API.
 //
-// Seedha matlab:
-// Parent ko poora DOM nahi, sirf methods. Modals, inputs library pattern.
+// In simple words:
+// Parent gets methods, not full DOM. Modals, input library pattern.
 // -----------------------------------------------------------------------------
 const ExposedInput = forwardRef(function ExposedInput(props, ref) {
   const inner = useRef(null);
@@ -494,11 +494,11 @@ const ExposedInput = forwardRef(function ExposedInput(props, ref) {
 // -----------------------------------------------------------------------------
 // Q23: Ref vs querySelector
 //
-// Kya karna hai:
-// document.getElementById avoid — ref React way.
+// Task:
+// Avoid document.getElementById — ref is the React way.
 //
-// Seedha matlab:
-// SSR, testing, multiple roots me querySelector fragile. Ref scoped to component.
+// In simple words:
+// querySelector fragile with SSR, testing, multiple roots. Ref scoped to component.
 // -----------------------------------------------------------------------------
 function NoQuerySelector() {
   const btnRef = useRef(null);
@@ -512,11 +512,11 @@ function NoQuerySelector() {
 // -----------------------------------------------------------------------------
 // Q24: Copy previous props pattern
 //
-// Kya karna hai:
-// prevPropsRef — effect me compare current vs prev.
+// Task:
+// prevPropsRef — compare current vs prev in effect.
 //
-// Seedha matlab:
-// "Sirf badla tab react karo" — getDerivedStateFromProps smell, kabhi useful debug.
+// In simple words:
+// "React only when changed" — getDerivedStateFromProps smell, sometimes useful for debug.
 // -----------------------------------------------------------------------------
 function PropChangeLog({ value }) {
   const prev = useRef(value);

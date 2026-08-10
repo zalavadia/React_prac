@@ -1,18 +1,18 @@
 // ============================================================================
 // 35 — React 19 Document Metadata (title / meta in tree)
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Pehle React SPA me document.title = '...' useEffect me set karte,
-// ya react-helmet jaise libs.
+// SIMPLE: Before, in React SPAs we set document.title = '...' in useEffect,
+// or used libraries like react-helmet.
 //
-// React 19: component ke ANDAR seedha <title>, <meta>, <link> likho —
-// React unhe document <head> me hoist / manage karta hai.
+// React 19: write <title>, <meta>, <link> directly INSIDE the component —
+// React hoists and manages them in the document <head>.
 //
-// Socho har page component apna nameplate (title) le ke aata;
-// React reception pe laga deta.
+// Think of each page component bringing its own nameplate (title);
+// React puts it up at the front desk.
 //
-// KYUN: Less effect soup; SSR/RSC friendly metadata story.
+// WHY: Less effect soup; SSR/RSC friendly metadata story.
 // INTERVIEW: client-only title vs RSC metadata; conflicting titles.
 //
 // ============================================================================
@@ -22,7 +22,7 @@ import { useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Basic <title> inside page component
 //
-// Seedha matlab:
+// In simple words:
 // Route/page render → title tag component tree me.
 // Browser tab text update.
 // -----------------------------------------------------------------------------
@@ -39,9 +39,9 @@ export function AboutPage() {
 // -----------------------------------------------------------------------------
 // Q2: <meta> description / og tags
 //
-// Seedha matlab:
-// SEO + social previews ke liye meta.
-// Real production me framework (Next Metadata API) bhi use hota —
+// In simple words:
+// meta for SEO + social previews.
+// In real production, frameworks (Next Metadata API) are also used —
 // React 19 built-in = foundation.
 // -----------------------------------------------------------------------------
 export function ProductPage({ product }) {
@@ -58,9 +58,9 @@ export function ProductPage({ product }) {
 // -----------------------------------------------------------------------------
 // Q3: [MID] Dynamic title with state
 //
-// Seedha matlab:
-// Title bhi render output — state badla, title re-render.
-// useEffect se document.title sync ki zaroorat kam.
+// In simple words:
+// Title is also render output — state changes, title re-renders.
+// Less need to sync document.title with useEffect.
 // -----------------------------------------------------------------------------
 export function CartTitle({ count }) {
   return (
@@ -84,8 +84,8 @@ export function CartApp() {
 // -----------------------------------------------------------------------------
 // Q4: <link rel="stylesheet"> / canonical idea
 //
-// Seedha matlab:
-// link tags bhi tree se declare.
+// In simple words:
+// declare link tags from the tree too.
 // Careful: duplicate stylesheets — design system / bundler usually better.
 // canonical URL meta/link SEO pattern.
 // -----------------------------------------------------------------------------
@@ -102,11 +102,11 @@ export function Article({ slug, title }) {
 }
 
 // -----------------------------------------------------------------------------
-// Q5: [MID] Conflict — do components title set karein?
+// Q5: [MID] Conflict — what if two components set the title?
 //
-// Seedha matlab:
-// Last / deeper / framework precedence — environment pe depend.
-// Practice: EK page-level owner for title; children random title mat chhodo.
+// In simple words:
+// Last / deeper / framework precedence — depends on the environment.
+// Practice: ONE page-level owner for title; do not leave random titles in children.
 // Interview: "single source of truth for document title per route".
 // -----------------------------------------------------------------------------
 export function NestedTitlesBad() {
@@ -128,11 +128,11 @@ function ChildAlsoSetsTitle() {
 }
 
 // -----------------------------------------------------------------------------
-// Q6: Purana useEffect way (contrast)
+// Q6: Old useEffect way (contrast)
 //
-// Seedha matlab:
-// Ab bhi chalega — lekin React 19 declarative metadata cleaner.
-// SSR me effect late — title flash possible; tree metadata better story.
+// In simple words:
+// It still works — but React 19 declarative metadata is cleaner.
+// In SSR, effects run late — title flash possible; tree metadata is a better story.
 // -----------------------------------------------------------------------------
 export function OldTitleEffect() {
   // useEffect(() => { document.title = 'Old way'; }, []);
@@ -142,10 +142,10 @@ export function OldTitleEffect() {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Frameworks vs raw React 19
 //
-// Seedha matlab:
+// In simple words:
 // Next.js App Router: export metadata / generateMetadata — first-class.
 // Vite SPA: React 19 title/meta tags helpful on client.
-// Jaano kaunsa environment — answer us hisaab se.
+// Know which environment you are in — answer accordingly.
 // -----------------------------------------------------------------------------
 const environments = {
   nextAppRouter: "use Next metadata APIs primarily",
@@ -155,8 +155,8 @@ const environments = {
 // -----------------------------------------------------------------------------
 // Q8: Accessibility — title meaningful
 //
-// Seedha matlab:
-// Tab me "Document" mat chhodo — page purpose clear.
+// In simple words:
+// Do not leave "Document" in the tab — make the page purpose clear.
 // Multi-page app: unique titles help screen reader users switching tabs.
 // -----------------------------------------------------------------------------
 export function GoodTitles() {
@@ -169,16 +169,16 @@ export function GoodTitles() {
 }
 
 // -----------------------------------------------------------------------------
-// Q9: [MID] Route change pe title update — SPA
+// Q9: [MID] Title update on route change — SPA
 //
-// Kya karna hai:
-// React Router route element me <title> per page component.
+// Task:
+// <title> per page component in React Router route element.
 //
-// Seedha matlab:
-// Route render → title component tree me → tab update.
+// In simple words:
+// Route render → title in component tree → tab update.
 // React 18: useEffect document.title on pathname change.
 // React 19: declarative title in each route component cleaner.
-// Trap: layout + page dono title — ek owner decide (page wins usually).
+// Trap: layout + page both set title — decide one owner (page usually wins).
 // -----------------------------------------------------------------------------
 export function DashboardRouteTitle() {
   return (
@@ -192,13 +192,13 @@ export function DashboardRouteTitle() {
 // -----------------------------------------------------------------------------
 // Q10: og:image / twitter cards
 //
-// Kya karna hai:
-// <meta property="og:image" content="https://..." /> social share ke liye.
+// Task:
+// <meta property="og:image" content="https://..." /> for social share.
 //
-// Seedha matlab:
+// In simple words:
 // Absolute URL prefer — relative OG images break on shares.
 // React 18 react-helmet async similar tags.
-// SSR/RSC: metadata first HTML response me hona best — crawlers.
+// SSR/RSC: metadata in first HTML response is best — for crawlers.
 // Client-only SPA: some bots weak JS — SSR still SEO win.
 // -----------------------------------------------------------------------------
 export function SharePage({ imageUrl, title }) {
@@ -216,14 +216,14 @@ export function SharePage({ imageUrl, title }) {
 // -----------------------------------------------------------------------------
 // Q11: [MID] Multiple meta same name — trap
 //
-// Kya karna hai:
-// Do <meta name="description"> — precedence unclear; ek hi rakho.
+// Task:
+// Two <meta name="description"> — precedence unclear; keep only one.
 //
-// Seedha matlab:
+// In simple words:
 // Same as duplicate title — single page-level SEO owner.
 // React 18 helmet override rules similar confusion.
-// Layout default description + page override — framework merge rules padho.
-// When NOT: random child components SEO tags chhodo.
+// Layout default description + page override — read your framework merge rules.
+// When NOT: leave random SEO tags in child components.
 // -----------------------------------------------------------------------------
 export function DuplicateMetaTrap() {
   return (
@@ -238,13 +238,13 @@ export function DuplicateMetaTrap() {
 // -----------------------------------------------------------------------------
 // Q12: lang attribute on html — who sets?
 //
-// Kya karna hai:
-// <html lang="hi"> usually root index.html ya framework layout.
+// Task:
+// <html lang="en"> usually in root index.html or framework layout.
 //
-// Seedha matlab:
+// In simple words:
 // React 19 title/meta hoist; html lang often static shell.
 // i18n route: framework may set lang per locale.
-// React 18: same — rarely component tree se html lang.
+// React 18: same — rarely html lang from component tree.
 // a11y: lang helps screen readers pronunciation.
 // -----------------------------------------------------------------------------
 export function LangNote() {
@@ -254,11 +254,11 @@ export function LangNote() {
 // -----------------------------------------------------------------------------
 // Q13: [MID] useEffect document.title migration
 //
-// Kya karna hai:
-// Purana: useEffect(() => { document.title = t }, [t]) → replace with <title>{t}</title>.
+// Task:
+// Old pattern: useEffect(() => { document.title = t }, [t]) → replace with <title>{t}</title>.
 //
-// Seedha matlab:
-// Remove effect cleanup title restore hacks jab declarative use karo.
+// In simple words:
+// Remove effect cleanup title restore hacks when using declarative tags.
 // React 18 effect runs after paint — title flash possible.
 // React 19 tree metadata integrates with render commit story better.
 // Keep effect for non-declarative APIs (analytics) only.
@@ -275,11 +275,11 @@ export function MigratedTitle({ pageName }) {
 // -----------------------------------------------------------------------------
 // Q14: robots noindex page
 //
-// Kya karna hai:
+// Task:
 // <meta name="robots" content="noindex, nofollow" /> staging/admin pages.
 //
-// Seedha matlab:
-// Component tree se declare — admin route component me.
+// In simple words:
+// Declare from component tree — in admin route component.
 // React 18 helmet equivalent.
 // SSR important — client-only late inject weaker for crawlers.
 // Don't noindex production by mistake — env guard.
@@ -297,14 +297,14 @@ export function StagingPage() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Next.js generateMetadata vs React 19 <title>
 //
-// Kya karna hai:
-// Next App Router me generateMetadata/export metadata often preferred.
+// Task:
+// In Next App Router generateMetadata/export metadata is often preferred.
 //
-// Seedha matlab:
+// In simple words:
 // React 19 <title> in client components works; Next adds static optimization.
 // React 18 Next: Head from next/head Pages router.
 // Answer interview by environment: "Next metadata API vs raw React 19 tags".
-// Dono goals same — correct head per route.
+// Both aim for the same goal — correct head per route.
 // -----------------------------------------------------------------------------
 const nextVsReact19Meta = {
   nextAppRouter: "export metadata / generateMetadata primary",
@@ -314,11 +314,11 @@ const nextVsReact19Meta = {
 // -----------------------------------------------------------------------------
 // Q16: favicon link rel="icon"
 //
-// Kya karna hai:
+// Task:
 // <link rel="icon" href="/favicon.ico" /> — page or root once.
 //
-// Seedha matlab:
-// Usually index.html once — har page duplicate avoid.
+// In simple words:
+// Usually index.html once — avoid duplicate on every page.
 // Per-section favicon rare — dynamic route possible teaching only.
 // React 18 public folder static same.
 // Duplicate link icons — browser picks one unpredictably.
@@ -335,10 +335,10 @@ export function FaviconNote() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] Client navigation title delay
 //
-// Kya karna hai:
+// Task:
 // SPA client route change — title updates on render, fast usually.
 //
-// Seedha matlab:
+// In simple words:
 // Slow route lazy load — title updates when page component mounts.
 // React 18 same with effect title.
 // Suspense fallback route — title from fallback or previous until resolve.
@@ -351,10 +351,10 @@ export function LazyRouteTitleNote() {
 // -----------------------------------------------------------------------------
 // Q18: Structured data JSON-LD — still script tag
 //
-// Kya karna hai:
+// Task:
 // SEO rich results: <script type="application/ld+json"> often in page still.
 //
-// Seedha matlab:
+// In simple words:
 // React 19 metadata tags cover title/meta/link — JSON-LD separate concern.
 // React 18 same — helmet or manual script.
 // dangerouslySetInnerHTML careful — sanitize static JSON only.
@@ -378,10 +378,10 @@ export function ArticleJsonLd({ article }) {
 // -----------------------------------------------------------------------------
 // Q19: [ADV] When NOT declarative metadata in React
 //
-// Kya karna hai:
+// Task:
 // Fully static site — build-time HTML head enough; no runtime React title needed.
 //
-// Seedha matlab:
+// In simple words:
 // Marketing one-pager SSR pre-rendered — meta in template.
 // React 19 win = dynamic per-user/per-route titles in SPA/SSR apps.
 // CMS-driven head — framework layer may centralize better than scattered tags.
@@ -396,10 +396,10 @@ const whenNotTreeMetadata = [
 // -----------------------------------------------------------------------------
 // Q20: [MID] Hydration + title mismatch
 //
-// Kya karna hai:
+// Task:
 // Server render title "A"; client first render title "B" — mismatch warning possible.
 //
-// Seedha matlab:
+// In simple words:
 // Initial client render match server HTML head expectations.
 // React 18 hydration mismatch similar with effect-set title timing.
 // User-specific title: fetch on server or after mount consistently.
@@ -417,11 +417,11 @@ export function HydrationTitleSafe({ userName }) {
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Priority / precedence mental model
 //
-// Kya karna hai:
+// Task:
 // Deeper / later mounted title may override — exact rules implementation-dependent.
 //
-// Seedha matlab:
-// Don't rely on "child always wins" — explicit architecture.
+// In simple words:
+// Do not rely on "child always wins" — explicit architecture.
 // React 18 helmet prioritizeRegisteredMeta similar battles.
 // Single RouteHead component pattern team-wide.
 // Testing: assert document.title in E2E after navigation.
@@ -438,10 +438,10 @@ export function SingleOwnerPattern({ title, children }) {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — metadata React 18 vs 19
 //
-// Kya karna hai:
+// Task:
 // 18: useEffect + react-helmet; 19: <title>/<meta> in JSX tree hoist to head.
 //
-// Seedha matlab:
+// In simple words:
 // Benefits: declarative, SSR friendly, less effect soup.
 // Traps: duplicate tags, wrong owner, client-only SEO limits.
 // Frameworks layer on top (Next metadata).

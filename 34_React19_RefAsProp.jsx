@@ -1,19 +1,19 @@
 // ============================================================================
 // 34 — React 19 ref as prop (forwardRef legacy)
-// Level: REACT19  |  Sequence seekho: pehle yeh file, phir agla number
+// Level: REACT19  |  Study in order: read this file first, then the next number
 // ============================================================================
 //
-// LAYMAN: Pehle ref special tha — props me nahi milta tha.
-// Isliye forwardRef(function (props, ref) { ... }) likhna padta.
+// SIMPLE: Before, ref was special — it did not come through props.
+// So you had to write forwardRef(function (props, ref) { ... }).
 //
-// React 19: ref normal prop hai — function Component({ ref, ... }) {
+// React 19: ref is a normal prop — function Component({ ref, ... }) {
 //   return <input ref={ref} />
 // }
 //
-// forwardRef ab bhi kaam karta (libraries / purana code) — naya code me
-// usually zaroori nahi. Class components alag history.
+// forwardRef still works (libraries / old code) — in new code
+// you usually do not need it. Class components are a separate history.
 //
-// KYUN: Boilerplate kam; mid interviews "forwardRef kyun tha?" ab context.
+// WHY: Less boilerplate; mid interviews now ask "why did forwardRef exist?" for context.
 // INTERVIEW: ref prop vs forwardRef; callback refs; useImperativeHandle.
 //
 // ============================================================================
@@ -23,9 +23,9 @@ import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 // -----------------------------------------------------------------------------
 // Q1: React 19 style — ref as prop
 //
-// Seedha matlab:
+// In simple words:
 // Parent <Input ref={inputRef} />.
-// Child function param me ref milta — DOM ko forward.
+// Child gets ref in function params — forward to DOM.
 // -----------------------------------------------------------------------------
 function Input({ ref, placeholder }) {
   return <input ref={ref} placeholder={placeholder} />;
@@ -42,12 +42,12 @@ export function FocusDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q2: Purana forwardRef (legacy / library compat)
+// Q2: Old forwardRef (legacy / library compat)
 //
-// Seedha matlab:
+// In simple words:
 // Same behavior, extra wrap.
-// Naye projects me prefer ref prop.
-// Purani lib support ke liye forwardRef dekhna pad sakta.
+// In new projects, prefer ref prop.
+// You may still see forwardRef for older library support.
 // -----------------------------------------------------------------------------
 const LegacyInput = forwardRef(function LegacyInput(props, ref) {
   return <input ref={ref} {...props} />;
@@ -59,11 +59,11 @@ export function LegacyFocusDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q3: [MID] ref function component pe bina forward / bina prop?
+// Q3: [MID] ref on function component without forwardRef / without prop?
 //
-// Seedha matlab:
-// React 18 me warning / ignore — ref props me nahi aata tha.
-// React 19 me aata hai. Version matter karta interview me clear bolo.
+// In simple words:
+// React 18 gave warning / ignore — ref did not come through props.
+// React 19 passes it through. Be clear about version in interviews.
 // -----------------------------------------------------------------------------
 const versionNote = {
   react18: "need forwardRef to pass ref to function components",
@@ -73,9 +73,9 @@ const versionNote = {
 // -----------------------------------------------------------------------------
 // Q4: Callback ref
 //
-// Seedha matlab:
-// ref={(node) => { ... }} — mount pe node, unmount pe null.
-// Measuring DOM / third-party attach ke liye.
+// In simple words:
+// ref={(node) => { ... }} — node on mount, null on unmount.
+// For measuring DOM / third-party attach.
 // -----------------------------------------------------------------------------
 export function CallbackRefMeasure() {
   return (
@@ -92,10 +92,10 @@ export function CallbackRefMeasure() {
 }
 
 // -----------------------------------------------------------------------------
-// Q5: [MID] useImperativeHandle — parent ko limited API
+// Q5: [MID] useImperativeHandle — limited API for parent
 //
-// Seedha matlab:
-// Kabhi parent ko poora DOM nahi — sirf focus() / scrollTo().
+// In simple words:
+// Sometimes parent does not need the whole DOM — only focus() / scrollTo().
 // useImperativeHandle(ref, () => ({ focus() { ... } }))
 // React 19: ref prop + useImperativeHandle combo.
 // -----------------------------------------------------------------------------
@@ -124,9 +124,9 @@ export function ImperativeParent() {
 // -----------------------------------------------------------------------------
 // Q6: Multiple refs merge idea
 //
-// Seedha matlab:
-// Library ko bhi ref chahiye + parent ko bhi — callback me dono set.
-// Ya tiny setRefs helper.
+// In simple words:
+// Library also needs ref + parent also — set both in callback.
+// Or a tiny setRefs helper.
 // -----------------------------------------------------------------------------
 function setRefs(...refs) {
   return (node) => {
@@ -144,15 +144,15 @@ export function MergeRefsDemo() {
 }
 
 // -----------------------------------------------------------------------------
-// Q7: ref on custom component — kya point karta?
+// Q7: ref on custom component — what does it point to?
 //
-// Seedha matlab:
-// Jab tak child ref ko DOM (ya imperative handle) pe na lagaye,
-// parent.current null / useless.
-// Document karo: "yeh component ref ko input pe forward karta".
+// In simple words:
+// Until the child attaches ref to DOM (or imperative handle),
+// parent.current is null / useless.
+// Document: "this component forwards ref to the input".
 // -----------------------------------------------------------------------------
 function Broken({ ref }) {
-  // ref accept kiya but kahin attach nahi ❌
+  // accepted ref but did not attach anywhere ❌
   return <input />;
 }
 
@@ -163,10 +163,10 @@ function Fixed({ ref }) {
 // -----------------------------------------------------------------------------
 // Q8: [MID] Interview closer
 //
-// Seedha matlab:
-// "React 19 me forwardRef mostly legacy; ref prop standard.
-// useImperativeHandle se controlled escape hatch.
-// Ref updates commit phase — render me ref.current mat padho logic ke liye."
+// In simple words:
+// "In React 19 forwardRef is mostly legacy; ref prop is standard.
+// useImperativeHandle as a controlled escape hatch.
+// Ref updates commit phase — do not read ref.current during render for logic."
 // -----------------------------------------------------------------------------
 const closer =
   "ref as prop in 19; forwardRef legacy; don't read ref during render for data flow.";
@@ -174,13 +174,13 @@ const closer =
 // -----------------------------------------------------------------------------
 // Q9: ref prop name collision — 'ref' reserved feel
 //
-// Kya karna hai:
-// Prop naam ref rakho carefully — DOM ref forward ke liye; alag data ke liye inputRef use karo.
+// Task:
+// Name the prop ref carefully — for DOM ref forward; use inputRef for other data.
 //
-// Seedha matlab:
-// React 19 me ref special prop slot jaisa behave — forward to DOM.
-// Agar product code me ref="something" string chahiye tha — rename (conflict rare).
-// React 18 forwardRef alag param — collision kam tha.
+// In simple words:
+// In React 19 ref behaves like a special prop slot — forward to DOM.
+// If product code needed ref="something" string — rename (conflict rare).
+// React 18 forwardRef used a separate param — less collision.
 // TypeScript: ComponentPropsWithRef types update in @types/react 19.
 // -----------------------------------------------------------------------------
 function LabeledInput({ ref, label }) {
@@ -200,11 +200,11 @@ export function RefPropLabelDemo() {
 // -----------------------------------------------------------------------------
 // Q10: [MID] TypeScript ref prop typing sketch
 //
-// Kya karna hai:
-// Props me ref?: Ref<HTMLInputElement> — @types/react 19 helpers.
+// Task:
+// ref in Props?: Ref<HTMLInputElement> — @types/react 19 helpers.
 //
-// Seedha matlab:
-// forwardRef generic types ab optional simpler components me.
+// In simple words:
+// forwardRef generic types are now optional in simpler components.
 // React 18: ForwardRefRenderFunction boilerplate types.
 // Migration: remove forwardRef wrapper first, keep ref in props interface.
 // Libraries publish both patterns during transition.
@@ -215,14 +215,14 @@ const tsRefNote =
 // -----------------------------------------------------------------------------
 // Q11: ref null on unmount — callback ref
 //
-// Kya karna hai:
-// ref={(node) => { ... }} — unmount pe node null aata hai.
+// Task:
+// ref={(node) => { ... }} — node is null on unmount.
 //
-// Seedha matlab:
-// Cleanup measure listeners jab node null.
+// In simple words:
+// Clean up measure listeners when node is null.
 // React 18/19 same callback ref semantics.
 // useImperativeHandle parent ref stable — inner unmount separate lifecycle.
-// Trap: ref callback inline har render new — re-run attach/detach; useCallback stabilize.
+// Trap: inline ref callback is new every render — re-runs attach/detach; stabilize with useCallback.
 // -----------------------------------------------------------------------------
 export function CallbackRefCleanup() {
   return (
@@ -241,10 +241,10 @@ export function CallbackRefCleanup() {
 // -----------------------------------------------------------------------------
 // Q12: [MID] forwardRef migration steps
 //
-// Kya karna hai:
-// 1) forwardRef hatao 2) ref ko props me lo 3) tests snapshot update.
+// Task:
+// 1) remove forwardRef 2) take ref in props 3) update test snapshots.
 //
-// Seedha matlab:
+// In simple words:
 // const X = forwardRef(fn) → function X({ ref, ...props }).
 // React 18 lib consumers still pass ref — 19 native prop accepts.
 // Deprecation warnings 18.3 — forwardRef still works 19.
@@ -260,11 +260,11 @@ const forwardRefMigration = [
 // -----------------------------------------------------------------------------
 // Q13: ref to class component — unchanged
 //
-// Kya karna hai:
-// Class components pe ref = instance; function ref prop change unko affect nahi.
+// Task:
+// On class components ref = instance; function ref prop change does not affect them.
 //
-// Seedha matlab:
-// React 19 ref-as-prop = function components ke liye DX win.
+// In simple words:
+// React 19 ref-as-prop = DX win for function components.
 // Class createRef/useRef attach instance — same as 18.
 // Mixed codebase: class leaf + function wrapper patterns coexist.
 // New code: function + ref prop preferred.
@@ -276,14 +276,14 @@ export function ClassRefNote() {
 // -----------------------------------------------------------------------------
 // Q14: [ADV] useImperativeHandle + ref prop together
 //
-// Kya karna hai:
+// Task:
 // FancyInput({ ref }) { useImperativeHandle(ref, () => ({ focus })); ... }
 //
-// Seedha matlab:
-// Parent ko limited API — encapsulation.
+// In simple words:
+// Limited API for parent — encapsulation.
 // React 18 forwardRef + useImperativeHandle classic pair.
 // React 19: ref prop replaces forwardRef only — imperative handle same.
-// Don't expose entire DOM unless needed — maintenance boundary.
+// Do not expose entire DOM unless needed — maintenance boundary.
 // Return object stable-ish — new object each call usually OK for handles.
 // -----------------------------------------------------------------------------
 function Meter({ ref }) {
@@ -311,13 +311,13 @@ export function MeterParent() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Reading ref.current during render — trap
 //
-// Kya karna hai:
-// render me if (ref.current) width = ... ❌ — layout flicker / rules.
+// Task:
+// in render if (ref.current) width = ... ❌ — layout flicker / rules.
 //
-// Seedha matlab:
-// Ref commit ke baad update — render phase me mat padho UI logic ke liye.
+// In simple words:
+// Ref updates after commit — do not read in render phase for UI logic.
 // React 18 same rule — ref not reactive state.
-// Measure: useLayoutEffect ya callback ref.
+// Measure: useLayoutEffect or callback ref.
 // Compiler doesn't make ref.current reactive — still imperative escape hatch.
 // -----------------------------------------------------------------------------
 export function NoRefDuringRender() {
@@ -332,10 +332,10 @@ export function NoRefDuringRender() {
 // -----------------------------------------------------------------------------
 // Q16: Third-party lib mergeRefs
 //
-// Kya karna hai:
-// Lib internal ref + parent ref — setRefs helper (Q6) ya mergeRefs util.
+// Task:
+// Lib internal ref + parent ref — setRefs helper (Q6) or mergeRefs util.
 //
-// Seedha matlab:
+// In simple words:
 // react-merge-refs package common in libs.
 // React 19 ref prop parent side same merge need.
 // React 18 forwardRef libs often merge inside.
@@ -350,10 +350,10 @@ export function LibMergeRefsDemo() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] ref on composite component — document contract
 //
-// Kya karna hai:
+// Task:
 // JSDoc: "@param ref forwarded to underlying <input />"
 //
-// Seedha matlab:
+// In simple words:
 // Broken component Q7 — accept ref but no attach = bug.
 // Design systems explicit: RefForwardedInput exports type.
 // React 18 forwardRef displayName for DevTools — ref prop components name function.
@@ -371,10 +371,10 @@ export function DocumentedParent() {
 // -----------------------------------------------------------------------------
 // Q18: String ref legacy — don't use
 //
-// Kya karna hai:
+// Task:
 // ref="myRef" string refs removed long ago — useRef/createRef only.
 //
-// Seedha matlab:
+// In simple words:
 // React 19 assumes modern ref API.
 // React 18 already no string refs.
 // Interview historical: string refs old class era.
@@ -385,13 +385,13 @@ const stringRefNote = "String refs dead — useRef or callback ref only.";
 // -----------------------------------------------------------------------------
 // Q19: [ADV] When NOT ref — state/props instead
 //
-// Kya karna hai:
-// Child value read karne ke liye ref abuse mat karo — lift state up.
+// Task:
+// Do not abuse ref to read child value — lift state up.
 //
-// Seedha matlab:
+// In simple words:
 // ref = imperative DOM/focus/scroll/measure — not data flow.
 // React 18 same anti-pattern.
-// Form values: controlled state or FormData submit — ref.current.value scrape fragile.
+// Form values: controlled state or FormData submit — scraping ref.current.value is fragile.
 // Parent needs text → value/onChange props.
 // -----------------------------------------------------------------------------
 export function PreferStateOverRef() {
@@ -404,13 +404,13 @@ export function PreferStateOverRef() {
 // -----------------------------------------------------------------------------
 // Q20: [MID] Server Components — refs client-only
 //
-// Kya karna hai:
-// ref use karne wala component 'use client' hona chahiye.
+// Task:
+// Component using ref should be 'use client'.
 //
-// Seedha matlab:
-// Server Component me ref meaningless — no DOM instance client-side lifecycle same way.
+// In simple words:
+// Ref is meaningless in Server Component — no DOM instance with same client-side lifecycle.
 // Pass ref to client child that wraps DOM element.
-// React 18 CSR everything client — RSC split naya concern.
+// React 18 CSR everything client — RSC split is a new concern.
 // Pattern: Server layout + Client input with ref for focus trap.
 // -----------------------------------------------------------------------------
 const rscRefNote = "Refs attach in client components; server components don't use refs on DOM.";
@@ -418,13 +418,13 @@ const rscRefNote = "Refs attach in client components; server components don't us
 // -----------------------------------------------------------------------------
 // Q21: [ADV] Compiler + ref prop
 //
-// Kya karna hai:
-// Compiler ref prop pass-through optimize kar sakta — still don't read during render.
+// Task:
+// Compiler may optimize ref prop pass-through — still do not read during render.
 //
-// Seedha matlab:
-// Simple forward ref components memoized automatically maybe.
-// useImperativeHandle deps careful — stale inner ref if deps wrong.
-// React 18 manual memo on forwardRef components common.
+// In simple words:
+// Simple forward ref components may be memoized automatically.
+// Be careful with useImperativeHandle deps — stale inner ref if deps wrong.
+// React 18 manual memo on forwardRef components was common.
 // Rules of React purity still apply.
 // -----------------------------------------------------------------------------
 export function CompilerRefNote() {
@@ -434,11 +434,11 @@ export function CompilerRefNote() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] Interview — ref React 18 vs 19 summary
 //
-// Kya karna hai:
+// Task:
 // 18: forwardRef required for function components.
 // 19: ref regular prop; forwardRef legacy compat.
 //
-// Seedha matlab:
+// In simple words:
 // callback ref, useImperativeHandle unchanged semantically.
 // Traps: not forwarding ref; reading ref in render; merge conflicts.
 // Migration incremental; libs lag on typings.

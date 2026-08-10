@@ -1,18 +1,18 @@
 // ============================================================================
 // 14 — Lifting State Up
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: Do siblings ko same data chahiye — state unke common parent me rakho.
-// Jaise ghar ka thermostat living room me; har room apna AC remote nahi.
-// Parent state rakhe, children props + callbacks se padhein/badlein.
+// SIMPLE: Two siblings need the same data — keep state in their common parent.
+// Like the house thermostat in the living room; not every room with its own AC remote.
+// Parent holds state, children read/change via props + callbacks.
 //
 // Pattern: const [x, setX] = useState in Parent; Child value={x} onChange={setX}.
-// Kab lift: shared sync. Kab mat: sirf ek child use kare — local rakh.
+// When to lift: shared sync. When not: only one child uses it — keep local.
 //
-// KYUN: Single source of truth. Duplicate state sync bugs khatam.
+// WHY: Single source of truth. Duplicate state sync bugs gone.
 // INTERVIEW: where should state live; controlled child.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { useState } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Two inputs synced via parent
 //
-// Kya karna hai:
-// Celsius parent state; do children dikhayein.
+// Task:
+// Celsius parent state; two children display it.
 //
-// Seedha matlab:
-// Shared value upar. Children dumb-ish display/editors.
+// In simple words:
+// Shared value up top. Children are dumb-ish display/editors.
 // -----------------------------------------------------------------------------
 function TempDisplay({ celsius }) {
   return <p>{celsius}°C</p>;
@@ -54,10 +54,10 @@ function TempApp() {
 // -----------------------------------------------------------------------------
 // Q2: Accordion — only one open
 //
-// Kya karna hai:
-// openId parent me; panels id match pe open.
+// Task:
+// openId in parent; panels open when id matches.
 //
-// Seedha matlab:
+// In simple words:
 // Mutual exclusion state naturally lifts to parent.
 // -----------------------------------------------------------------------------
 function Panel({ id, openId, onOpen, title, children }) {
@@ -87,10 +87,10 @@ function Accordion() {
 // -----------------------------------------------------------------------------
 // Q3: List + detail selection
 //
-// Kya karna hai:
-// selectedId parent; List click → Detail show.
+// Task:
+// selectedId in parent; List click → Detail show.
 //
-// Seedha matlab:
+// In simple words:
 // Master-detail classic lift.
 // -----------------------------------------------------------------------------
 function List({ items, selectedId, onSelect }) {
@@ -131,11 +131,11 @@ function MasterDetail() {
 // -----------------------------------------------------------------------------
 // Q4: Don't lift too high
 //
-// Kya karna hai:
-// Hover state sirf ek card me — parent App me mat.
+// Task:
+// Hover state only in one card — not in parent App.
 //
-// Seedha matlab:
-// State jitna neeche ho sake utna better (colocate). Lift jab share zaroori.
+// In simple words:
+// State as low as possible (colocate). Lift only when sharing is needed.
 // -----------------------------------------------------------------------------
 function Card() {
   const [hover, setHover] = useState(false); // local OK
@@ -152,11 +152,11 @@ function Card() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Derived state — don't duplicate
 //
-// Kya karna hai:
-// fullName = first + last — alag state mat; render me compute.
+// Task:
+// fullName = first + last — not separate state; compute in render.
 //
-// Seedha matlab:
-// Duplicate state sync hell. Source fields rakho, derive baaki.
+// In simple words:
+// Duplicate state sync hell. Keep source fields, derive the rest.
 // -----------------------------------------------------------------------------
 function NameForm() {
   const [first, setFirst] = useState("");
@@ -174,10 +174,10 @@ function NameForm() {
 // -----------------------------------------------------------------------------
 // Q6: Callback props naming
 //
-// Kya karna hai:
-// onX / setX clear names — child ko pata parent expect kya.
+// Task:
+// onX / setX clear names — child knows what parent expects.
 //
-// Seedha matlab:
+// In simple words:
 // Convention: onChange, onSubmit, onSelect. Readable API.
 // -----------------------------------------------------------------------------
 function SearchField({ value, onChange }) {
@@ -187,21 +187,21 @@ function SearchField({ value, onChange }) {
 // -----------------------------------------------------------------------------
 // Q7: [MID] Lift then maybe context
 //
-// Kya karna hai:
-// Bohot deep tree me same state — lift + context (11).
+// Task:
+// Same state deep in tree — lift + context (11).
 //
-// Seedha matlab:
-// Pehle lift parent. Props drilling pain ho to context. Steps skip mat.
+// In simple words:
+// First lift to parent. If props drilling hurts, use context. Don't skip steps.
 // -----------------------------------------------------------------------------
 // Parent state → props → if drilling pain → Context Provider
 
 // -----------------------------------------------------------------------------
 // Q8: Controlled vs internal state child
 //
-// Kya karna hai:
-// Kabhi child optional value/onChange (controlled) ya default local.
+// Task:
+// Sometimes child has optional value/onChange (controlled) or default local.
 //
-// Seedha matlab:
+// In simple words:
 // Flexible components: if value!=null controlled else self state.
 // -----------------------------------------------------------------------------
 function FlexibleInput({ value, onChange, defaultValue = "" }) {
@@ -218,12 +218,12 @@ function FlexibleInput({ value, onChange, defaultValue = "" }) {
 // -----------------------------------------------------------------------------
 // Q9: Syncing two inputs — Celsius & Fahrenheit
 //
-// Kya karna hai:
-// Parent me celsius state; F input convert karke setCelsius call.
+// Task:
+// Parent has celsius state; F input converts and calls setCelsius.
 //
-// Seedha matlab:
-// Dono inputs ek source of truth share. Conversion parent ya handler me.
-// Duplicate F state mat — derive from C.
+// In simple words:
+// Both inputs share one source of truth. Conversion in parent or handler.
+// Don't duplicate F state — derive from C.
 // -----------------------------------------------------------------------------
 function FahrenheitInput({ celsius, onCelsiusChange }) {
   const fahrenheit = (celsius * 9) / 5 + 32;
@@ -253,12 +253,12 @@ function TempConverter() {
 // -----------------------------------------------------------------------------
 // Q10: Controlled child — value + onChange required
 //
-// Kya karna hai:
-// Parent owns state; child sirf display + notify — "controlled component".
+// Task:
+// Parent owns state; child only displays + notifies — "controlled component".
 //
-// Seedha matlab:
-// React forms ka core pattern. Child apna state nahi rakhta value ke liye.
-// Single source of truth parent me.
+// In simple words:
+// Core React forms pattern. Child does not keep its own state for value.
+// Single source of truth in parent.
 // -----------------------------------------------------------------------------
 function ControlledInput({ value, onChange, label }) {
   return (
@@ -277,26 +277,26 @@ function ControlledForm() {
 // -----------------------------------------------------------------------------
 // Q11: [MID] When lift vs colocate — decision tree
 //
-// Kya karna hai:
-// Sirf ek child use kare → local. Do siblings sync → lift parent.
+// Task:
+// Only one child uses it → local. Two siblings sync → lift to parent.
 //
-// Seedha matlab:
-// State jitna neeche utna better performance + clarity.
-// Lift sirf jab share/sync zaroori ho — premature lift mat.
+// In simple words:
+// State as low as possible = better performance + clarity.
+// Lift only when share/sync is needed — don't lift too early.
 // -----------------------------------------------------------------------------
 function ColocateNote() {
-  return <p>Pehle colocate try karo. Share need aaye tab lift.</p>;
+  return <p>Try colocate first. Lift when sharing is needed.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q12: Prop drilling pain → context step
 //
-// Kya karna hai:
+// Task:
 // App → Layout → Page → Widget → Leaf same user prop — drilling.
 //
-// Seedha matlab:
-// 2-3 level props OK. 5+ same prop → context consider (11 file).
-// Lift pehle try; drilling unbearable ho to context.
+// In simple words:
+// 2-3 levels of props OK. 5+ same prop → consider context (11 file).
+// Try lift first; context when drilling is unbearable.
 // -----------------------------------------------------------------------------
 function DrillingSketch({ user }) {
   return <Middle user={user} />;
@@ -311,11 +311,11 @@ function Leaf({ user }) {
 // -----------------------------------------------------------------------------
 // Q13: Lifting filter state for shared list
 //
-// Kya karna hai:
-// query parent me; List + Count dono filtered items use karein.
+// Task:
+// query in parent; List + Count both use filtered items.
 //
-// Seedha matlab:
-// Search box aur results sync — natural lift candidate.
+// In simple words:
+// Search box and results in sync — natural lift candidate.
 // -----------------------------------------------------------------------------
 function FilterBar({ query, onQueryChange }) {
   return (
@@ -349,10 +349,10 @@ function FilterApp() {
 // -----------------------------------------------------------------------------
 // Q14: Inverse data flow — child notifies parent
 //
-// Kya karna hai:
+// Task:
 // onSubmit callback — child event, parent state update.
 //
-// Seedha matlab:
+// In simple words:
 // Data down (props), events up (callbacks). React one-way flow.
 // Lifting = events up + state down combo.
 // -----------------------------------------------------------------------------
@@ -373,11 +373,11 @@ function ParentSubmit() {
 // -----------------------------------------------------------------------------
 // Q15: [MID] Don't lift derived values
 //
-// Kya karna hai:
-// items + filter → filteredItems compute in parent render, alag state mat.
+// Task:
+// items + filter → filteredItems compute in parent render, not separate state.
 //
-// Seedha matlab:
-// Sirf source state lift karo. Derived parent ya child me compute.
+// In simple words:
+// Only lift source state. Compute derived in parent or child.
 // Duplicate filtered state = sync bug factory.
 // -----------------------------------------------------------------------------
 function DerivedFilterDemo() {
@@ -395,11 +395,11 @@ function DerivedFilterDemo() {
 // -----------------------------------------------------------------------------
 // Q16: Shared toggle — theme siblings
 //
-// Kya karna hai:
-// isDark parent; Header + Content dono props se.
+// Task:
+// isDark in parent; Header + Content both get props.
 //
-// Seedha matlab:
-// UI mode share karna = lift. Context tab jab tree bahut deep.
+// In simple words:
+// Sharing UI mode = lift. Context when tree is very deep.
 // -----------------------------------------------------------------------------
 function Header({ dark }) {
   return <header style={{ background: dark ? "#222" : "#fff" }}>Header</header>;
@@ -423,12 +423,12 @@ function ThemeLift() {
 // -----------------------------------------------------------------------------
 // Q17: Key reset vs lifting state
 //
-// Kya karna hai:
+// Task:
 // Form reset — parent key={formKey} bump vs lift reset handler.
 //
-// Seedha matlab:
-// Kabhi child local state OK; reset ke liye key change se remount.
-// Lift jab multiple children sync reset chahiye.
+// In simple words:
+// Sometimes child local state OK; key change remounts for reset.
+// Lift when multiple children need synced reset.
 // -----------------------------------------------------------------------------
 function ResettableForm({ keySeed }) {
   const [text, setText] = useState("");
@@ -440,12 +440,12 @@ function ResettableForm({ keySeed }) {
 // -----------------------------------------------------------------------------
 // Q18: [MID] Container / Presentational split
 //
-// Kya karna hai:
+// Task:
 // Smart parent state + dumb display children — lift enables this.
 //
-// Seedha matlab:
-// Container: data + handlers. Presentational: props se render only.
-// Test presentational easy — mock props.
+// In simple words:
+// Container: data + handlers. Presentational: render from props only.
+// Easy to test presentational — mock props.
 // -----------------------------------------------------------------------------
 function UserCard({ name, onEdit }) {
   return (
@@ -463,15 +463,15 @@ function UserContainer() {
 // -----------------------------------------------------------------------------
 // Q19: Lifting too high — global local state problem
 //
-// Kya karna hai:
-// Modal open state App me jab sirf ek branch use kare — over-lift.
+// Task:
+// Modal open state in App when only one branch uses it — over-lift.
 //
-// Seedha matlab:
-// App re-render har modal toggle pe — waste. Colocate modal state section me.
+// In simple words:
+// App re-renders on every modal toggle — waste. Colocate modal state in section.
 // Balance: share need vs blast radius.
 // -----------------------------------------------------------------------------
 function SectionWithModal() {
-  const [open, setOpen] = useState(false); // yahan OK, App me mat
+  const [open, setOpen] = useState(false); // OK here, not in App
   return (
     <div>
       <button onClick={() => setOpen(true)}>Open</button>
@@ -495,10 +495,10 @@ function Modal({ open, onClose, children }) {
 // -----------------------------------------------------------------------------
 // Q20: Syncing checkbox group — all selected parent state
 //
-// Kya karna hai:
-// selectedIds Set/array parent; each checkbox controlled.
+// Task:
+// selectedIds Set/array in parent; each checkbox controlled.
 //
-// Seedha matlab:
+// In simple words:
 // Multi-select share = lift. Toggle one id → parent update → all sync.
 // -----------------------------------------------------------------------------
 function Checkbox({ id, checked, onToggle }) {
@@ -535,29 +535,29 @@ function CheckboxGroup() {
 // -----------------------------------------------------------------------------
 // Q21: [MID] URL as lifted state (concept)
 //
-// Kya karna hai:
-// selectedTab parent me + sync URL searchParams — share + bookmarkable.
+// Task:
+// selectedTab in parent + sync URL searchParams — share + bookmarkable.
 //
-// Seedha matlab:
-// Lifted state sirf component tree nahi — URL bhi "shared parent".
-// React Router: useSearchParams lift alternative.
+// In simple words:
+// Lifted state is not just the component tree — URL is also a "shared parent".
+// React Router: useSearchParams as lift alternative.
 // -----------------------------------------------------------------------------
 function TabUrlNote() {
-  return <p>Tab state URL me = lift + persistence free.</p>;
+  return <p>Tab state in URL = lift + persistence free.</p>;
 }
 
 // -----------------------------------------------------------------------------
 // Q22: Anti-pattern — mirroring props to state
 //
-// Kya karna hai:
-// const [v, setV] = useState(props.value) — props change pe out of sync.
+// Task:
+// const [v, setV] = useState(props.value) — out of sync when props change.
 //
-// Seedha matlab:
-// Controlled ho to props hi use karo. Local copy mat unless key reset.
-// useEffect sync props→state = usually smell.
+// In simple words:
+// If controlled, use props directly. No local copy unless key reset.
+// useEffect sync props→state = usually a smell.
 // -----------------------------------------------------------------------------
 function MirroringBad({ value }) {
-  // ❌ const [v, setV] = useState(value); — props update ignore
+  // ❌ const [v, setV] = useState(value); — ignores props update
   return <input value={value} readOnly />; // ✅ controlled from parent
 }
 

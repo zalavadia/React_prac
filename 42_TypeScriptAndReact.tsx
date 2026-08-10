@@ -1,14 +1,14 @@
 // ============================================================================
 // 42 — TypeScript + React
-// Level: ADVANCED  |  Sequence: JS React solid, phir yeh typing layer
+// Level: ADVANCED  |  Sequence: JS React solid, then this typing layer
 // ============================================================================
 //
-// LAYMAN: TypeScript = code likhte waqt type checker — props galat pass?
-// Compiler pakad lega. React me props, events, refs, hooks sab typed.
+// SIMPLE: TypeScript = type checker while you write code — wrong props passed?
+// Compiler catches it. In React, props, events, refs, hooks — all typed.
 //
-// KYUN: Bade teams me fewer runtime bugs; autocomplete; refactor safe.
+// WHY: Fewer runtime bugs in big teams; autocomplete; safe refactors.
 // INTERVIEW: FC vs plain fn, discriminated unions, generic List<T>, ref null.
-// Vite + React + TS project me use — teaching file.
+// Use in Vite + React + TS project — teaching file.
 // Optional: npm i zod (Q18 preview)
 //
 // ============================================================================
@@ -35,16 +35,16 @@ import {
   type Ref,
 } from "react";
 
-// Zod preview — Vite me: npm i zod
+// Zod preview — in Vite: npm i zod
 import { z } from "zod";
 
 // -----------------------------------------------------------------------------
 // Q1: FC vs plain function typing props
 //
-// Kya karna hai:
-// React.FC optional children inject karta tha — ab plain fn + props type prefer.
+// Task:
+// React.FC used to inject optional children — now prefer plain fn + props type.
 //
-// Seedha matlab:
+// In simple words:
 // function Button(props: ButtonProps) — simple, explicit.
 // React.FC<Props> legacy; generic children confusion — avoid in new code.
 // -----------------------------------------------------------------------------
@@ -66,12 +66,12 @@ const FCButton: React.FC<ButtonProps> = ({ label, onClick }) => (
 // -----------------------------------------------------------------------------
 // Q2: Props interface + optional + children: React.ReactNode
 //
-// Kya karna hai:
+// Task:
 // interface CardProps { title: string; subtitle?: string; children: ReactNode }
 //
-// Seedha matlab:
+// In simple words:
 // ? = optional. ReactNode = string | number | element | fragment | null | array...
-// JSX me kuch bhi children ho sakta — ReactNode cover karta hai.
+// JSX can have anything as children — ReactNode covers it.
 // -----------------------------------------------------------------------------
 interface CardProps {
   title: string;
@@ -92,11 +92,11 @@ function Card({ title, subtitle, children }: CardProps) {
 // -----------------------------------------------------------------------------
 // Q3: Event types — ChangeEvent, FormEvent, MouseEvent
 //
-// Kya karna hai:
-// Handler me e: ChangeEvent<HTMLInputElement> etc.
+// Task:
+// In handler: e: ChangeEvent<HTMLInputElement> etc.
 //
-// Seedha matlab:
-// Generic element type batata hai e.target kya hai.
+// In simple words:
+// Generic element type tells you what e.target is.
 // Form submit → FormEvent<HTMLFormElement>. Click → MouseEvent<HTMLButtonElement>.
 // -----------------------------------------------------------------------------
 function SearchForm() {
@@ -129,12 +129,12 @@ function SearchForm() {
 // -----------------------------------------------------------------------------
 // Q4: useState — generic inference + explicit
 //
-// Kya karna hai:
-// useState(0) infers number. Union/null ke liye explicit generic.
+// Task:
+// useState(0) infers number. For union/null use explicit generic.
 //
-// Seedha matlab:
-// useState<User | null>(null) — TS samjhega state kab null.
-// Initial value se infer often enough — over-annotate mat.
+// In simple words:
+// useState<User | null>(null) — TS knows when state can be null.
+// Initial value inference is often enough — don't over-annotate.
 // -----------------------------------------------------------------------------
 type User = { id: number; name: string };
 
@@ -157,12 +157,12 @@ function UserPicker() {
 // -----------------------------------------------------------------------------
 // Q5: useRef — HTML element types + null initial
 //
-// Kya karna hai:
+// Task:
 // useRef<HTMLInputElement>(null) — .current HTMLInputElement | null.
 //
-// Seedha matlab:
+// In simple words:
 // DOM ref → element type + null. Mutable box (no DOM) → useRef<number>(0).
-// Access se pehle if (ref.current) guard — strict null checks.
+// Guard with if (ref.current) before access — strict null checks.
 // -----------------------------------------------------------------------------
 function FocusField() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -183,11 +183,11 @@ function TickRef() {
 // -----------------------------------------------------------------------------
 // Q6: useReducer — typed actions (discriminated union)
 //
-// Kya karna hai:
+// Task:
 // type Action = { type: "inc" } | { type: "set"; value: number }
 //
-// Seedha matlab:
-// Discriminant field "type" — switch me narrow ho jata hai.
+// In simple words:
+// Discriminant field "type" — switch narrows it.
 // payload optional per action — type-safe dispatch.
 // -----------------------------------------------------------------------------
 type CounterState = { count: number };
@@ -229,11 +229,11 @@ function TypedCounter() {
 // -----------------------------------------------------------------------------
 // Q7: Component props with generics — List<T>
 //
-// Kya karna hai:
+// Task:
 // function List<T>({ items, render }: ListProps<T>)
 //
-// Seedha matlab:
-// Reusable list — item type caller decide. keyof / extends constraints add kar sakte.
+// In simple words:
+// Reusable list — caller decides item type. Can add keyof / extends constraints.
 // -----------------------------------------------------------------------------
 type ListProps<T> = {
   items: T[];
@@ -264,12 +264,12 @@ function GenericListDemo() {
 // -----------------------------------------------------------------------------
 // Q8: Extending HTML attributes — ButtonHTMLAttributes
 //
-// Kya karna hai:
+// Task:
 // type Props = ButtonHTMLAttributes<HTMLButtonElement> & { loading?: boolean }
 //
-// Seedha matlab:
-// Native props (onClick, disabled, className) inherit + custom add.
-// ComponentPropsWithoutRef<"button"> bhi common shortcut.
+// In simple words:
+// Inherit native props (onClick, disabled, className) + add custom ones.
+// ComponentPropsWithoutRef<"button"> is also a common shortcut.
 // -----------------------------------------------------------------------------
 type LoadingButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
@@ -299,12 +299,12 @@ function IconInput({ icon, ...inputProps }: IconInputProps) {
 // -----------------------------------------------------------------------------
 // Q9: Discriminated union props — variant
 //
-// Kya karna hai:
+// Task:
 // LinkButton = { variant: "link"; href: string } | { variant: "button"; onClick }
 //
-// Seedha matlab:
-// variant switch → TS force correct fields per branch.
-// Optional everything se behtar — impossible states compile error.
+// In simple words:
+// variant switch → TS forces correct fields per branch.
+// Better than making everything optional — impossible states become compile errors.
 // -----------------------------------------------------------------------------
 type ActionLink =
   | { variant: "link"; href: string; label: string }
@@ -320,12 +320,12 @@ function ActionControl(props: ActionLink) {
 // -----------------------------------------------------------------------------
 // Q10: Typing custom hooks return
 //
-// Kya karna hai:
+// Task:
 // Explicit return type OR inferred tuple/object.
 //
-// Seedha matlab:
-// Return type document karta hai API. Tuple [value, setter] as const optional.
-// Over-export internal types mat — hook consumer ko jo chahiye woh.
+// In simple words:
+// Return type documents the API. Tuple [value, setter] as const is optional.
+// Don't over-export internal types — only what hook consumers need.
 // -----------------------------------------------------------------------------
 type UseToggleReturn = {
   on: boolean;
@@ -347,12 +347,12 @@ function ToggleDemo() {
 // -----------------------------------------------------------------------------
 // Q11: Context — typed createContext + undefined guard
 //
-// Kya karna hai:
+// Task:
 // createContext<Auth | null>(null) + provider OR throw helper.
 //
-// Seedha matlab:
-// Default null → consumer me guard. Ya separate useAuth hook throws if missing.
-// undefined default bhi — but null + named hook pattern common.
+// In simple words:
+// Default null → guard in consumer. Or separate useAuth hook throws if missing.
+// undefined default also works — but null + named hook pattern is common.
 // -----------------------------------------------------------------------------
 type AuthContextValue = {
   user: User | null;
@@ -395,10 +395,10 @@ function ProfileChip() {
 // -----------------------------------------------------------------------------
 // Q12: forwardRef / React 19 ref as prop typing
 //
-// Kya karna hai:
+// Task:
 // React 19: ref normal prop. forwardRef legacy typing still in codebases.
 //
-// Seedha matlab:
+// In simple words:
 // forwardRef<HTMLInputElement, Props>((props, ref) => ...)
 // 19 style: function Input({ ref, ...props }: Props & { ref?: Ref<HTMLInputElement> })
 // -----------------------------------------------------------------------------
@@ -426,10 +426,10 @@ const LegacyInput = forwardRef<HTMLInputElement, LegacyInputProps>(
 // -----------------------------------------------------------------------------
 // Q13: as const / satisfies
 //
-// Kya karna hai:
+// Task:
 // as const → readonly literal tuple. satisfies → check shape, keep inference.
 //
-// Seedha matlab:
+// In simple words:
 // ROUTES as const — keyof typeof ROUTES typed keys.
 // satisfies Record<string, string> — extra keys error, values stay literal.
 // -----------------------------------------------------------------------------
@@ -452,10 +452,10 @@ function RouteLink({ name }: { name: RouteKey }) {
 // -----------------------------------------------------------------------------
 // Q14: Utility types — Pick Omit Partial Required for props
 //
-// Kya karna hai:
-// Public props se internal derive — DRY.
+// Task:
+// Derive internal types from public props — DRY.
 //
-// Seedha matlab:
+// In simple words:
 // Pick<User, "id" | "name"> — subset. Omit<User, "password"> — hide sensitive.
 // Partial<Form> edit mode. Required<Pick<...>> force optional → required.
 // -----------------------------------------------------------------------------
@@ -481,12 +481,12 @@ function UserBadge({ id, name }: UserPreview) {
 // -----------------------------------------------------------------------------
 // Q15: API response + loading/error state union
 //
-// Kya karna hai:
+// Task:
 // type State = idle | loading | success | error — discriminated.
 //
-// Seedha matlab:
-// status field se narrow — data sirf success me exists (TS knows).
-// Same pattern file 12 fetch machine — ab typed.
+// In simple words:
+// Narrow via status field — data exists only in success (TS knows).
+// Same pattern as file 12 fetch machine — now typed.
 // -----------------------------------------------------------------------------
 type ApiUser = { id: number; name: string };
 
@@ -518,12 +518,12 @@ function UserLoader() {
 // -----------------------------------------------------------------------------
 // Q16: Children render props typing
 //
-// Kya karna hai:
+// Task:
 // children: (value: T) => ReactNode — function as child.
 //
-// Seedha matlab:
-// Render prop pattern typed — caller ko data type pata.
-// ReactNode return flexible UI.
+// In simple words:
+// Render prop pattern typed — caller knows the data type.
+// ReactNode return gives flexible UI.
 // -----------------------------------------------------------------------------
 type DataRenderProps<T> = {
   data: T;
@@ -545,10 +545,10 @@ function RenderPropDemo() {
 // -----------------------------------------------------------------------------
 // Q17: Polymorphic `as` prop pattern (simple)
 //
-// Kya karna hai:
+// Task:
 // <Text as="a" href="..."> — element type change, props merge typed.
 //
-// Seedha matlab:
+// In simple words:
 // ElementType + ComponentPropsWithoutRef<C> intersection — advanced but common lib pattern.
 // -----------------------------------------------------------------------------
 type PolymorphicProps<C extends ElementType> = {
@@ -582,12 +582,12 @@ function PolymorphicDemo() {
 // -----------------------------------------------------------------------------
 // Q18: Zod infer — z.infer preview for forms
 //
-// Kya karna hai:
+// Task:
 // Schema single source → runtime validate + TS type.
 //
-// Seedha matlab:
+// In simple words:
 // npm i zod. Form schema define → type FormValues = z.infer<typeof Schema>.
-// parse safe — invalid data runtime catch, type compile time.
+// parse safe — invalid data caught at runtime, type at compile time.
 // -----------------------------------------------------------------------------
 const SignupSchema = z.object({
   email: z.string().email(),
@@ -608,10 +608,10 @@ function SignupPreview() {
 // -----------------------------------------------------------------------------
 // Q19: Strict tsconfig tips (comments)
 //
-// Kya karna hai:
-// compilerOptions strict family enable karo.
+// Task:
+// Enable compilerOptions strict family.
 //
-// Seedha matlab:
+// In simple words:
 // "strict": true — null checks, implicit any off, etc.
 // "noUncheckedIndexedAccess": true — arr[i] maybe undefined ✅ safer
 // "jsx": "react-jsx" — Vite default
@@ -628,10 +628,10 @@ const tsconfigTips = [
 // -----------------------------------------------------------------------------
 // Q20: Common TS errors — children, event target, ref null
 //
-// Kya karna hai:
-// Fix patterns dikhao.
+// Task:
+// Show fix patterns.
 //
-// Seedha matlab:
+// In simple words:
 // ❌ Props without children but JSX children pass → add children: ReactNode
 // ❌ e.target.value on Event → ChangeEvent<HTMLInputElement>
 // ❌ ref.current.focus() without null check → ?. or if guard
@@ -655,12 +655,12 @@ function FixedInput() {
 // -----------------------------------------------------------------------------
 // Q21: Typing memo / lazy components
 //
-// Kya karna hai:
+// Task:
 // memo<Props>(fn). lazy(() => import(...)) return type Promise<{ default: Component }>
 //
-// Seedha matlab:
-// memo generic props preserve. lazy needs default export component.
-// Suspense boundary lazy child ke saath (file 21).
+// In simple words:
+// memo generic preserves props. lazy needs default export component.
+// Suspense boundary with lazy child (file 21).
 // -----------------------------------------------------------------------------
 type ExpensiveProps = { n: number };
 
@@ -679,10 +679,10 @@ const LazyDashboard = lazy(() =>
 // -----------------------------------------------------------------------------
 // Q22: Enum vs union string literals for variants
 //
-// Kya karna hai:
+// Task:
 // Prefer union "sm" | "md" | "lg" over enum (tree-shake, no reverse mapping).
 //
-// Seedha matlab:
+// In simple words:
 // enum Size { Sm, Md } — runtime object, awkward JSX.
 // type Size = "sm" | "md" — idiomatic TS + React props.
 // const enum rare — bundler inline, debugging harder.
@@ -708,12 +708,12 @@ enum LegacySize {
 // -----------------------------------------------------------------------------
 // Q23: Index signatures vs Record
 //
-// Kya karna hai:
+// Task:
 // Record<string, T> typed dict. Index signature { [key: string]: T } similar.
 //
-// Seedha matlab:
+// In simple words:
 // Record<Keys, T> — known keys. Record<string, number> — open map.
-// Index signature interface me extra props allow — use carefully with strict.
+// Index signature on interface allows extra props — use carefully with strict.
 // -----------------------------------------------------------------------------
 type LabelsByLocale = Record<string, string>;
 
@@ -735,12 +735,12 @@ function LocaleLabel({ code }: { code: string }) {
 // -----------------------------------------------------------------------------
 // Q24: Typing useEffect cleanup
 //
-// Kya karna hai:
+// Task:
 // Return void | (() => void | undefined) — cleanup function optional.
 //
-// Seedha matlab:
+// In simple words:
 // Effect fn return type inferred. Explicit: useEffect((): void | (() => void) => ...)
-// Cleanup sync — async fn return mat (Promise void ≠ cleanup).
+// Cleanup is sync — don't return async fn (Promise void ≠ cleanup).
 // AbortController typed with fetch cancel pattern.
 // -----------------------------------------------------------------------------
 function SubscribedWidget({ userId }: { userId: number }) {
@@ -769,14 +769,14 @@ function SubscribedWidget({ userId }: { userId: number }) {
 // -----------------------------------------------------------------------------
 // Q25: [ADV] Interview — interface vs type for props; never for props?
 //
-// Kya karna hai:
-// Bolne layak nuanced answer.
+// Task:
+// Nuanced answer worth knowing for interviews.
 //
-// Seedha matlab:
-// interface props — extend declare merge (rare props). type — unions/intersections easier.
+// In simple words:
+// interface props — extend declare merge (rare for props). type — unions/intersections easier.
 // Team convention > dogma. Both fine for component props.
 // "never use type" outdated myth. "never use interface for unions" — union needs type.
-// Props = object shape → either works. Consistency team me important.
+// Props = object shape → either works. Consistency in team is important.
 // eslint-react often no difference; pick one style guide.
 // -----------------------------------------------------------------------------
 type NeverForPropsMyth =

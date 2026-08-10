@@ -2,16 +2,16 @@
 
 Base → Mid → **React 19** → Mid interview → **Advanced** (TS, a11y, routing, concurrent, auth/RHF/Zod, Zustand, class).
 
-## Padho kaise
-1. `node 00_StudyOrder.js` — sequence dekho
-2. Files: `01_` se `47_` order me
-3. Browser app (topic + Q&A + solutions):
+## How to study
+1. `node 00_StudyOrder.js` — see the sequence
+2. Files: `01_` through `47_` in order
+3. Browser app (topics + Q&A + solutions):
    ```bash
    cd docs
    python3 -m http.server 5600
    ```
    Open `http://localhost:5600`
-4. Docs data refresh (after editing any teaching file):
+4. Refresh docs data (after editing any teaching file):
    ```bash
    node docs/generate-topics-data.js
    ```
@@ -25,7 +25,7 @@ Base → Mid → **React 19** → Mid interview → **Advanced** (TS, a11y, rout
 | 40 | INTERVIEW | **47 Qs** |
 | 41–47 | ADVANCED | **24–26 Qs** — Class, TS, a11y, routing, concurrent, Auth+RHF+Zod, Zustand |
 
-**Total ≈ 1090 questions** across the path. Har Q ke baad Example/Solution.
+**Total ≈ 1090 questions** across the path. Each question includes an example/solution.
 
 ## Advanced (41–47)
 | File | Focus |
@@ -38,5 +38,5 @@ Base → Mid → **React 19** → Mid interview → **Advanced** (TS, a11y, rout
 | 46 | Auth patterns + React Hook Form + Zod |
 | 47 | Zustand |
 
-Live Vite practice: `npm create vite@latest` + React 19. Advanced files ke liye optionally:
+Live Vite practice: `npm create vite@latest` + React 19. For advanced files, optionally:
 `npm i react-router-dom zod react-hook-form @hookform/resolvers zustand`

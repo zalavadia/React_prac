@@ -1,18 +1,18 @@
 // ============================================================================
 // 12 — useReducer
-// Level: MID  |  Sequence: pehle yeh, phir agla number
+// Level: MID  |  Sequence: read this file, then the next number
 // ============================================================================
 //
-// LAYMAN: useState chhote dabbe. useReducer = kitchen manager jo ORDER (action)
-// sunke state recipe (reducer) se naya state banata hai.
+// SIMPLE: useState is small boxes. useReducer = kitchen manager who hears ORDER (action)
+// and builds new state from a recipe (reducer).
 // dispatch({ type: "add", payload }) → reducer(state, action) → nextState.
 //
-// Jab: kai related fields, complex transitions, next state purane pe depend,
-// ya "event → how state changes" clear document karna ho (Redux jaisa mini).
+// When: many related fields, complex transitions, next state depends on previous,
+// or you want to clearly document "event → how state changes" (mini Redux).
 //
-// KYUN: Forms/wizards/game logic clean. Testable pure reducer.
+// WHY: Forms/wizards/game logic stay clean. Testable pure reducer.
 // INTERVIEW: when useReducer vs useState; pure reducer; immer optional.
-// Vite/React 19 project me use — teaching file.
+// Use in a Vite + React 19 project — teaching file.
 //
 // ============================================================================
 
@@ -21,11 +21,11 @@ import { useReducer } from "react";
 // -----------------------------------------------------------------------------
 // Q1: Counter with reducer
 //
-// Kya karna hai:
+// Task:
 // INC / DEC / RESET actions.
 //
-// Seedha matlab:
-// Saari update logic ek jagah. UI sirf dispatch.
+// In simple words:
+// All update logic in one place. UI only dispatches.
 // -----------------------------------------------------------------------------
 function counterReducer(state, action) {
   switch (action.type) {
@@ -55,11 +55,11 @@ function CounterR() {
 // -----------------------------------------------------------------------------
 // Q2: Todo list reducer
 //
-// Kya karna hai:
+// Task:
 // add / toggle / remove.
 //
-// Seedha matlab:
-// Array updates immutable. action.payload me data.
+// In simple words:
+// Array updates are immutable. Data goes in action.payload.
 // -----------------------------------------------------------------------------
 function todosReducer(state, action) {
   switch (action.type) {
@@ -103,11 +103,11 @@ function Todos() {
 // -----------------------------------------------------------------------------
 // Q3: Form object reducer
 //
-// Kya karna hai:
+// Task:
 // field update action + reset.
 //
-// Seedha matlab:
-// Kai fields — ek reducer vs kai useState. Related → reducer nice.
+// In simple words:
+// Many fields — one reducer vs many useState. Related fields → reducer is nice.
 // -----------------------------------------------------------------------------
 function formReducer(state, action) {
   switch (action.type) {
@@ -145,11 +145,11 @@ function ProfileForm() {
 // -----------------------------------------------------------------------------
 // Q4: Lazy init
 //
-// Kya karna hai:
+// Task:
 // useReducer(reducer, arg, initFn)
 //
-// Seedha matlab:
-// Heavy initial state ek baar — init(arg) se banao.
+// In simple words:
+// Heavy initial state once — build with init(arg).
 // -----------------------------------------------------------------------------
 function init(count) {
   return { count, history: [] };
@@ -170,11 +170,11 @@ function LazyCounter() {
 // -----------------------------------------------------------------------------
 // Q5: [MID] Finite state machine feel
 //
-// Kya karna hai:
-// status: idle→loading→success|error; invalid transitions ignore.
+// Task:
+// status: idle→loading→success|error; ignore invalid transitions.
 //
-// Seedha matlab:
-// Reducer rules enforce — random setStatus bugs kam.
+// In simple words:
+// Reducer rules enforce — fewer random setStatus bugs.
 // -----------------------------------------------------------------------------
 function fetchReducer(state, action) {
   switch (action.type) {
@@ -217,27 +217,27 @@ function FetchMachine() {
 // -----------------------------------------------------------------------------
 // Q6: [MID] useReducer + context = light Redux
 //
-// Kya karna hai:
-// Provider me state+dispatch; children dispatch actions.
+// Task:
+// state+dispatch in Provider; children dispatch actions.
 //
-// Seedha matlab:
-// Mid apps me Redux se pehle yeh pattern. Scale carefully.
+// In simple words:
+// Mid apps use this pattern before Redux. Scale carefully.
 // -----------------------------------------------------------------------------
 // See 11_UseContext split pattern — pair with useReducer for store-like API.
 
 // -----------------------------------------------------------------------------
 // Q7: Immer-style note (concept)
 //
-// Kya karna hai:
-// Samjho: mutate draft libraries exist; core React me spread/map.
+// Task:
+// Understand: mutate draft libraries exist; core React uses spread/map.
 //
-// Seedha matlab:
+// In simple words:
 // Interview: reducer must be pure — no fetch inside reducer.
-// Side effects dispatch ke BAAD / effect me.
+// Side effects go AFTER dispatch / in effect.
 // -----------------------------------------------------------------------------
 function pureReducer(state, action) {
   // ✅ return new state only
-  // ❌ fetch(); localStorage.setItem — yahan mat
+  // ❌ fetch(); localStorage.setItem — not here
   if (action.type === "tick") return { ...state, n: state.n + 1 };
   return state;
 }
@@ -245,23 +245,23 @@ function pureReducer(state, action) {
 // -----------------------------------------------------------------------------
 // Q8: Prefer useState when simple
 //
-// Kya karna hai:
-// Ek boolean toggle — useState kaafi.
+// Task:
+// One boolean toggle — useState is enough.
 //
-// Seedha matlab:
-// Over-engineer mat. Complexity aaye tab reducer.
+// In simple words:
+// Don't over-engineer. Use reducer when complexity grows.
 // -----------------------------------------------------------------------------
 // const [on, setOn] = useState(false); // simple → state
 
 // -----------------------------------------------------------------------------
 // Q9: Complex nested state reducer
 //
-// Kya karna hai:
+// Task:
 // state = { user: { name, prefs: { theme } } } — nested update immutable.
 //
-// Seedha matlab:
-// Spread chain lamba ho to immer socho. Core React me manual spread.
-// Related nested fields ek reducer me clean.
+// In simple words:
+// If spread chain gets long, consider immer. Core React uses manual spread.
+// Related nested fields stay clean in one reducer.
 // -----------------------------------------------------------------------------
 function nestedReducer(state, action) {
   switch (action.type) {
@@ -294,13 +294,13 @@ function NestedProfile() {
 // -----------------------------------------------------------------------------
 // Q10: Immer sketch (concept)
 //
-// Kya karna hai:
-// draft.user.prefs.theme = "dark"; return draft — immer produce() wrap.
+// Task:
+// draft.user.prefs.theme = "dark"; return draft — wrap with immer produce().
 //
-// Seedha matlab:
-// Interview: "immer se mutate likho, immutable output milega."
-// Reducer ke andar produce(state, draft => { draft.n++ }) — optional lib.
-// Core interview: spread bhi acceptable answer.
+// In simple words:
+// Interview: "write mutate with immer, get immutable output."
+// Inside reducer: produce(state, draft => { draft.n++ }) — optional lib.
+// Core interview: spread is also an acceptable answer.
 // -----------------------------------------------------------------------------
 // import { produce } from "immer";
 // const next = produce(state, draft => { draft.items.push(x); });
@@ -308,12 +308,12 @@ function NestedProfile() {
 // -----------------------------------------------------------------------------
 // Q11: Init function deep dive
 //
-// Kya karna hai:
+// Task:
 // useReducer(reducer, props.initialCount, (n) => ({ count: n, log: [] }))
 //
-// Seedha matlab:
-// Init sirf FIRST mount pe chalta — re-mount pe arg change ignore (usually).
-// localStorage se hydrate karna common init use-case.
+// In simple words:
+// Init runs only on FIRST mount — arg change on re-mount is ignored (usually).
+// Hydrating from localStorage is a common init use case.
 // -----------------------------------------------------------------------------
 function readStoredCount(key, fallback) {
   const raw = localStorage.getItem(key);
@@ -326,12 +326,12 @@ function persistedInit(n) {
 // -----------------------------------------------------------------------------
 // Q12: [MID] dispatch stability
 //
-// Kya karna hai:
-// dispatch function reference mount se stable — deps me safe.
+// Task:
+// dispatch function reference is stable from mount — safe in deps.
 //
-// Seedha matlab:
+// In simple words:
 // useEffect(() => { dispatch({ type: "tick" }) }, [dispatch]) — OK.
-// setState jaisa stable identity — context me pass karo bina memo ke.
+// Stable identity like setState — pass in context without memo.
 // -----------------------------------------------------------------------------
 function StableDispatchDemo() {
   const [state, dispatch] = useReducer(counterReducer, 0);
@@ -342,12 +342,12 @@ function StableDispatchDemo() {
 // -----------------------------------------------------------------------------
 // Q13: Reducer purity rules
 //
-// Kya karna hai:
-// Reducer me: no fetch, no Date.now side effect, no mutate state arg.
+// Task:
+// In reducer: no fetch, no Date.now side effect, no mutate state arg.
 //
-// Seedha matlab:
+// In simple words:
 // Pure (state, action) => newState — same input same output.
-// Side effects action handler / useEffect me. Test reducer alag easily.
+// Side effects in action handler / useEffect. Test reducer separately easily.
 // -----------------------------------------------------------------------------
 function impureBad(state, action) {
   // ❌ state.items.push(action.item); return state; — mutate
@@ -359,11 +359,11 @@ function impureBad(state, action) {
 // -----------------------------------------------------------------------------
 // Q14: Middleware-ish wrapper sketch
 //
-// Kya karna hai:
+// Task:
 // function logger(reducer) { return (s,a) => { console.log(a); return reducer(s,a) } }
 //
-// Seedha matlab:
-// Higher-order reducer — Redux middleware idea mini.
+// In simple words:
+// Higher-order reducer — mini Redux middleware idea.
 // useReducer(logger(myReducer), init) — debug / analytics wrap.
 // -----------------------------------------------------------------------------
 function withLogger(reducer) {
@@ -381,12 +381,12 @@ function LoggedCounter() {
 // -----------------------------------------------------------------------------
 // Q15: useReducer vs useState — when which
 //
-// Kya karna hai:
+// Task:
 // 1 field toggle → useState. 5+ related fields + transitions → reducer.
 //
-// Seedha matlab:
-// useState: simple, kam boilerplate. useReducer: event→state map clear.
-// Next state purane pe complex depend → reducer shine.
+// In simple words:
+// useState: simple, less boilerplate. useReducer: clear event→state map.
+// Complex depend on previous state → reducer shines.
 // -----------------------------------------------------------------------------
 function WhenWhichNote() {
   return (
@@ -399,12 +399,12 @@ function WhenWhichNote() {
 // -----------------------------------------------------------------------------
 // Q16: Action creators
 //
-// Kya karna hai:
+// Task:
 // const inc = () => ({ type: "inc" }); dispatch(inc());
 //
-// Seedha matlab:
-// Typos kam — type string ek jagah. Components clean.
-// Redux me standard; local useReducer me bhi helpful bade apps me.
+// In simple words:
+// Fewer typos — type string in one place. Components stay clean.
+// Standard in Redux; helpful in local useReducer for big apps too.
 // -----------------------------------------------------------------------------
 const incAction = () => ({ type: "inc" });
 const decAction = () => ({ type: "dec" });
@@ -423,12 +423,12 @@ function ActionCreatorCounter() {
 // -----------------------------------------------------------------------------
 // Q17: [MID] TypeScript-ish action unions (comments)
 //
-// Kya karna hai:
+// Task:
 // type Action = { type: "inc" } | { type: "add"; text: string }
 //
-// Seedha matlab:
-// Discriminated union — switch exhaustive. payload typed per action.
-// JS me comments se document; TS me compiler help karta hai.
+// In simple words:
+// Discriminated union — exhaustive switch. payload typed per action.
+// Document in JS with comments; TS compiler helps.
 // -----------------------------------------------------------------------------
 // /** @typedef {{ type: "toggle"; id: number }} ToggleAction */
 // /** @typedef {{ type: "add"; text: string; id: number }} AddAction */
@@ -437,12 +437,12 @@ function ActionCreatorCounter() {
 // -----------------------------------------------------------------------------
 // Q18: Batch related updates one dispatch
 //
-// Kya karna hai:
-// action { type: "loginSuccess", user, token } — ek dispatch multiple fields.
+// Task:
+// action { type: "loginSuccess", user, token } — one dispatch, multiple fields.
 //
-// Seedha matlab:
-// Kai setState calls vs ek reducer action — atomic update, ek re-render.
-// Race / half-updated state bugs kam.
+// In simple words:
+// Many setState calls vs one reducer action — atomic update, one re-render.
+// Fewer race / half-updated state bugs.
 // -----------------------------------------------------------------------------
 function authReducer(state, action) {
   switch (action.type) {
@@ -458,12 +458,12 @@ function authReducer(state, action) {
 // -----------------------------------------------------------------------------
 // Q19: Default case return state
 //
-// Kya karna hai:
-// switch default: return state — unknown action ignore.
+// Task:
+// switch default: return state — ignore unknown action.
 //
-// Seedha matlab:
-// Kabhi default throw karte hain dev me — typo catch. Prod me often return state.
-// Redux Toolkit me extraReducers alag pattern.
+// In simple words:
+// Sometimes default throws in dev — catches typos. Prod often returns state.
+// Redux Toolkit uses extraReducers — different pattern.
 // -----------------------------------------------------------------------------
 function strictReducer(state, action) {
   switch (action.type) {
@@ -477,12 +477,12 @@ function strictReducer(state, action) {
 // -----------------------------------------------------------------------------
 // Q20: [MID] useReducer + lazy init + localStorage
 //
-// Kya karna hai:
+// Task:
 // init reads storage once; reducer updates; effect persists (optional).
 //
-// Seedha matlab:
-// Heavy init ek baar. Re-render pe init dubara nahi.
-// Custom hook usePersistedReducer bana sakte ho.
+// In simple words:
+// Heavy init once. Init does not run again on re-render.
+// You can build a custom usePersistedReducer hook.
 // -----------------------------------------------------------------------------
 function PersistedCounter() {
   const [state, dispatch] = useReducer(lazyReducer, 0, persistedInit);
@@ -494,12 +494,12 @@ function PersistedCounter() {
 // -----------------------------------------------------------------------------
 // Q21: Replacing multiple useState with one reducer
 //
-// Kya karna hai:
-// loading, data, error teen useState → ek fetchReducer (Q5 jaisa).
+// Task:
+// loading, data, error three useState → one fetchReducer (like Q5).
 //
-// Seedha matlab:
-// Related async states sync rehna easy. Ek action invalidates doosra field.
-// setLoading(true); setError(null) — do calls vs dispatch({ type: "start" }).
+// In simple words:
+// Related async states stay in sync easily. One action invalidates another field.
+// setLoading(true); setError(null) — two calls vs dispatch({ type: "start" }).
 // -----------------------------------------------------------------------------
 function FetchStateNote() {
   return <p>Async trio (loading/data/error) = classic reducer win.</p>;
@@ -508,12 +508,12 @@ function FetchStateNote() {
 // -----------------------------------------------------------------------------
 // Q22: Testing reducer in isolation
 //
-// Kya karna hai:
+// Task:
 // expect(todosReducer([], { type: "add", id: 1, text: "x" })).toEqual([...])
 //
-// Seedha matlab:
-// Pure reducer = unit test bina React render ke. Fast, reliable.
-// Component test alag; business logic reducer me rakho.
+// In simple words:
+// Pure reducer = unit test without React render. Fast, reliable.
+// Component test separate; keep business logic in reducer.
 // -----------------------------------------------------------------------------
 // test("toggle", () => {
 //   const s = [{ id: 1, done: false }];

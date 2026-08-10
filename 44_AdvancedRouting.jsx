@@ -1,15 +1,15 @@
 // ============================================================================
 // 44 — Advanced Routing (React Router v6.4+ Data APIs)
-// Level: MID / ADV  |  Sequence: pehle 22_RoutingBasics, phir yeh
+// Level: MID / ADV  |  Sequence: read 22_RoutingBasics first, then this
 // ============================================================================
 //
-// LAYMAN: Purana style = routes JSX me, data fetch useEffect me.
+// SIMPLE: Old style = routes in JSX, data fetch in useEffect.
 // Data router = createBrowserRouter + RouterProvider — route config object,
-// loader (pehle data), action (form submit), errorElement, defer/Suspense.
+// loader (data first), action (form submit), errorElement, defer/Suspense.
 //
 // Remix-style thinking: URL = source of truth; loader parallel; pending UI.
 //
-// KYUN: Less waterfall, better UX (skeleton), auth redirect in loader clean.
+// WHY: Less waterfall, better UX (skeleton), auth redirect in loader clean.
 // INTERVIEW: loader vs useEffect; action vs onSubmit; useBlocker; useFetcher.
 // Vite/React 19 — import from react-router-dom.
 //
@@ -57,12 +57,12 @@ async function fakePosts() {
 // -----------------------------------------------------------------------------
 // Q1: createBrowserRouter + RouterProvider (data router entry)
 //
-// Kya karna hai:
+// Task:
 // router = createBrowserRouter([{ path, element, loader, ... }])
 // Root: <RouterProvider router={router} />
 //
-// Seedha matlab:
-// Config array/object — loaders/actions attach yahan. BrowserRouter+Routes optional alt.
+// In simple words:
+// Config array/object — attach loaders/actions here. BrowserRouter+Routes is an optional alternative.
 // -----------------------------------------------------------------------------
 const rootRouter = createBrowserRouter([
   {
@@ -101,11 +101,11 @@ function AboutPage() {
 // -----------------------------------------------------------------------------
 // Q2: Deep nested routes — tree of children
 //
-// Kya karna hai:
+// Task:
 // Parent path + child path join. /dashboard/settings/profile
 //
-// Seedha matlab:
-// Har level pe layout + Outlet. URL reflects hierarchy.
+// In simple words:
+// Layout + Outlet at each level. URL reflects hierarchy.
 // -----------------------------------------------------------------------------
 const nestedRouter = createBrowserRouter([
   {
@@ -150,32 +150,32 @@ function ProfileSettings() {
 // -----------------------------------------------------------------------------
 // Q3: Layout routes — shared chrome without path segment
 //
-// Kya karna hai:
-// Parent sirf layout; child paths relative add hote hain.
+// Task:
+// Parent is layout only; child paths are added as relative paths.
 //
-// Seedha matlab:
-// /shop + /shop/cart same ShopShell. Nav ek baar render.
+// In simple words:
+// /shop + /shop/cart share the same ShopShell. Nav renders once.
 // -----------------------------------------------------------------------------
 // { path: '/shop', element: <ShopShell />, children: [...] }
 
 // -----------------------------------------------------------------------------
 // Q4: Index routes — parent exact URL default child
 //
-// Kya karna hai:
-// { index: true, element: <DefaultPanel /> } — path string nahi.
+// Task:
+// { index: true, element: <DefaultPanel /> } — no path string.
 //
-// Seedha matlab:
-// /dashboard/settings exact pe SettingsHome; /profile alag child.
+// In simple words:
+// /dashboard/settings exactly shows SettingsHome; /profile is a separate child.
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
 // Q5: [MID] Pathless layout route (layout without URL segment)
 //
-// Kya karna hai:
-// Parent path="" — wraps siblings, URL me extra segment nahi.
+// Task:
+// Parent path="" — wraps siblings, no extra segment in URL.
 //
-// Seedha matlab:
-// Auth wrapper ya analytics layout bina /auth prefix ke.
+// In simple words:
+// Auth wrapper or analytics layout without a /auth prefix.
 // -----------------------------------------------------------------------------
 const pathlessRouter = createBrowserRouter([
   {
@@ -210,12 +210,12 @@ function RegisterPage() {
 // -----------------------------------------------------------------------------
 // Q6: Loaders — fetch before render + useLoaderData
 //
-// Kya karna hai:
+// Task:
 // export async function loader() { return json(data); }
 // Component: const data = useLoaderData()
 //
-// Seedha matlab:
-// Route navigate → loader run → data ready → render. Waterfall kam.
+// In simple words:
+// Route navigate → loader run → data ready → render. Fewer waterfalls.
 // -----------------------------------------------------------------------------
 async function postsLoader() {
   const posts = await fakePosts();
@@ -242,12 +242,12 @@ const postsRoute = {
 // -----------------------------------------------------------------------------
 // Q7: [ADV] defer + Await + Suspense — slow data non-blocking
 //
-// Kya karna hai:
+// Task:
 // loader return defer({ fast: x, slow: promise })
 // UI: <Suspense><Await resolve={slow}>...</Await></Suspense>
 //
-// Seedha matlab:
-// Critical data turant; heavy stream baad me. Remix/React Router pattern.
+// In simple words:
+// Critical data right away; heavy data streams later. Remix/React Router pattern.
 // -----------------------------------------------------------------------------
 async function dashboardLoader() {
   const user = await fakeUser();
@@ -278,12 +278,12 @@ function DashboardDeferred() {
 // -----------------------------------------------------------------------------
 // Q8: Actions — Form method="post" + useActionData
 //
-// Kya karna hai:
+// Task:
 // action async ({ request }) { const fd = await request.formData(); ... return json({ ok }); }
 // <Form method="post"> + const result = useActionData()
 //
-// Seedha matlab:
-// Mutation route level — revalidation automatic. onSubmit fetch manual kam.
+// In simple words:
+// Mutation at route level — automatic revalidation. Less manual onSubmit fetch.
 // -----------------------------------------------------------------------------
 async function contactAction({ request }) {
   const fd = await request.formData();
@@ -307,11 +307,11 @@ function ContactPage() {
 // -----------------------------------------------------------------------------
 // Q9: useNavigation — pending / submitting UI
 //
-// Kya karna hai:
+// Task:
 // const nav = useNavigation(); nav.state === 'loading' | 'submitting'
 //
-// Seedha matlab:
-// Global spinner ya form disabled jab navigation chal rahi ho.
+// In simple words:
+// Global spinner or form disabled while navigation is in progress.
 // -----------------------------------------------------------------------------
 function GlobalPendingBar() {
   const navigation = useNavigation();
@@ -324,11 +324,11 @@ function GlobalPendingBar() {
 // -----------------------------------------------------------------------------
 // Q10: errorElement + useRouteError
 //
-// Kya karna hai:
-// Route pe errorElement. Loader throw → boundary. useRouteError() detail.
+// Task:
+// Add errorElement on route. Loader throw → boundary. useRouteError() detail.
 //
-// Seedha matlab:
-// try/catch har component me kam. Route-level error UI consistent.
+// In simple words:
+// Less try/catch in every component. Route-level error UI stays consistent.
 // -----------------------------------------------------------------------------
 function RootError() {
   const error = useRouteError();
@@ -356,11 +356,11 @@ async function riskyLoader() {
 // -----------------------------------------------------------------------------
 // Q11: [MID] Protected routes — loader redirect
 //
-// Kya karna hai:
-// loader me token check → throw redirect('/login') ya return null + wrapper
+// Task:
+// Token check in loader → throw redirect('/login') or return null + wrapper
 //
-// Seedha matlab:
-// Render se pehle block — flash of protected content kam.
+// In simple words:
+// Block before render — less flash of protected content.
 // -----------------------------------------------------------------------------
 async function protectedLoader() {
   const user = await getSessionUser();
@@ -375,11 +375,11 @@ async function getSessionUser() {
 // -----------------------------------------------------------------------------
 // Q12: Auth context + RequireAuth wrapper (component guard)
 //
-// Kya karna hai:
-// AuthProvider + RequireAuth children wrap. Loader + component dono pattern.
+// Task:
+// AuthProvider + RequireAuth wrap children. Both loader and component patterns.
 //
-// Seedha matlab:
-// Client-only auth state → wrapper OK. SSR/hydration → loader better.
+// In simple words:
+// Client-only auth state → wrapper is OK. SSR/hydration → loader is better.
 // -----------------------------------------------------------------------------
 const AuthContext = createContext(null);
 
@@ -411,14 +411,14 @@ function ProtectedPage() {
 }
 
 // -----------------------------------------------------------------------------
-// Q13: Outlet context — parent → deep child data bina prop drill
+// Q13: Outlet context — parent → deep child data without prop drilling
 //
-// Kya karna hai:
+// Task:
 // Parent: <Outlet context={{ user }} />
 // Child: const { user } = useOutletContext()
 //
-// Seedha matlab:
-// Layout ne loader data — niche tabs ko context se do. Overuse mat.
+// In simple words:
+// Layout has loader data — pass to nested tabs via context. Do not overuse.
 // -----------------------------------------------------------------------------
 function ParentWithContext() {
   const { user } = useLoaderData();
@@ -433,11 +433,11 @@ function ChildUsesContext() {
 // -----------------------------------------------------------------------------
 // Q14: [MID] Search params advanced — multiple keys + setters
 //
-// Kya karna hai:
+// Task:
 // useSearchParams(); setParams(prev => { prev.set('sort','name'); return prev; })
 //
-// Seedha matlab:
-// Filters pagination URL me — share/bookmark. Object shorthand bhi chalega.
+// In simple words:
+// Filters and pagination in URL — share/bookmark. Object shorthand works too.
 // -----------------------------------------------------------------------------
 function ProductFilters() {
   const [params, setParams] = useSearchParams();
@@ -469,11 +469,11 @@ function ProductFilters() {
 // -----------------------------------------------------------------------------
 // Q15: Relative links — to=".." / to="settings"
 //
-// Kya karna hai:
+// Task:
 // Link to="cart" relative current route. ".." parent up.
 //
-// Seedha matlab:
-// Nested routes me full path hardcode mat. Route change safe.
+// In simple words:
+// In nested routes, do not hardcode full paths. Safe when routes change.
 // -----------------------------------------------------------------------------
 function OrderDetailLinks() {
   return (
@@ -487,11 +487,11 @@ function OrderDetailLinks() {
 // -----------------------------------------------------------------------------
 // Q16: useMatches + handle — breadcrumbs from route config
 //
-// Kya karna hai:
+// Task:
 // Route handle: { crumb: (data) => 'Posts' }. useMatches() map crumbs.
 //
-// Seedha matlab:
-// Meta UI route tree se derive — duplicate titles kam.
+// In simple words:
+// Derive meta UI from route tree — fewer duplicate titles.
 // -----------------------------------------------------------------------------
 function Breadcrumbs() {
   const matches = useMatches();
@@ -522,11 +522,11 @@ function Breadcrumbs() {
 // -----------------------------------------------------------------------------
 // Q17: Lazy route modules — code split per route
 //
-// Kya karna hai:
+// Task:
 // const Admin = lazy(() => import('./Admin')); route element: <Suspense><Admin/></Suspense>
 //
-// Seedha matlab:
-// Bundle chhota — admin tab load jab route hit. Router lazy + React.lazy pair.
+// In simple words:
+// Smaller bundle — admin tab loads when route is hit. Router lazy + React.lazy pair.
 // -----------------------------------------------------------------------------
 const LazyAdmin = lazy(() =>
   Promise.resolve({ default: () => <h1>Admin panel</h1> })
@@ -543,11 +543,11 @@ function LazyAdminRoute() {
 // -----------------------------------------------------------------------------
 // Q18: Scroll restoration note
 //
-// Kya karna hai:
+// Task:
 // RouterProvider scroll restoration default on. Custom: ScrollRestoration component (RR 6.4+).
 //
-// Seedha matlab:
-// SPA me back button pe scroll position ya top — product decision. Document karo.
+// In simple words:
+// In SPA, back button scroll position or top — product decision. Document it.
 // -----------------------------------------------------------------------------
 // import { ScrollRestoration } from 'react-router-dom';
 // Root layout: <ScrollRestoration getKey={(location) => location.pathname} />
@@ -555,11 +555,11 @@ function LazyAdminRoute() {
 // -----------------------------------------------------------------------------
 // Q19: Splat routes — catch-all *
 //
-// Kya karna hai:
-// path: 'docs/*' — rest URL params me. splat / * param name version pe depend.
+// Task:
+// path: 'docs/*' — rest of URL in params. splat / * param name depends on version.
 //
-// Seedha matlab:
-// CMS pages / file paths. 404 child ya splat handler.
+// In simple words:
+// CMS pages / file paths. 404 child or splat handler.
 // -----------------------------------------------------------------------------
 function DocsCatchAll() {
   const { "*": splat } = useParams();
@@ -572,11 +572,11 @@ function DocsCatchAll() {
 // -----------------------------------------------------------------------------
 // Q20: handle export for breadcrumbs / meta (route module pattern)
 //
-// Kya karna hai:
+// Task:
 // Colocate: export async function loader() {}; export const handle = { crumb };
 //
-// Seedha matlab:
-// Route module ek file — loader, action, component, meta handle sab.
+// In simple words:
+// Route module is one file — loader, action, component, meta handle all together.
 // -----------------------------------------------------------------------------
 export const postsRouteHandle = {
   crumb: (data) => data?.posts?.[0]?.title ?? "Posts",
@@ -585,10 +585,10 @@ export const postsRouteHandle = {
 // -----------------------------------------------------------------------------
 // Q21: navigate relative — useNavigate({ relative: 'path' })
 //
-// Kya karna hai:
-// navigate('..', { relative: 'path' }) ya navigate('../sibling')
+// Task:
+// navigate('..', { relative: 'path' }) or navigate('../sibling')
 //
-// Seedha matlab:
+// In simple words:
 // Programmatic same as relative Link. Form success → navigate('..').
 // -----------------------------------------------------------------------------
 function useGoUp() {
@@ -599,10 +599,10 @@ function useGoUp() {
 // -----------------------------------------------------------------------------
 // Q22: [ADV] useBlocker — dirty form "Leave page?"
 //
-// Kya karna hai:
+// Task:
 // const blocker = useBlocker(whenDirty); blocker.state === 'blocked' → confirm UI
 //
-// Seedha matlab:
+// In simple words:
 // Unsaved changes guard. UX: custom modal + blocker.proceed / reset.
 // -----------------------------------------------------------------------------
 function DirtyFormBlocker() {
@@ -630,10 +630,10 @@ function DirtyFormBlocker() {
 // -----------------------------------------------------------------------------
 // Q23: useFetcher — submit/load without navigation
 //
-// Kya karna hai:
+// Task:
 // const fetcher = useFetcher(); fetcher.submit(formData, { method: 'post', action: '/vote' })
 //
-// Seedha matlab:
+// In simple words:
 // Like button, optimistic UI — page URL same. fetcher.state pending.
 // -----------------------------------------------------------------------------
 function LikeButton({ postId }) {
@@ -653,11 +653,11 @@ function LikeButton({ postId }) {
 // -----------------------------------------------------------------------------
 // Q24: [ADV] Parallel loaders (Remix-style) — sibling routes
 //
-// Kya karna hai:
-// Parent + child loaders parallel jab sibling branches navigate.
+// Task:
+// Parent + child loaders run in parallel when sibling branches navigate.
 //
-// Seedha matlab:
-// Data router same level loaders run together — parent/child waterfall aware design.
+// In simple words:
+// Data router runs same-level loaders together — be aware of parent/child waterfall when designing.
 // Heavy child → defer; siblings independent → parallel benefit.
 // -----------------------------------------------------------------------------
 const parallelRouter = createBrowserRouter([
@@ -688,10 +688,10 @@ function SidebarWidgets() {
 // -----------------------------------------------------------------------------
 // Q25: [MID] Interview quick hits — data router vs classic
 //
-// Kya karna hai:
+// Task:
 // loader vs useEffect; action vs fetch POST; when useFetcher vs Form navigate.
 //
-// Seedha matlab:
+// In simple words:
 // Classic RR = client-only routing. Data APIs = data coupling + pending states.
 // -----------------------------------------------------------------------------
 const routingInterviewNotes = {
